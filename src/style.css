@@ -1,0 +1,1135 @@
+@import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Barlow:wght@400;500;600;700;800&display=swap");
+:root {
+  font-family: "Barlow", Arial, sans-serif;
+  color: #e7e6db;
+  background: #111519;
+  font-synthesis: none;
+  font-weight: 500;
+  --muted: #84918e;
+  --coral: #ed815e;
+  --mint: #acd4b9;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+button,
+a,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+button,
+select {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+}
+button:focus-visible,
+a:focus-visible,
+select:focus-visible {
+  outline: 2px solid #eec98c;
+  outline-offset: 4px;
+}
+button {
+  transition:
+    background 0.15s,
+    transform 0.15s;
+}
+button:hover {
+  filter: brightness(1.12);
+}
+button:active {
+  transform: translateY(1px);
+}
+button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.topbar {
+  height: 86px;
+  border-bottom: 1px solid #2d3438;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4.6%;
+  gap: 20px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: #e7e6db;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+.brand-mark {
+  background: var(--coral);
+  color: #161c20;
+  font-style: italic;
+  font-weight: 900;
+  font-size: 24px;
+  padding: 3px 7px;
+  position: relative;
+  letter-spacing: -4px;
+  width: 42px;
+  height: 34px;
+}
+.brand-mark span {
+  position: absolute;
+  right: -5px;
+  top: -9px;
+  font-size: 18px;
+  letter-spacing: 0;
+  color: #ed815e;
+}
+.brand-dot {
+  font-size: 10px;
+  align-self: flex-start;
+}
+.top-meta {
+  font-family: monospace;
+  font-size: 10px;
+  letter-spacing: 1.6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #a3aaa4;
+}
+.status-dot,
+.live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #aad5b8;
+  display: inline-block;
+}
+.edition {
+  margin-left: 25px;
+  color: #687573;
+}
+.icon-button {
+  background: none;
+  border: 1px solid #3e4748;
+  color: #bcc4b8;
+  padding: 10px 13px;
+  font-family: monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+.icon-button span {
+  margin-left: 10px;
+}
+main {
+  max-width: 1330px;
+  margin: auto;
+  padding: 25px 55px 0;
+}
+.section-line {
+  display: flex;
+  justify-content: space-between;
+  font: 10px monospace;
+  letter-spacing: 1.5px;
+  color: #768580;
+}
+.section-line i {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: var(--coral);
+  margin-right: 9px;
+}
+.heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 35px 0 31px;
+}
+.eyebrow {
+  font: 10px monospace;
+  letter-spacing: 2px;
+  color: #a5b3a9;
+  margin: 0 0 12px;
+}
+h1 {
+  font-family: "Barlow Condensed", "Impact", sans-serif;
+  font-size: 94px;
+  line-height: 0.8;
+  letter-spacing: -1px;
+  margin: 0;
+  font-weight: 800;
+}
+h1 > span {
+  display: block;
+  color: var(--coral);
+  margin-top: 6px;
+}
+.title-star {
+  display: inline-block;
+  color: var(--mint);
+  font-size: 72px;
+  vertical-align: top;
+  margin-left: 15px;
+  line-height: 0.8;
+}
+.intro {
+  padding-top: 20px;
+  max-width: 370px;
+}
+.tag {
+  border: 1px solid #4b564d;
+  color: var(--mint);
+  font: 9px monospace;
+  letter-spacing: 1.2px;
+  padding: 7px 10px;
+}
+.intro p {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #a3ada5;
+  margin: 22px 0 16px;
+}
+.text-button {
+  border: 0;
+  background: none;
+  color: #d4d9c8;
+  letter-spacing: 1.5px;
+  padding: 8px 0;
+  font: 10px monospace;
+}
+.text-button span {
+  margin-left: 42px;
+  font-size: 17px;
+}
+.cabinet {
+  border: 1px solid #4c5756;
+  background: #1c2529;
+  padding: 7px;
+  box-shadow: 0 15px 60px #0003;
+}
+.cabinet-bar,
+.cabinet-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px 14px;
+  font: 10px monospace;
+  letter-spacing: 1px;
+  color: #b6bfb4;
+}
+.cabinet-bar b {
+  color: #617974;
+  margin: 0 7px;
+}
+.cabinet-bar i {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: var(--coral);
+  margin-right: 8px;
+}
+.screen {
+  aspect-ratio: 16/9;
+  position: relative;
+  overflow: hidden;
+  background: #22333d;
+}
+#game,
+#overlay,
+#hud {
+  position: absolute;
+  inset: 0;
+}
+#game canvas {
+  display: block;
+  image-rendering: pixelated;
+}
+#overlay {
+  z-index: 3;
+  background: #08141c38;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#overlay.empty {
+  pointer-events: none;
+  background: none;
+}
+#overlay:has(.menu-panel) {
+  justify-content: flex-start;
+  background: linear-gradient(
+    90deg,
+    #101d29ec 0%,
+    #101d29b0 37%,
+    #0b172222 72%
+  );
+}
+.menu-panel {
+  padding-left: 6%;
+  width: 62%;
+}
+.mini-label {
+  font: 10px monospace;
+  letter-spacing: 2px;
+  color: var(--mint);
+  margin-bottom: 22px;
+}
+.mini-label span {
+  width: 6px;
+  height: 6px;
+  background: var(--mint);
+  display: inline-block;
+  margin-right: 7px;
+}
+.menu-panel h2 {
+  font:
+    800 clamp(24px, 4.2vw, 57px)/0.97 "Barlow Condensed",
+    "Impact",
+    sans-serif;
+  letter-spacing: 0.3px;
+  margin: 0;
+  color: #f1edda;
+}
+.menu-panel p {
+  color: #b5c2b9;
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 16px 0 23px;
+}
+.primary,
+.secondary {
+  display: block;
+  border: 1px solid transparent;
+  padding: 14px 20px;
+  text-align: left;
+  font-family: "Barlow", sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+.primary {
+  background: var(--coral);
+  color: #192128;
+}
+.secondary {
+  background: #1c2b30de;
+  border-color: #61736b;
+  color: #dfdfca;
+}
+.menu-panel button {
+  width: 275px;
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+.menu-panel button span {
+  font-size: 16px;
+}
+.menu-panel small {
+  display: block;
+  margin-top: 20px;
+  color: #91a69f;
+  font: 8px monospace;
+  letter-spacing: 1px;
+}
+.arena-stamp {
+  position: absolute;
+  right: 5%;
+  top: 15%;
+  border: 2px solid #c4c6a976;
+  color: #d2d5bba0;
+  border-radius: 50%;
+  width: 110px;
+  height: 110px;
+  transform: rotate(12deg);
+  font: 10px monospace;
+  text-align: center;
+  padding: 12px;
+}
+.arena-stamp span {
+  display: block;
+  font:
+    bold italic 36px "Barlow Condensed",
+    sans-serif;
+  line-height: 1.1;
+}
+.arena-stamp b {
+  font-size: 7px;
+  display: block;
+  margin-top: 5px;
+}
+.cabinet-bottom {
+  padding: 13px 12px 6px;
+  font-size: 8px;
+  color: #95a49a;
+}
+.cabinet-bottom .live-dot {
+  width: 5px;
+  height: 5px;
+  margin-right: 7px;
+}
+.cabinet-bottom b {
+  margin: 0 10px;
+}
+.lower {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1.2fr;
+  gap: 18px;
+  padding: 31px 0;
+}
+.roster-title {
+  padding-top: 4px;
+}
+.roster-title h2 {
+  font:
+    700 25px/1.05 "Barlow Condensed",
+    sans-serif;
+  margin: 10px 0;
+  color: #d9dfd0;
+}
+.roster-title p {
+  font-size: 11px;
+  color: #7f928c;
+}
+.fighter-card {
+  min-height: 146px;
+  border: 1px solid #394544;
+  background: #1b2428;
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  padding: 10px;
+}
+.fighter-card .number {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  font: 10px monospace;
+  color: #6f807a;
+}
+.fighter-card img {
+  width: 114px;
+  height: 114px;
+  image-rendering: pixelated;
+  object-fit: contain;
+  filter: drop-shadow(0 5px 0 #0003);
+}
+.fighter-card .eyebrow {
+  font-size: 7px;
+  letter-spacing: 1px;
+}
+.fighter-card h3 {
+  font:
+    800 36px/1 "Barlow Condensed",
+    sans-serif;
+  margin: 5px 0 9px;
+  color: var(--coral);
+}
+.fighter-card h3 span {
+  font: 20px Arial;
+  margin-left: 30px;
+}
+.fighter-card p {
+  font-size: 9px;
+  color: #9faaa0;
+  margin: 0;
+}
+.fighter-card.mint h3 {
+  color: var(--mint);
+}
+.fighter-card.coral {
+  background: linear-gradient(120deg, #392e28, #1b2428 60%);
+}
+.fighter-card.mint {
+  background: linear-gradient(120deg, #263b36, #1b2428 60%);
+}
+footer {
+  border-top: 1px solid #303b3b;
+  display: flex;
+  justify-content: space-between;
+  padding: 22px 0 26px;
+  color: #6f827b;
+  font: 8px monospace;
+  letter-spacing: 1px;
+}
+footer b {
+  color: var(--coral);
+  margin: 0 12px;
+}
+.selection-panel,
+.pause-panel {
+  background: #13232cf2;
+  border: 1px solid #71857a;
+  padding: 25px 32px;
+  width: 80%;
+  max-width: 630px;
+  box-shadow: 8px 8px 0 #07121b66;
+}
+.selection-panel h2,
+.pause-panel h2 {
+  font:
+    800 36px/1 "Barlow Condensed",
+    sans-serif;
+  margin: 5px 0 18px;
+}
+.selections {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+}
+.selections h3 {
+  font: 10px monospace;
+  color: var(--mint);
+  letter-spacing: 1px;
+}
+.choices {
+  display: flex;
+  gap: 9px;
+}
+.choice {
+  background: #22353b;
+  border: 1px solid #4b605c;
+  color: #cbd5c7;
+  flex: 1;
+  padding: 0 8px 7px;
+  font: 12px monospace;
+}
+.choice.selected {
+  border-color: var(--coral);
+  background: #463d35;
+  box-shadow: inset 0 -3px var(--coral);
+}
+.choice img {
+  height: 78px;
+  width: 78px;
+  display: block;
+  margin: auto;
+  image-rendering: pixelated;
+}
+.selections label {
+  display: block;
+  font: 8px monospace;
+  letter-spacing: 1px;
+  color: #afc0b5;
+  margin-top: 12px;
+}
+.selections select {
+  display: block;
+  width: 100%;
+  margin-top: 5px;
+  background: #21323b;
+  color: #d4dfd0;
+  border: 1px solid #53635f;
+  padding: 6px;
+  font-size: 11px;
+}
+.selection-hint {
+  font-size: 10px;
+  color: #aab9ac;
+}
+.selection-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+.selection-actions button {
+  padding: 10px 14px;
+  flex: 1;
+  text-align: center;
+  font-size: 9px;
+}
+.pause-panel {
+  width: 65%;
+  text-align: center;
+  max-width: 490px;
+}
+.pause-panel h2 {
+  font-size: 56px;
+  color: var(--coral);
+}
+.pause-panel button {
+  margin: 10px auto;
+  width: 100%;
+  text-align: center;
+}
+.pause-panel p {
+  font-size: 11px;
+  color: #b2c2b4;
+}
+.score {
+  display: block;
+  font-size: 35px;
+  margin: 14px;
+}
+#hud {
+  pointer-events: none;
+  z-index: 2;
+  padding: 20px 22px;
+}
+.health-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+.health {
+  flex: 1;
+  min-width: 0;
+}
+.health-name {
+  display: flex;
+  justify-content: space-between;
+  color: #f2edcf;
+  font: 13px monospace;
+  margin-bottom: 5px;
+}
+.health-name span {
+  font-size: 11px;
+  color: #efbb7c;
+}
+.health-name b {
+  font-size: 8px;
+  color: #c3d1c7;
+  margin-left: 8px;
+}
+.health-track {
+  background: #482d30;
+  border: 2px solid #c7c7ac;
+  height: 16px;
+  padding: 2px;
+}
+.health-track i {
+  height: 100%;
+  display: block;
+  background: var(--coral);
+}
+.player-1 .health-track i {
+  background: var(--mint);
+  margin-left: auto;
+}
+.special-track {
+  margin-top: 5px;
+  height: 4px;
+  background: #243637;
+  width: 45%;
+}
+.special-track i {
+  display: block;
+  height: 100%;
+  background: #efcc8b;
+}
+.health small {
+  font: 6px monospace;
+  letter-spacing: 1px;
+  color: #d3d8bf;
+}
+.player-1 .special-track {
+  margin-left: auto;
+}
+.player-1 {
+  text-align: right;
+}
+.timer {
+  font:
+    800 35px/0.9 "Barlow Condensed",
+    sans-serif;
+  text-align: center;
+  color: #f3ead0;
+  min-width: 50px;
+}
+.timer small {
+  display: block;
+  font: 7px monospace;
+  margin-top: 6px;
+}
+.round-message {
+  position: absolute;
+  top: 42%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  background: #10222ae8;
+  padding: 20px;
+  font:
+    800 32px "Barlow Condensed",
+    sans-serif;
+  color: #f1d4a0;
+}
+#fight-tools {
+  position: absolute;
+  bottom: 12px;
+  left: 15px;
+  z-index: 4;
+  display: flex;
+  gap: 8px;
+}
+#fight-tools[hidden] {
+  display: none;
+}
+#fight-tools button {
+  background: #12232cdb;
+  color: #c1cbbd;
+  border: 1px solid #4d655f;
+  font: 8px monospace;
+  padding: 7px 10px;
+}
+dialog {
+  width: min(630px, 95vw);
+  max-height: 90vh;
+  background: #18282f;
+  color: #dce0cf;
+  border: 1px solid #849283;
+  padding: 30px;
+}
+dialog::backdrop {
+  background: #071017ce;
+  backdrop-filter: blur(4px);
+}
+.dialog-top {
+  display: flex;
+  justify-content: space-between;
+}
+.dialog-top button {
+  background: none;
+  border: 0;
+  color: #dce0cf;
+  font-size: 28px;
+  line-height: 1;
+}
+dialog h2 {
+  font:
+    800 40px/0.95 "Barlow Condensed",
+    sans-serif;
+  margin: 10px 0 15px;
+}
+.control-help {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #a8b6aa;
+}
+.bindings {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+}
+.bindings h3 {
+  font: 11px monospace;
+  color: var(--coral);
+}
+.binding {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #3b4a48;
+  padding: 6px 0;
+  font-size: 12px;
+}
+.binding button {
+  background: #2d3e43;
+  color: #e1ddc7;
+  border: 1px solid #69796e;
+  min-width: 42px;
+  height: 28px;
+  font: 12px monospace;
+}
+#binding-status {
+  font: 10px monospace;
+  color: #e4b787;
+  min-height: 22px;
+}
+.pad-help {
+  border-top: 1px solid #4a5c53;
+  padding-top: 15px;
+  font-size: 11px;
+  color: #acbdb2;
+  line-height: 1.7;
+}
+.pad-help strong {
+  font: 10px monospace;
+  color: var(--mint);
+}
+@media (min-width: 1450px) {
+  main {
+    max-width: 1400px;
+  }
+  .heading {
+    padding: 42px 0;
+  }
+  h1 {
+    font-size: 110px;
+  }
+  .screen {
+    max-height: 670px;
+  }
+  .menu-panel h2 {
+    font-size: 65px;
+  }
+  .menu-panel p {
+    font-size: 16px;
+  }
+  .menu-panel button {
+    padding: 18px 22px;
+    width: 315px;
+  }
+}
+@media (max-width: 900px) {
+  main {
+    padding: 24px 25px 0;
+  }
+  .topbar {
+    padding: 0 25px;
+    height: 70px;
+  }
+  .edition {
+    display: none;
+  }
+  .heading {
+    gap: 25px;
+  }
+  h1 {
+    font-size: 77px;
+  }
+  .title-star {
+    font-size: 55px;
+  }
+  .intro {
+    max-width: 300px;
+  }
+  .tag {
+    font-size: 7px;
+  }
+  .lower {
+    gap: 10px;
+  }
+  .fighter-card {
+    padding: 6px;
+  }
+  .fighter-card img {
+    width: 82px;
+    height: 100px;
+  }
+  .fighter-card p {
+    font-size: 8px;
+  }
+  .fighter-card h3 span {
+    margin-left: 10px;
+  }
+  .roster-title h2 {
+    font-size: 23px;
+  }
+  .menu-panel p {
+    margin: 12px 0;
+  }
+  .menu-panel small {
+    margin-top: 12px;
+    font-size: 6px;
+  }
+  .mini-label {
+    margin-bottom: 12px;
+    font-size: 8px;
+  }
+  .menu-panel button {
+    padding: 10px 15px;
+    width: 240px;
+  }
+  .selection-panel {
+    padding: 15px 20px;
+  }
+  .selection-panel h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+  .choice img {
+    height: 58px;
+    width: 58px;
+  }
+  .selection-actions {
+    margin-top: 10px;
+  }
+  .selection-hint {
+    margin: 8px 0;
+  }
+  .selections h3 {
+    margin: 6px 0;
+  }
+  .selection-panel .eyebrow {
+    margin-bottom: 8px;
+  }
+}
+@media (max-width: 620px) {
+  main {
+    padding: 17px 12px 0;
+  }
+  .topbar {
+    padding: 0 13px;
+    height: 62px;
+  }
+  .brand {
+    font-size: 11px;
+    gap: 8px;
+  }
+  .top-meta {
+    display: none;
+  }
+  .icon-button {
+    font-size: 8px;
+  }
+  .section-line {
+    font-size: 7px;
+  }
+  .section-line > span:last-child {
+    display: none;
+  }
+  .heading {
+    display: block;
+    padding: 25px 0;
+  }
+  h1 {
+    font-size: 79px;
+  }
+  .intro {
+    max-width: none;
+    padding-top: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .intro p {
+    display: none;
+  }
+  .intro .text-button {
+    font-size: 8px;
+  }
+  .text-button span {
+    margin-left: 8px;
+  }
+  .tag {
+    font-size: 6px;
+    padding: 7px;
+  }
+  .cabinet {
+    padding: 4px;
+  }
+  .cabinet-bar {
+    font-size: 7px;
+    padding: 7px 4px;
+  }
+  .cabinet-bottom {
+    font-size: 5px;
+    padding: 8px 4px 4px;
+  }
+  .menu-panel {
+    padding-left: 5%;
+    width: 75%;
+  }
+  .menu-panel h2 {
+    font-size: 25px;
+  }
+  .mini-label {
+    font-size: 6px;
+    margin-bottom: 8px;
+  }
+  .menu-panel p {
+    font-size: 8px;
+    margin: 7px 0;
+  }
+  .menu-panel button {
+    font-size: 7px;
+    padding: 6px 10px;
+    width: 165px;
+    margin-top: 5px;
+  }
+  .menu-panel button span {
+    font-size: 10px;
+  }
+  .menu-panel small {
+    font-size: 5px;
+    margin-top: 8px;
+  }
+  .arena-stamp {
+    height: 65px;
+    width: 65px;
+    padding: 6px;
+    font-size: 6px;
+    right: 4%;
+    top: 13%;
+  }
+  .arena-stamp span {
+    font-size: 24px;
+  }
+  .arena-stamp b {
+    font-size: 4px;
+    margin-top: 2px;
+  }
+  .lower {
+    grid-template-columns: 1fr 1fr;
+    padding: 23px 0;
+  }
+  .roster-title {
+    grid-column: span 2;
+  }
+  .roster-title h2 br {
+    display: none;
+  }
+  .fighter-card {
+    min-height: 100px;
+    display: block;
+  }
+  .fighter-card img {
+    float: left;
+    width: 65px;
+    height: 85px;
+  }
+  .fighter-card .eyebrow {
+    font-size: 5px;
+    letter-spacing: 0;
+  }
+  .fighter-card h3 {
+    font-size: 28px;
+  }
+  .fighter-card h3 span {
+    display: none;
+  }
+  .fighter-card p {
+    font-size: 7px;
+  }
+  .fighter-card > div {
+    padding-top: 17px;
+  }
+  .fighter-card .number {
+    font-size: 7px;
+    top: 5px;
+    right: 5px;
+  }
+  footer {
+    font-size: 6px;
+    gap: 15px;
+    line-height: 1.7;
+  }
+  .selection-panel {
+    width: 94%;
+    padding: 9px 12px;
+  }
+  .selection-panel h2 {
+    font-size: 20px;
+    margin: 2px 0 5px;
+  }
+  .selection-panel .eyebrow {
+    font-size: 6px;
+    margin-bottom: 4px;
+  }
+  .selections {
+    gap: 12px;
+  }
+  .selections h3 {
+    font-size: 7px;
+    margin: 3px 0;
+  }
+  .choice img {
+    height: 34px;
+    width: 34px;
+  }
+  .choice {
+    font-size: 8px;
+    padding-bottom: 3px;
+  }
+  .selections label {
+    font-size: 6px;
+    margin-top: 4px;
+  }
+  .selections select {
+    font-size: 8px;
+    padding: 2px;
+    margin-top: 2px;
+  }
+  .selection-hint {
+    font-size: 7px;
+    margin: 4px 0;
+  }
+  .selection-actions {
+    gap: 5px;
+    margin-top: 5px;
+  }
+  .selection-actions button {
+    font-size: 6px;
+    padding: 6px;
+  }
+  .pause-panel {
+    padding: 14px;
+    width: 85%;
+  }
+  .pause-panel h2 {
+    font-size: 32px;
+    margin: 5px 0;
+  }
+  .pause-panel .eyebrow {
+    font-size: 6px;
+    margin: 4px;
+  }
+  .pause-panel button {
+    font-size: 8px;
+    padding: 7px;
+    margin: 6px auto;
+  }
+  .pause-panel p {
+    font-size: 8px;
+    margin: 4px;
+  }
+  .score {
+    font-size: 20px;
+    margin: 5px;
+  }
+  #hud {
+    padding: 10px;
+  }
+  .health-row {
+    gap: 8px;
+  }
+  .health-name {
+    font-size: 9px;
+  }
+  .health-name span {
+    font-size: 7px;
+  }
+  .health-track {
+    height: 11px;
+    padding: 1px;
+  }
+  .timer {
+    font-size: 23px;
+    min-width: 30px;
+  }
+  .timer small {
+    font-size: 5px;
+  }
+  .health small {
+    font-size: 4px;
+  }
+  .health-name b {
+    font-size: 5px;
+    margin-left: 3px;
+  }
+  .round-message {
+    font-size: 20px;
+    padding: 12px;
+  }
+  #fight-tools {
+    bottom: 6px;
+    left: 6px;
+  }
+  #fight-tools button {
+    font-size: 5px;
+    padding: 4px;
+  }
+  .special-track {
+    margin-top: 3px;
+    height: 3px;
+  }
+  .bindings {
+    gap: 15px;
+  }
+}
