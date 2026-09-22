@@ -378,7 +378,14 @@ export class Combat {
         f.pose = "block";
       } else if (!f.attack) {
         f.stance = input.down && f.y === 0 ? "crouching" : "standing";
-        f.pose = f.y > 0 ? "jump" : input.down ? "crouch" : "idle";
+        f.pose =
+          f.y > 0
+            ? "jump"
+            : input.block
+              ? "block"
+              : input.down
+                ? "crouch"
+                : "idle";
         if (input.up && !f.previous.up && f.y === 0) {
           f.vy = 7.6;
           f.stance = "standing";
@@ -387,7 +394,7 @@ export class Combat {
         if (!input.down || f.y > 0) {
           const d = Number(input.right) - Number(input.left);
           f.x += d * (f.y > 0 ? 4 : 2.25);
-          if (d && f.y === 0) f.pose = "walk";
+          if (d && f.y === 0 && !input.block) f.pose = "walk";
         }
         for (const kind of ["special", "kick", "punch"] as const) {
           if (!input[kind] || f.previous[kind]) continue;

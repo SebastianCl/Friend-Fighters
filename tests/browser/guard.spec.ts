@@ -227,3 +227,32 @@ test("mando estándar bloquea con Y / triángulo", async ({ page }) => {
     "block",
   );
 });
+
+for (const controls of [
+  { player: 1, block: "KeyE", down: "KeyS" },
+  { player: 2, block: "KeyI", down: "ArrowDown" },
+]) {
+  test(`P${controls.player} muestra la guardia al mantener Bloqueo sin recibir un golpe`, async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await expect(page.locator("#app")).toHaveAttribute("data-ready", "true");
+    await page.clock.install();
+    await page.clock.pauseAt(await page.evaluate(() => Date.now() + 1000));
+    await page.getByRole("button", { name: "JUGAR VERSUS" }).click();
+    await page.getByRole("button", { name: "¡A PELEAR!" }).click();
+    await tick(page, 2);
+    await page.keyboard.down(controls.block);
+    await tick(page, 2);
+    await expect(page.locator("canvas")).toHaveAttribute(
+      `data-p${controls.player}-animation`,
+      "block",
+    );
+    await page.keyboard.down(controls.down);
+    await tick(page, 2);
+    await expect(page.locator("canvas")).toHaveAttribute(
+      `data-p${controls.player}-animation`,
+      "crouch",
+    );
+  });
+}

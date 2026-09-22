@@ -277,7 +277,20 @@ describe("guard stun", () => {
     const x = c.fighters[0].x;
     c.step([frame({ block: true, right: true }), idle()]);
     expect(c.fighters[0].x).toBeGreaterThan(x);
-    expect(c.fighters[0].pose).toBe("walk");
+    expect(c.fighters[0].pose).toBe("block");
+    expect(animationFor(c.fighters[0], 0)).toBe("block");
+  });
+  it("muestra guardia de pie y baja inmediatamente, sin contacto", () => {
+    const c = new Combat();
+    c.step([frame({ block: true }), idle()]);
+    expect(c.fighters[0].pose).toBe("block");
+    expect(animationFor(c.fighters[0], 0)).toBe("block");
+    expect(c.hits).toEqual([]);
+    c.step([frame({ block: true, down: true }), idle()]);
+    expect(c.fighters[0].stance).toBe("crouching");
+    expect(c.fighters[0].pose).toBe("block");
+    expect(animationFor(c.fighters[0], 0)).toBe("crouch");
+    expect(c.hits).toEqual([]);
   });
   it("restaura guardia y postura en práctica y reinicio", () => {
     const { c, target } = setup();
