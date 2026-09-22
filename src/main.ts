@@ -7,6 +7,13 @@ import { Inputs, actions, labels, keyLabel } from "./input";
 import "./game.css";
 import { effects } from "./effects/visual-effects-manager";
 import type { VisualEffect } from "./effects/visual-effect";
+import {
+  LANDING_DUST_ANIMATION,
+  LANDING_DUST_CONFIG,
+  LANDING_DUST_TYPE,
+  landedThisStep,
+  landingDustDuration,
+} from "./effects/landing-dust";
 
 const app = document.querySelector<HTMLDivElement>("#app")!;
 app.innerHTML = `<div class="game-viewport"><section class="arena arcade-stage"><div id="game"></div><header class="arena-header"><a class="arcade-brand brand" href="#" aria-label="Menú principal"><span class="brand-icon">FF</span> FRIEND <b>FIGHTERS</b></a><p class="edition"><span></span> DISTRITO NEÓN <i>/</i> VOL. 02</p><div class="header-actions"><button id="sound" aria-label="Silenciar sonido">SONIDO ON</button><button id="fullscreen" aria-label="Pantalla completa" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 2H2v5M13 2h5v5M18 13v5h-5M7 18H2v-5"/></svg></button></div></header><div id="hud" hidden></div><div id="overlay"></div><footer class="arena-toolbar game-toolbar"><span id="mode-label">VERSUS LOCAL / EDICIÓN NEÓN</span><div id="fight-tools" hidden><button id="pause-button">Ⅱ PAUSA</button><button id="reset-practice" hidden>↺ REINICIAR PRÁCTICA</button></div><nav><button id="controls-top">GUÍA DE CONTROLES</button><a class="visual-preview-link" href="/visual-preview.html">NUEVO ESTILO VISUAL ↗</a></nav></footer></section></div><p id="asset-status" class="asset-status" role="status">Cargando la arena y las animaciones…</p><p id="fullscreen-status" class="sr-only" role="status"></p><dialog id="controls-dialog" aria-labelledby="controls-title"></dialog>`;
@@ -75,7 +82,16 @@ const Arena = makeArena({
     if (screen !== "fight" || paused) return;
     accumulator += delta;
     while (accumulator >= 1000 / 60) {
+      const airborneBeforeStep = combat.fighters.map((fighter) => fighter.y > 0);
       combat.step([inputs.frame(0), practice ? idle() : inputs.frame(1)]);
+      combat.fighters.forEach((fighter, index) => {
+        if (landedThisStep(airborneBeforeStep[index], fighter.y)) {
+          effects.spawn(LANDING_DUST_TYPE, {
+            x: fighter.x * presentation.unit,
+            y: presentation.groundY,
+          });
+        }
+      });
       for (const hit of combat.hits) {
         tone(hit.blocked, hit.special);
         if (!hit.blocked) {
@@ -191,6 +207,25 @@ effects.registerType("heavyHit", {
     effect.graphics = g;
   },
   update: animateHitSpark,
+});
+
+effects.registerType(LANDING_DUST_TYPE, {
+  ttl: landingDustDuration(),
+  scale: LANDING_DUST_CONFIG.scale,
+  depth: LANDING_DUST_CONFIG.depth,
+  offsetX: LANDING_DUST_CONFIG.offsetX,
+  offsetY: LANDING_DUST_CONFIG.offsetY,
+  create: (effect, scene) => {
+    const sprite =
+      effect.sprite ?? scene.add.sprite(0, 0, "landing-dust", 0).setOrigin(0.5, 1);
+    effect.sprite = sprite;
+    sprite
+      .setTexture("landing-dust", 0)
+      .setOrigin(0.5, 1)
+      .setActive(true)
+      .setVisible(true)
+      .play(LANDING_DUST_ANIMATION);
+  },
 });
 
 const fullscreenButton = document.getElementById("fullscreen")!;

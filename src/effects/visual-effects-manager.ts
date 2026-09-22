@@ -64,7 +64,13 @@ export class VisualEffectsManager {
     effect.position = position;
     effect.elapsed = 0;
     config.create(effect, this._scene);
-    effect.graphics?.setPosition(position.x, position.y).setDepth(7);
+    const x = position.x + (config.offsetX ?? 0);
+    const y = position.y + (config.offsetY ?? 0);
+    effect.graphics?.setPosition(x, y).setDepth(config.depth ?? 7);
+    effect.sprite
+      ?.setPosition(x, y)
+      .setDepth(config.depth ?? 7)
+      .setScale(config.scale ?? 1);
 
     this._active.push(effect);
     return effect;

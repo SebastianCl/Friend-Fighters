@@ -2,6 +2,7 @@ export class VisualEffect {
   type!: string;
   position!: { x: number; y: number };
   graphics?: Phaser.GameObjects.Graphics;
+  sprite?: Phaser.GameObjects.Sprite;
   ttl: number;
   elapsed: number = 0;
 
@@ -26,11 +27,17 @@ export class VisualEffect {
       this.graphics.destroy();
       this.graphics = undefined;
     }
+    this.sprite?.stop();
+    this.sprite?.setActive(false).setVisible(false);
   }
 }
 
 export type EffectConfig = {
   ttl?: number;
+  scale?: number;
+  depth?: number;
+  offsetX?: number;
+  offsetY?: number;
   create: (effect: VisualEffect, scene: Phaser.Scene) => void;
   update?: (effect: VisualEffect, delta: number) => void;
 };

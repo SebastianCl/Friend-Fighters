@@ -8,6 +8,10 @@ import {
 } from "./animation";
 import { type Combat, type Hit } from "./combat";
 import { cameraShakeForHit } from "./effects/camera-shake";
+import {
+  LANDING_DUST_ANIMATION,
+  LANDING_DUST_CONFIG,
+} from "./effects/landing-dust";
 import { visualFighter, visualStage } from "./visual-assets";
 
 interface FrameArt extends AnimationRegion {
@@ -49,6 +53,7 @@ export function makeArena(hooks: ArenaHooks) {
       this.load.image("guard", visualFighter.sprite);
       this.load.image("motion", "/art/combat-v2/movement-sheet.png");
       this.load.image("air", "/art/combat-v2/air-sheet-v2.png");
+      this.load.image("landing-dust-source", "/art/combat-v2/landing-dust.png");
       this.load.image("neon", visualStage.background);
       this.load.image("portrait", visualFighter.portrait);
       this.load.on("loaderror", () => {
@@ -59,6 +64,30 @@ export function makeArena(hooks: ArenaHooks) {
     create() {
       if (this.loadFailed) return;
       try {
+        const dustImage = this.textures
+          .get("landing-dust-source")
+          .getSourceImage() as HTMLImageElement;
+        const dustFrameWidth = Math.floor(
+          dustImage.width / LANDING_DUST_CONFIG.columns,
+        );
+        const dustFrameHeight = Math.floor(
+          dustImage.height / LANDING_DUST_CONFIG.rows,
+        );
+        this.textures.addSpriteSheet("landing-dust", dustImage, {
+          frameWidth: dustFrameWidth,
+          frameHeight: dustFrameHeight,
+          endFrame:
+            LANDING_DUST_CONFIG.columns * LANDING_DUST_CONFIG.rows - 1,
+        });
+        this.anims.create({
+          key: LANDING_DUST_ANIMATION,
+          frames: this.anims.generateFrameNumbers("landing-dust", {
+            start: 0,
+            end: LANDING_DUST_CONFIG.columns * LANDING_DUST_CONFIG.rows - 1,
+          }),
+          frameRate: LANDING_DUST_CONFIG.frameRate,
+          repeat: 0,
+        });
         const pixels = new Map<
           string,
           { data: Uint8ClampedArray; width: number }
