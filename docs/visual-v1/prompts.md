@@ -6,7 +6,7 @@ Herramienta: image_gen integrada, sin CLI. Referencia original: `public/art/visu
 
 ```text
 Use case: identity-preserve.
-Asset type: transparent full-body fighting-game character sprite for Friend Fighters.
+Asset type: transparent full-body fighting-game character sprite for Amigos y Rivales.
 Input image: the supplied illustration is the identity, clothing and pixel-art style reference. Extract/recreate ONLY its woman fighter as a polished standalone sprite.
 Preserve her specific face shape, warm skin tone, eyes, long dark hair, human body proportions, dark loose short-sleeved T-shirt, beige pleated skirt, black fingerless gloves with red wrist wraps, dark brown lace-up ankle boots. Same grounded fighting guard, three-quarter view facing RIGHT, two raised fists, both boots resting on the same ground baseline. Do not redesign her, make her chibi, muscular or generic anime.
 Detailed hand-pixelled arcade art with crisp dark outlines, deliberate visible pixel clusters, stepped shading and restrained highlights, comparable to the reference. Face must remain recognizably the same illustrated person. Full head to both soles, complete hands and boots, centered with 5% clear padding, around 850 pixels tall in a portrait canvas. Feet apart in the reference stance.

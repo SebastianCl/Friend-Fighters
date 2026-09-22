@@ -11,7 +11,7 @@ app.innerHTML = `
       <img class="backdrop" src="${scene.background}" alt="Calle nocturna de pixel art iluminada por letreros cian, magenta y amarillos" fetchpriority="high" />
       <div class="atmosphere" aria-hidden="true"></div>
       <header class="arena-header">
-        <a class="arcade-brand" href="/" aria-label="Volver al juego"><span class="brand-icon">FF</span>FRIEND <b>FIGHTERS</b></a>
+        <a class="arcade-brand" href="/" aria-label="Volver al juego"><span class="brand-icon">FF</span>AMIGOS Y <b>RIVALES</b></a>
         <p class="edition"><span></span> NUEVA DIRECCIÓN VISUAL <i>/</i> VOL. 02</p>
         <button class="menu-toggle" data-dialog="menu">☰ <span>MENÚ</span></button>
       </header>
@@ -57,7 +57,7 @@ app.innerHTML = `
     <div class="compare-grid"><figure><figcaption><b>01</b> TU REFERENCIA</figcaption><div class="compare-image reference-image"><img src="${scene.reference}" alt="Ilustración original proporcionada como referencia" /></div></figure><figure><figcaption><b>02</b> PERSONAJE AISLADO</figcaption><div class="compare-image transparency-grid"><img src="${fighter.sprite}" alt="Sprite de cuerpo completo sobre una cuadrícula que muestra su transparencia" /></div></figure><figure><figcaption><b>03</b> ROSTRO EN DETALLE</figcaption><div class="compare-image portrait-image"><img src="${fighter.portrait}" alt="Retrato generado para comparar los rasgos con la referencia" /></div></figure></div>
     <p class="dialog-note">Compara forma del rostro, peinado, silueta y ropa. En la arena usamos el mismo sprite en ambos lados para evaluar escala y legibilidad.</p>
   </dialog>
-  <dialog id="menu-dialog" class="menu-dialog" aria-labelledby="menu-title"><button class="close-dialog" aria-label="Cerrar menú">×</button><p class="tiny-label">Friend Fighters / VOL. 02</p><h2 id="menu-title">UNA NUEVA<br>ESQUINA.</h2><p>Una prueba de estilo, antes del próximo round.</p><button class="menu-primary close-menu">VOLVER A LA ARENA <span>→</span></button><button class="menu-secondary" data-switch="portrait">EXPLORAR PERSONAJE <span>↗</span></button><button class="menu-secondary" data-switch="compare">COMPARAR REFERENCIA <span>↗</span></button><a class="original-link" href="/">IR AL JUEGO</a><small>Esta pantalla es una prueba visual estática.<br>Las mecánicas y las animaciones están disponibles en el juego.</small></dialog>
+  <dialog id="menu-dialog" class="menu-dialog" aria-labelledby="menu-title"><button class="close-dialog" aria-label="Cerrar menú">×</button><p class="tiny-label">Amigos y Rivales / VOL. 02</p><h2 id="menu-title">UNA NUEVA<br>ESQUINA.</h2><p>Una prueba de estilo, antes del próximo round.</p><button class="menu-primary close-menu">VOLVER A LA ARENA <span>→</span></button><button class="menu-secondary" data-switch="portrait">EXPLORAR PERSONAJE <span>↗</span></button><button class="menu-secondary" data-switch="compare">COMPARAR REFERENCIA <span>↗</span></button><a class="original-link" href="/">IR AL JUEGO</a><small>Esta pantalla es una prueba visual estática.<br>Las mecánicas y las animaciones están disponibles en el juego.</small></dialog>
 `;
 
 const arena = document.querySelector<HTMLElement>(".arena")!;

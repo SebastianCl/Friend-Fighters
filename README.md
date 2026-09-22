@@ -1,4 +1,4 @@
-# Friend Fighters — Distrito Neón
+# Amigos y Rivales — Distrito Neón
 
 Juego de pelea 2D para dos personas en un mismo computador, con pixel art detallado basado en la ilustración aprobada. Incluye versus local, práctica, teclado reasignable, mandos estándar, sonido y pantalla completa.
 
