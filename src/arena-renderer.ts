@@ -144,10 +144,12 @@ export function makeArena(hooks: ArenaHooks) {
           );
         });
         this.energy = this.add.graphics().setDepth(4);
+        this.cameras.main.setZoom(1).centerOn(640, 360);
         this.game.canvas.setAttribute(
           "aria-label",
           "Arena de combate en Distrito Neón",
         );
+        this.game.canvas.dataset.cameraZoom = "1.000";
         this.game.canvas.dataset.ready = "true";
         hooks.ready();
       } catch (error) {
@@ -191,22 +193,6 @@ export function makeArena(hooks: ArenaHooks) {
       if (!state.paused) this.clock += Math.min(delta, 100) * 0.06;
       this.tweens.timeScale = state.paused ? 0 : 1;
       this.energy.clear();
-      if (!state.paused) {
-        const airborne =
-          state.screen === "fight"
-            ? Math.max(
-                ...state.combat.fighters.map((f) => (f.hp > 0 ? f.y : 0)),
-              )
-            : 0;
-        const targetZoom = Math.max(0.82, 1 - airborne / 430);
-        const zoom = Phaser.Math.Linear(
-          this.cameras.main.zoom,
-          targetZoom,
-          1 - Math.exp(-delta / 90),
-        );
-        this.cameras.main.setZoom(zoom).centerOn(640, 720 - 360 / zoom);
-        this.game.canvas.dataset.cameraZoom = zoom.toFixed(3);
-      }
       state.combat.fighters.forEach((original, i) => {
         const f =
           state.screen === "menu" || state.screen === "select"
@@ -268,6 +254,11 @@ export function makeArena(hooks: ArenaHooks) {
         );
         this.game.canvas.dataset[`p${i + 1}Animation`] = key;
         this.game.canvas.dataset[`p${i + 1}X`] = String(Math.round(x));
+        this.game.canvas.dataset[`p${i + 1}RenderedHeight`] = (
+          art.referenceHeight *
+          Math.abs(image.scaleY) *
+          this.cameras.main.zoom
+        ).toFixed(3);
         if (f.attack?.kind === "special" && show) {
           const phase = attackPhase(f),
             radius =

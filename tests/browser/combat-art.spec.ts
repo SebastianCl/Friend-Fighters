@@ -48,7 +48,98 @@ test("nuevas ilustraciones listas, sin poses vacías ni recortes en sus límites
   }
 });
 
-test("poses reales de combate, cámara aérea, pausa y pantalla completa", async ({
+test("cada jugador conserva su tamaño al saltar, caminar y atacar", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.goto("/");
+  await expect(page.locator("#app")).toHaveAttribute("data-ready", "true");
+  await page.getByRole("button", { name: "JUGAR VERSUS" }).click();
+  await page.getByRole("button", { name: "¡A PELEAR!" }).click();
+  const canvas = page.locator("canvas");
+
+  const expectFixedPresentation = async () => {
+    const metrics = await canvas.evaluate((element) => ({
+      zoom: Number(element.dataset.cameraZoom),
+      p1Height: Number(element.dataset.p1RenderedHeight),
+      p2Height: Number(element.dataset.p2RenderedHeight),
+    }));
+    expect(metrics.zoom).toBeCloseTo(1, 3);
+    expect(metrics.p1Height).toBeCloseTo(420, 3);
+    expect(metrics.p2Height).toBeCloseTo(420, 3);
+  };
+
+  await expect(canvas).toHaveAttribute("data-p1-animation", /guard|breathe/);
+  await expect(canvas).toHaveAttribute("data-p2-animation", /guard|breathe/);
+  await expectFixedPresentation();
+
+  for (const [key, player] of [
+    ["KeyA", 1],
+    ["ArrowRight", 2],
+  ] as const) {
+    await page.keyboard.down(key);
+    await expect(canvas).toHaveAttribute(`data-p${player}-animation`, /walk-/);
+    await expectFixedPresentation();
+    await page.keyboard.up(key);
+  }
+
+  for (const [key, player] of [
+    ["KeyF", 1],
+    ["KeyJ", 2],
+  ] as const) {
+    await page.keyboard.press(key);
+    await expect(canvas).toHaveAttribute(
+      `data-p${player}-animation`,
+      /punch-wind|punch-hit/,
+    );
+    await expectFixedPresentation();
+    await expect(canvas).toHaveAttribute(`data-p${player}-animation`, /guard/, {
+      timeout: 2000,
+    });
+  }
+
+  const verifyJump = async (
+    key: "KeyW" | "ArrowUp",
+    player: 1 | 2,
+    otherPlayer: 1 | 2,
+  ) => {
+    await page.keyboard.press(key);
+    await expect(canvas).toHaveAttribute(`data-p${player}-animation`, "rise");
+    const seen = new Set<string>(["rise"]);
+    await page.keyboard.press("Escape");
+    await expect(page.locator(".pause-panel")).toBeVisible();
+    await expectFixedPresentation();
+    await canvas.screenshot({
+      path: `test-results/p${player}-jump-fixed.png`,
+    });
+    await page.getByRole("button", { name: "VOLVER AL COMBATE" }).click();
+    for (let sample = 0; sample < 30; sample++) {
+      const animations = await canvas.evaluate(
+        (element, players) => ({
+          jumping: element.dataset[`p${players.player}Animation`],
+          other: element.dataset[`p${players.otherPlayer}Animation`],
+        }),
+        { player, otherPlayer },
+      );
+      if (animations.jumping) seen.add(animations.jumping);
+      expect(animations.other).not.toMatch(/rise|land/);
+      await expectFixedPresentation();
+      await page.waitForTimeout(30);
+    }
+    expect(seen).toContain("rise");
+    expect(seen).toContain("land");
+    await expect(canvas).toHaveAttribute(
+      `data-p${player}-animation`,
+      /guard|breathe/,
+    );
+    await expectFixedPresentation();
+  };
+
+  await verifyJump("KeyW", 1, 2);
+  await verifyJump("ArrowUp", 2, 1);
+});
+
+test("poses reales de combate, cámara fija, pausa y pantalla completa", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
@@ -78,7 +169,7 @@ test("poses reales de combate, cámara aérea, pausa y pantalla completa", async
   await page.keyboard.press("KeyW");
   await expect(canvas).toHaveAttribute("data-p1-animation", /rise|land/);
   await page.waitForTimeout(140);
-  expect(Number(await canvas.getAttribute("data-camera-zoom"))).toBeLessThan(1);
+  expect(Number(await canvas.getAttribute("data-camera-zoom"))).toBe(1);
   await page.screenshot({ path: "docs/combat-v2/jump.png" });
   await page.waitForTimeout(650);
   await page.keyboard.press("KeyH");
