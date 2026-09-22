@@ -490,7 +490,12 @@ export class Combat {
       attack.frame++;
       if (attack.frame >= move.startup + move.active + move.recovery) {
         f.attack = null;
-        f.pose = f.y > 0 ? "jump" : "idle";
+        if (f.y > 0) {
+          f.pose = "jump";
+        } else {
+          f.stance = inputs[i].down ? "crouching" : "standing";
+          f.pose = inputs[i].down ? "crouch" : "idle";
+        }
       }
     });
     for (const {

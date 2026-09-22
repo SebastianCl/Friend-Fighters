@@ -3,6 +3,30 @@ import { Combat, idle, moves, combatSpace } from "../src/combat";
 import { animationFor, animationRegions, attackPhase } from "../src/animation";
 
 describe("animaciones sincronizadas con el combate", () => {
+  it("no muestra una pose de pie cuando el golpe termina y se mantiene abajo", () => {
+    const c = new Combat();
+    c.step([{ ...idle(), punch: true, down: true }, idle()]);
+    const animations = [animationFor(c.fighters[0], 0)];
+
+    while (c.fighters[0].attack) {
+      c.step([{ ...idle(), down: true }, idle()]);
+      animations.push(animationFor(c.fighters[0], 0));
+    }
+
+    expect(animations).toContain("low-punch");
+    expect(animations).not.toContain("guard");
+    expect(animations).not.toContain("breathe");
+    expect(animations.at(-1)).toBe("crouch");
+  });
+  it("vuelve a la pose de pie si se suelta abajo antes de terminar el golpe", () => {
+    const c = new Combat();
+    c.step([{ ...idle(), punch: true, down: true }, idle()]);
+
+    while (c.fighters[0].attack) c.step([idle(), idle()]);
+
+    expect(c.fighters[0].stance).toBe("standing");
+    expect(animationFor(c.fighters[0], 0)).toBe("guard");
+  });
   it("distingue anticipación, impacto y recuperación sin adelantar el contacto", () => {
     const c = new Combat();
     const f = c.fighters[0];

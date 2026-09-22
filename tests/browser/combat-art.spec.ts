@@ -371,3 +371,28 @@ test("poses reales de combate, cámara fija, pausa y pantalla completa", async (
     .getByRole("button", { name: "Salir de pantalla completa", exact: true })
     .click();
 });
+
+test("golpe agachado no muestra una pose de pie al terminar", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.locator("#app")).toHaveAttribute("data-ready", "true");
+  await page.getByRole("button", { name: "ENTRAR A PRÁCTICA" }).click();
+  await page.getByRole("button", { name: "PRACTICAR", exact: false }).click();
+
+  const canvas = page.locator("canvas");
+  await page.keyboard.down("KeyS");
+  await expect(canvas).toHaveAttribute("data-p1-animation", "crouch");
+  await page.keyboard.down("KeyF");
+
+  const animations: string[] = [];
+  for (let sample = 0; sample < 30; sample++) {
+    animations.push((await canvas.getAttribute("data-p1-animation")) ?? "");
+    await page.waitForTimeout(17);
+  }
+
+  await page.keyboard.up("KeyF");
+  await page.keyboard.up("KeyS");
+  expect(animations).toContain("low-punch");
+  expect(animations).not.toContain("guard");
+  expect(animations).not.toContain("breathe");
+  await expect(canvas).toHaveAttribute("data-p1-animation", /guard|breathe/);
+});
