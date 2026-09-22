@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import { Combat, idle } from "./combat";
+import { CpuController } from "./cpu-controller";
 import { makeArena, presentation } from "./arena-renderer";
 import {
   visualCharacter,
@@ -30,7 +31,7 @@ import { createTournamentParticipants } from "./tournament-setup";
 import { renderTournamentBracket } from "./tournament-view";
 
 const app = document.querySelector<HTMLDivElement>("#app")!;
-app.innerHTML = `<div class="game-viewport"><section class="arena arcade-stage"><div id="game"></div><header class="arena-header"><a class="arcade-brand brand" href="#" aria-label="Menú principal"><span class="brand-icon">FF</span> FRIEND <b>FIGHTERS</b></a><div class="header-actions"><button id="sound" aria-label="Silenciar sonido">SONIDO ON</button><button id="music" aria-label="Silenciar música" aria-pressed="true">MÚSICA ON</button><button id="fullscreen" aria-label="Pantalla completa" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 2H2v5M13 2h5v5M18 13v5h-5M7 18H2v-5"/></svg></button></div></header><div id="hud" hidden></div><div id="overlay"></div><footer class="arena-toolbar game-toolbar"><span id="mode-label">VERSUS LOCAL / EDICIÓN NEÓN</span><div id="fight-tools" hidden><button id="pause-button">Ⅱ PAUSA</button><button id="reset-practice" hidden>↺ REINICIAR PRÁCTICA</button></div><nav><button id="controls-top">GUÍA DE CONTROLES</button><a class="visual-preview-link" href="/visual-preview.html">NUEVO ESTILO VISUAL ↗</a></nav></footer></section></div><p id="asset-status" class="asset-status" role="status">Cargando la arena y las animaciones…</p><p id="fullscreen-status" class="sr-only" role="status"></p><dialog id="controls-dialog" aria-labelledby="controls-title"></dialog>`;
+app.innerHTML = `<div class="game-viewport"><section class="arena arcade-stage"><div id="game"></div><header class="arena-header"><a class="arcade-brand brand" href="#" aria-label="Menú principal"><span class="brand-icon">FF</span> AMIGOS Y <b>RIVALES</b></a><div class="header-actions"><button id="sound" aria-label="Silenciar sonido">SONIDO ON</button><button id="music" aria-label="Silenciar música" aria-pressed="true">MÚSICA ON</button><button id="fullscreen" aria-label="Pantalla completa" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 2H2v5M13 2h5v5M18 13v5h-5M7 18H2v-5"/></svg></button></div></header><div id="hud" hidden></div><div id="overlay"></div><footer class="arena-toolbar game-toolbar"><span id="mode-label">VERSUS LOCAL / EDICIÓN NEÓN</span><div id="fight-tools" hidden><button id="pause-button">Ⅱ PAUSA</button><button id="reset-practice" hidden>↺ REINICIAR PRÁCTICA</button></div><nav><button id="controls-top">GUÍA DE CONTROLES</button><a class="visual-preview-link" href="/visual-preview.html">NUEVO ESTILO VISUAL ↗</a></nav></footer></section></div><p id="asset-status" class="asset-status" role="status">Cargando la arena y las animaciones…</p><p id="fullscreen-status" class="sr-only" role="status"></p><dialog id="controls-dialog" aria-labelledby="controls-title"></dialog>`;
 let assetsReady = false;
 const stage = document.querySelector<HTMLElement>(".arcade-stage")!;
 const viewport = document.querySelector<HTMLElement>(".game-viewport")!;
@@ -55,7 +56,9 @@ let combat = new Combat(),
   paused = false,
   practice = false,
   tournamentFight = false,
+  opponentControl: "PLAYER" | "CPU" = "PLAYER",
   accumulator = 0;
+let cpuController: CpuController | null = null;
 let tournament: Tournament<CharacterId> | null = null;
 let tournamentPlayerCharacter: CharacterId = visualCharacters[0].id;
 let muted = false;
@@ -143,7 +146,12 @@ const Arena = makeArena({
       const airborneBeforeStep = soundStateBeforeStep.fighters.map(
         (fighter) => fighter.airborne,
       );
-      combat.step([inputs.frame(0), practice ? idle() : inputs.frame(1)]);
+      combat.step([
+        inputs.frame(0),
+        practice
+          ? idle()
+          : (cpuController?.frame(combat, 1) ?? inputs.frame(1)),
+      ]);
       const soundStateAfterStep = captureCombatSoundState(combat);
       combatTransitionCues(soundStateBeforeStep, soundStateAfterStep).forEach(
         (cue) => sounds.play(cue),
@@ -336,11 +344,13 @@ function menu() {
   combat = new Combat();
   chosen = ["laura", "sebastian"];
   tournamentFight = false;
+  opponentControl = "PLAYER";
+  cpuController = null;
   hud.hidden = true;
   fightTools.hidden = true;
   document.getElementById("mode-label")!.innerHTML = "VERSUS LOCAL";
   setOverlay(
-    `<div class="menu-panel"><h1>FRIEND<br><em>FIGHTERS</em></h1><p>Amigos y rivales.</p><button class="primary" id="versus" data-requires-assets ${assetsReady ? "" : "disabled"}>JUGAR VERSUS <span>↗</span></button><button class="secondary" id="practice" data-requires-assets ${assetsReady ? "" : "disabled"}>ENTRAR A PRÁCTICA <span>→</span></button><button class="secondary" id="tournament">VER TORNEO <span>→</span></button></div>`,
+    `<div class="menu-panel"><h1>AMIGOS<br><em>Y RIVALES</em></h1><button class="primary" id="versus" data-requires-assets ${assetsReady ? "" : "disabled"}>JUGAR VERSUS <span>↗</span></button><button class="secondary" id="practice" data-requires-assets ${assetsReady ? "" : "disabled"}>ENTRAR A PRÁCTICA <span>→</span></button><button class="secondary" id="tournament">VER TORNEO <span>→</span></button></div>`,
   );
   btn("versus", () => select(false));
   btn("practice", () => select(true));
@@ -426,9 +436,17 @@ function select(mode: boolean) {
 }
 function renderSelection() {
   setOverlay(
-    `<div class="selection-panel"><p class="eyebrow">${practice ? "LABORATORIO DE COMBATE" : "ANTES DEL PRIMER GOLPE"}</p><h2>ELIGE TU ESQUINA</h2><div class="selections">${[0, 1].map((i) => `<div class="player-selection"><h3>${i === 1 && practice ? "RIVAL DE PRÁCTICA" : `JUGADOR ${i + 1}`}</h3><div class="character-options">${visualCharacters.map((character) => `<button class="character-card" data-player="${i}" data-character="${character.id}" aria-label="Elegir ${character.name} para ${i === 1 && practice ? "rival de práctica" : `jugador ${i + 1}`}" aria-pressed="${chosen[i] === character.id}"><img src="${character.portrait}" alt=""/><span><strong>${character.name}</strong><small>${character.title}</small></span></button>`).join("")}</div><label>DISPOSITIVO<select id="device-${i}" ${practice && i === 1 ? "disabled" : ""}></select></label></div>`).join("")}</div><p id="device-hint" class="selection-hint" role="status"></p><div class="selection-actions"><button class="secondary" id="back">VOLVER</button><button class="secondary" id="configure">CONTROLES</button><button class="primary" id="start">${practice ? "PRACTICAR" : "¡A PELEAR!"} ↗</button></div></div>`,
+    `<div class="selection-panel"><p class="eyebrow">${practice ? "LABORATORIO DE COMBATE" : "ANTES DEL PRIMER GOLPE"}</p><h2>ELIGE TU ESQUINA</h2><div class="selections">${[0, 1].map((i) => `<div class="player-selection"><h3>${i === 1 && practice ? "RIVAL DE PRÁCTICA" : i === 1 && opponentControl === "CPU" ? "CPU" : `JUGADOR ${i + 1}`}</h3><div class="character-options">${visualCharacters.map((character) => `<button class="character-card" data-player="${i}" data-character="${character.id}" aria-label="Elegir ${character.name} para ${i === 1 && practice ? "rival de práctica" : `jugador ${i + 1}`}" aria-pressed="${chosen[i] === character.id}"><img src="${character.portrait}" alt=""/><span><strong>${character.name}</strong><small>${character.title}</small></span></button>`).join("")}</div>${i === 1 && !practice ? `<label>CONTROL<select id="opponent-control"><option value="PLAYER" ${opponentControl === "PLAYER" ? "selected" : ""}>PLAYER</option><option value="CPU" ${opponentControl === "CPU" ? "selected" : ""}>CPU</option></select></label>` : ""}<label>DISPOSITIVO<select id="device-${i}" ${(practice || opponentControl === "CPU") && i === 1 ? "disabled" : ""}></select></label></div>`).join("")}</div><p id="device-hint" class="selection-hint" role="status"></p><div class="selection-actions"><button class="secondary" id="back">VOLVER</button><button class="secondary" id="configure">CONTROLES</button><button class="primary" id="start">${practice ? "PRACTICAR" : "¡A PELEAR!"} ↗</button></div></div>`,
   );
   refreshPads();
+  const controlSelect = document.getElementById(
+    "opponent-control",
+  ) as HTMLSelectElement | null;
+  if (controlSelect)
+    controlSelect.onchange = () => {
+      opponentControl = controlSelect.value as "PLAYER" | "CPU";
+      renderSelection();
+    };
   document.querySelectorAll<HTMLButtonElement>("[data-character]").forEach(
     (button) =>
       (button.onclick = () => {
@@ -445,6 +463,7 @@ function renderSelection() {
     () => {
       if (
         !practice &&
+        opponentControl === "PLAYER" &&
         inputs.devices[0] !== "keyboard" &&
         inputs.devices[0] === inputs.devices[1]
       ) {
@@ -487,6 +506,10 @@ function refreshPads() {
 function start() {
   if (!assetsReady) return;
   combat = new Combat(practice);
+  cpuController =
+    !practice && !tournamentFight && opponentControl === "CPU"
+      ? new CpuController()
+      : null;
   screen = "fight";
   paused = false;
   music.setPaused(false);
@@ -502,13 +525,15 @@ function start() {
     ? "TORNEO / AL MEJOR DE 3"
     : practice
       ? "PRÁCTICA / SIN LÍMITES"
-      : "VERSUS LOCAL / AL MEJOR DE 3";
+      : cpuController
+        ? "PLAYER VS CPU / AL MEJOR DE 3"
+        : "VERSUS LOCAL / AL MEJOR DE 3";
   updateHud();
   sounds.play("round-start");
 }
 let lastHud = "";
 function updateHud() {
-  const markup = `<div class="health-row">${[0, 1].map((i) => `${i === 1 ? `<div class="timer round-clock"><span>${practice ? "PRÁCTICA" : `ROUND ${combat.round}`}</span><strong>${practice ? "∞" : Math.ceil(combat.ticks / 60)}</strong><b>VS</b></div>` : ""}<div class="health player-${i} ${i === 0 ? "player-one" : "player-two"}"><div class="name-row"><span class="player-number">P${i + 1}</span><h2>${visualCharacter(chosen[i]).name}</h2><span class="round-pips" aria-label="${combat.wins[i]} rounds ganados">${"◆".repeat(combat.wins[i])}${"◇".repeat(2 - combat.wins[i])}</span></div><div class="health-track life-frame" role="progressbar" aria-label="Vida jugador ${i + 1}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${combat.fighters[i].hp}"><i class="life-fill" style="width:${combat.fighters[i].hp}%"></i></div><div class="meter-row"><div class="special-track energy-frame"><i style="width:${100 - (combat.fighters[i].cooldown / 180) * 100}%"></i></div><span>ESPECIAL ${combat.fighters[i].cooldown === 0 ? "LISTO" : "RECARGANDO"}</span></div><div class="combo-counter" aria-label="Combo jugador ${i + 1}" ${combat.combos[i].displayHits < 2 ? "hidden" : ""}>${combat.combos[i].displayHits} HITS</div></div>`).join("")}</div>${combat.phase === "round" ? `<div class="round-message">${combat.message}<small>SIGUIENTE ROUND</small></div>` : ""}`;
+  const markup = `<div class="health-row">${[0, 1].map((i) => `${i === 1 ? `<div class="timer round-clock"><span>${practice ? "PRÁCTICA" : `ROUND ${combat.round}`}</span><strong>${practice ? "∞" : Math.ceil(combat.ticks / 60)}</strong><b>VS</b></div>` : ""}<div class="health player-${i} ${i === 0 ? "player-one" : "player-two"}"><div class="name-row"><span class="player-number">${i === 1 && cpuController ? "CPU" : `P${i + 1}`}</span><h2>${visualCharacter(chosen[i]).name}</h2><span class="round-pips" aria-label="${combat.wins[i]} rounds ganados">${"◆".repeat(combat.wins[i])}${"◇".repeat(2 - combat.wins[i])}</span></div><div class="health-track life-frame" role="progressbar" aria-label="Vida jugador ${i + 1}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${combat.fighters[i].hp}"><i class="life-fill" style="width:${combat.fighters[i].hp}%"></i></div><div class="meter-row"><div class="special-track energy-frame"><i style="width:${100 - (combat.fighters[i].cooldown / 180) * 100}%"></i></div><span>ESPECIAL ${combat.fighters[i].cooldown === 0 ? "LISTO" : "RECARGANDO"}</span></div><div class="combo-counter" aria-label="Combo jugador ${i + 1}" ${combat.combos[i].displayHits < 2 ? "hidden" : ""}>${combat.combos[i].displayHits} HITS</div></div>`).join("")}</div>${combat.phase === "round" ? `<div class="round-message">${combat.message}<small>SIGUIENTE ROUND</small></div>` : ""}`;
   if (markup !== lastHud) {
     hud.innerHTML = markup;
     lastHud = markup;
@@ -531,7 +556,10 @@ function pause(reason = "RESPIRA. LA RIVALIDAD ESPERA.") {
       const pads = navigator.getGamepads?.() ?? [];
       const absent = inputs.devices.some(
         (d, i) =>
-          !(practice && i === 1) && d !== "keyboard" && !pads[Number(d)],
+          !(practice && i === 1) &&
+          !(cpuController && i === 1) &&
+          d !== "keyboard" &&
+          !pads[Number(d)],
       );
       if (absent) {
         document.getElementById("pause-hint")!.textContent =
@@ -579,7 +607,7 @@ function showResult() {
     return;
   }
   setOverlay(
-    `<div class="pause-panel result-panel"><p class="eyebrow">LA AMISTAD SIGUE. EL MARCADOR TAMBIÉN.</p><h2>${visualCharacter(chosen[winner]).name} GANA</h2><p>JUGADOR ${winner + 1} <span class="score">${combat.wins[0]} — ${combat.wins[1]}</span></p><button class="primary" id="rematch">OTRA RONDA ENTRE AMIGOS ↗</button><button class="secondary" id="reselect">CAMBIAR LUCHADORES</button><button class="text-button" id="result-menu">VOLVER AL MENÚ</button></div>`,
+    `<div class="pause-panel result-panel"><p class="eyebrow">LA AMISTAD SIGUE. EL MARCADOR TAMBIÉN.</p><h2>${visualCharacter(chosen[winner]).name} GANA</h2><p>${winner === 1 && cpuController ? "CPU" : `JUGADOR ${winner + 1}`} <span class="score">${combat.wins[0]} — ${combat.wins[1]}</span></p><button class="primary" id="rematch">OTRA RONDA ENTRE AMIGOS ↗</button><button class="secondary" id="reselect">CAMBIAR LUCHADORES</button><button class="text-button" id="result-menu">VOLVER AL MENÚ</button></div>`,
   );
   btn("rematch", start, null);
   btn("reselect", () => select(false));
@@ -673,7 +701,10 @@ window.addEventListener("gamepadconnected", refreshPads);
 window.addEventListener("gamepaddisconnected", (e) => {
   if (
     inputs.devices.some(
-      (d, i) => d === String(e.gamepad.index) && !(practice && i === 1),
+      (d, i) =>
+        d === String(e.gamepad.index) &&
+        !(practice && i === 1) &&
+        !(cpuController && i === 1),
     )
   )
     pause("MANDO DESCONECTADO");
@@ -683,7 +714,14 @@ let previousStart = false;
 function pollStart() {
   const startPressed = Array.from(navigator.getGamepads?.() ?? []).some(
     (p) =>
-      p && inputs.devices.includes(String(p.index)) && p.buttons[9]?.pressed,
+      p &&
+      inputs.devices.some(
+        (device, i) =>
+          device === String(p.index) &&
+          !(practice && i === 1) &&
+          !(cpuController && i === 1),
+      ) &&
+      p.buttons[9]?.pressed,
   );
   if (startPressed && !previousStart && screen === "fight" && !dialog.open) {
     if (paused) document.getElementById("resume")?.click();
