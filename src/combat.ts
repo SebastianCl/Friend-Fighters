@@ -35,9 +35,9 @@ const animations = {
 };
 export const fighters: FighterDefinition[] = [
   {
-    id: "fighter-01",
-    name: "LUCHADORA 01",
-    title: "Personaje de referencia",
+    id: "laura",
+    name: "LAURA",
+    title: "La primera contendiente",
     color: 0xeb6841,
     light: 0xffbc82,
     skin: 0xd9976c,
@@ -45,9 +45,9 @@ export const fighters: FighterDefinition[] = [
     animations,
   },
   {
-    id: "mirror-01",
-    name: "ESPEJO",
-    title: "Mismo personaje · otra esquina",
+    id: "sebastian",
+    name: "SEBASTIAN",
+    title: "Tinta y determinación",
     color: 0x69c6ba,
     light: 0xc3ead6,
     skin: 0xaf795d,

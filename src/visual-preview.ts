@@ -17,13 +17,13 @@ app.innerHTML = `
       </header>
       <div class="fight-hud" aria-label="Interfaz demostrativa: vida y energía estáticas">
         <div class="player-hud player-one">
-          <div class="name-row"><span class="player-number">P1</span><h1>LUCHADORA 01</h1><span class="round-pips" aria-hidden="true">◆ ◇</span></div>
+          <div class="name-row"><span class="player-number">P1</span><h1>LAURA</h1><span class="round-pips" aria-hidden="true">◆ ◇</span></div>
           <div class="life-frame"><div class="life-fill"></div></div>
           <div class="meter-row"><div class="energy-frame"><i></i></div><span>POWER</span></div>
         </div>
         <div class="round-clock"><span>ROUND 01</span><strong>99</strong><b>VS</b></div>
         <div class="player-hud player-two">
-          <div class="name-row"><span class="round-pips" aria-hidden="true">◇ ◇</span><h2>ESPEJO</h2><span class="player-number">P2</span></div>
+          <div class="name-row"><span class="round-pips" aria-hidden="true">◇ ◇</span><h2>LAURA</h2><span class="player-number">P2</span></div>
           <div class="life-frame"><div class="life-fill"></div></div>
           <div class="meter-row"><span>POWER</span><div class="energy-frame"><i></i></div></div>
         </div>
@@ -31,10 +31,10 @@ app.innerHTML = `
       <div class="stage-label"><span>ESCENARIO 01</span><strong>DISTRITO NEÓN</strong><i>00:24 AM / AFTER HOURS</i></div>
       <div class="ground-shadow shadow-one" aria-hidden="true"></div>
       <div class="ground-shadow shadow-two" aria-hidden="true"></div>
-      <img class="fighter fighter-one" src="${fighter.sprite}" alt="Luchadora 01: cabello oscuro largo, camiseta oscura, falda beige, guantes rojos y negros, y botas" fetchpriority="high" />
+      <img class="fighter fighter-one" src="${fighter.sprite}" alt="Laura: cabello oscuro largo, camiseta oscura, falda beige, guantes rojos y negros, y botas" fetchpriority="high" />
       <img class="fighter fighter-two" src="${fighter.sprite}" alt="La misma luchadora reflejada, mirando hacia su rival" />
-      <div class="corner-label corner-one"><b>01</b><span>LUCHADORA 01<small>PERSONAJE DE REFERENCIA</small></span></div>
-      <div class="corner-label corner-two"><span>ESPEJO<small>MISMO PERSONAJE · OTRA ESQUINA</small></span><b>02</b></div>
+      <div class="corner-label corner-one"><b>01</b><span>LAURA<small>PERSONAJE DE REFERENCIA</small></span></div>
+      <div class="corner-label corner-two"><span>LAURA<small>PRUEBA ESTÁTICA · OTRA ESQUINA</small></span><b>02</b></div>
       <footer class="arena-toolbar">
         <div class="preview-tag"><span></span><strong>PRUEBA VISUAL</strong><small>SIN COMBATE</small></div>
         <nav aria-label="Explorar la dirección visual">
@@ -49,7 +49,7 @@ app.innerHTML = `
   <p id="fullscreen-status" class="sr-only" role="status"></p>
   <dialog id="portrait-dialog" class="art-dialog" aria-labelledby="portrait-title">
     <header class="dialog-heading"><div><p>FIGHTER FILE / 001</p><h2 id="portrait-title">LA IDENTIDAD<br>ESTÁ EN LOS DETALLES.</h2></div><button class="close-dialog" aria-label="Cerrar retrato">×</button></header>
-    <div class="portrait-layout"><img class="portrait-art" src="${fighter.portrait}" alt="Retrato detallado de Luchadora 01: rostro, ojos y cabello" /><div class="portrait-copy"><span class="tiny-label">LUCHADORA 01</span><h3>MISMA MIRADA.<br>NUEVA ARENA.</h3><p>Rostro, peinado y proporciones basados en la ilustración que compartiste.</p><dl><div><dt>ESTILO</dt><dd>Pixel art detallado</dd></div><div><dt>APARIENCIA</dt><dd>Conservada de la referencia</dd></div><div><dt>ESTADO</dt><dd>Guardia · prueba estática</dd></div></dl><a class="asset-link" href="${fighter.portrait}" target="_blank" rel="noopener">ABRIR RETRATO ORIGINAL ↗</a></div></div>
+    <div class="portrait-layout"><img class="portrait-art" src="${fighter.portrait}" alt="Retrato detallado de Laura: rostro, ojos y cabello" /><div class="portrait-copy"><span class="tiny-label">LAURA</span><h3>MISMA MIRADA.<br>NUEVA ARENA.</h3><p>Rostro, peinado y proporciones basados en la ilustración que compartiste.</p><dl><div><dt>ESTILO</dt><dd>Pixel art detallado</dd></div><div><dt>APARIENCIA</dt><dd>Conservada de la referencia</dd></div><div><dt>ESTADO</dt><dd>Guardia · prueba estática</dd></div></dl><a class="asset-link" href="${fighter.portrait}" target="_blank" rel="noopener">ABRIR RETRATO ORIGINAL ↗</a></div></div>
     <p class="dialog-note">El parecido se compara con la ilustración aportada. Las animaciones y las fotos originales de tus amigos corresponden a la siguiente etapa.</p>
   </dialog>
   <dialog id="compare-dialog" class="art-dialog comparison-dialog" aria-labelledby="compare-title">

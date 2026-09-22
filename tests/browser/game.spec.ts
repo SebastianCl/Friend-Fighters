@@ -83,9 +83,7 @@ test("partida real con teclado, resultado y revancha", async ({ page }) => {
       });
     }
   }
-  await expect(page.locator(".result-panel")).toContainText(
-    "LUCHADORA 01 GANA",
-  );
+  await expect(page.locator(".result-panel")).toContainText("LAURA GANA");
   await page.screenshot({ path: "test-results/result.png" });
   await page.getByRole("button", { name: "OTRA RONDA ENTRE AMIGOS" }).click();
   await expect(page.locator(".result-panel")).toHaveCount(0);
@@ -94,6 +92,38 @@ test("partida real con teclado, resultado y revancha", async ({ page }) => {
     "width:100%",
   );
   await expect(page.locator(".timer")).toContainText("ROUND 1");
+});
+test("Laura y Sebastian se eligen por esquina y permiten combate espejo", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "JUGAR VERSUS" }).click();
+
+  await expect(
+    page.getByRole("button", { name: "Elegir LAURA para jugador 1" }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await expect(
+    page.getByRole("button", { name: "Elegir SEBASTIAN para jugador 2" }),
+  ).toHaveAttribute("aria-pressed", "true");
+
+  await page
+    .getByRole("button", { name: "Elegir SEBASTIAN para jugador 1" })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Elegir SEBASTIAN para jugador 1" }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("button", { name: "¡A PELEAR!" }).click();
+
+  const canvas = page.locator("canvas");
+  await expect(canvas).toHaveAttribute("data-p1-character", "sebastian");
+  await expect(canvas).toHaveAttribute("data-p2-character", "sebastian");
+  await expect(page.locator(".player-0")).toContainText("SEBASTIAN");
+  await expect(page.locator(".player-1")).toContainText("SEBASTIAN");
+  await page.keyboard.press("KeyF");
+  await expect(canvas).toHaveAttribute(
+    "data-p1-animation",
+    /punch-wind|punch-hit/,
+  );
 });
 test("selección impide asignar el mismo mando a dos jugadores", async ({
   page,

@@ -21,7 +21,7 @@ Hay 21 poses/regiones en total, incluida la guardia aprobada. Las regiones se de
 - Cada unidad del combate equivale a dos píxeles de presentación. La cámara se aleja suavemente durante los saltos para conservar la figura dentro de la escena; barras, menús y controles no se alejan.
 - `combatSpace` centraliza límites, separación y alturas de los cuerpos. Los alcances y alturas de ataque corresponden a la nueva anatomía. Los cuerpos en el suelo se separan, mientras el salto permite cruzar al rival y cambiar de orientación al aterrizar.
 - Se conservan los valores de daño, anticipación, actividad, recuperación, recarga, vida, reloj y puntuación. El movimiento aéreo se ajustó para permitir cruzar al rival con la nueva separación corporal.
-- La selección configura dispositivos para **Luchadora 01** y **Espejo**. Ambos usan el personaje aprobado; no representan dos personas distintas. Indicadores P1 cian y P2 magenta distinguen a los jugadores sin recolorear su rostro o ropa.
+- La selección configura personaje y dispositivo por esquina. **Laura** y **Sebastian** comparten las mismas reglas de combate y admiten cualquier combinación, incluidos combates espejo. Indicadores P1 cian y P2 magenta distinguen a los jugadores sin recolorear su rostro o ropa.
 - Los recursos deben cargar antes de habilitar el inicio. Un fallo de carga muestra una opción para reintentar.
 
 ## Verificación

@@ -2,7 +2,7 @@
 
 Juego de pelea 2D para dos personas en un mismo computador, con pixel art detallado basado en la ilustración aprobada. Incluye versus local, práctica, teclado reasignable, mandos estándar, sonido y pantalla completa.
 
-La versión jugable usa **Luchadora 01** y **Espejo**, dos jugadores con el mismo personaje. Los rostros y cuerpos de otros amigos se incorporarán después; esta versión no necesita cuentas ni servidor de aplicación.
+La versión jugable incluye a **Laura** y **Sebastian**. Cada jugador puede elegir cualquiera de los dos, incluidos combates espejo, sin cuentas ni servidor de aplicación.
 
 ## Ejecutar
 

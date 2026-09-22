@@ -1,8 +1,11 @@
 import Phaser from "phaser";
-import { Combat, fighters, idle } from "./combat";
+import { Combat, idle } from "./combat";
 import { makeArena, presentation } from "./arena-renderer";
-import { visualFighter } from "./visual-assets";
-const portrait = () => visualFighter.portrait;
+import {
+  visualCharacter,
+  visualCharacters,
+  type CharacterId,
+} from "./visual-assets";
 import { Inputs, actions, labels, keyLabel } from "./input";
 import "./game.css";
 import { effects } from "./effects/visual-effects-manager";
@@ -30,7 +33,7 @@ const hud = document.querySelector<HTMLDivElement>("#hud")!;
 const fightTools = document.querySelector<HTMLDivElement>("#fight-tools")!;
 const inputs = new Inputs();
 let combat = new Combat(),
-  chosen = [0, 1],
+  chosen: [CharacterId, CharacterId] = ["laura", "sebastian"],
   screen: "menu" | "select" | "fight" | "result" = "menu",
   paused = false,
   practice = false,
@@ -77,7 +80,7 @@ btn("sound", () => {
   soundLabel();
 });
 const Arena = makeArena({
-  state: () => ({ combat, screen, paused }),
+  state: () => ({ combat, screen, paused, characters: chosen }),
   advance: (delta) => {
     if (screen !== "fight" || paused) return;
     accumulator += delta;
@@ -266,13 +269,13 @@ function menu() {
   inputs.suspended = true;
   inputs.clear();
   combat = new Combat();
-  chosen = [0, 1];
+  chosen = ["laura", "sebastian"];
   hud.hidden = true;
   fightTools.hidden = true;
   document.getElementById("mode-label")!.innerHTML =
     "VERSUS LOCAL / DISTRITO NEÓN";
   setOverlay(
-    `<div class="menu-panel"><div class="mini-label"><span></span> VOL. 02 / DISTRITO NEÓN</div><h1>FRIEND<br><em>FIGHTERS</em></h1><p>La misma amistad.<br>Una nueva rivalidad.</p><button class="primary" id="versus" data-requires-assets ${assetsReady ? "" : "disabled"}>JUGAR VERSUS <span>↗</span></button><button class="secondary" id="practice" data-requires-assets ${assetsReady ? "" : "disabled"}>ENTRAR A PRÁCTICA <span>→</span></button><small>2 JUGADORES LOCALES · TECLADO O MANDOS</small></div><div class="menu-character"><span>PERSONAJE 01</span><strong>LUCHADORA 01</strong><small>EL PRIMER ROUND EMPIEZA CONTIGO.</small></div>`,
+    `<div class="menu-panel"><div class="mini-label"><span></span> VOL. 02 / DISTRITO NEÓN</div><h1>FRIEND<br><em>FIGHTERS</em></h1><p>La misma amistad.<br>Una nueva rivalidad.</p><button class="primary" id="versus" data-requires-assets ${assetsReady ? "" : "disabled"}>JUGAR VERSUS <span>↗</span></button><button class="secondary" id="practice" data-requires-assets ${assetsReady ? "" : "disabled"}>ENTRAR A PRÁCTICA <span>→</span></button><small>2 JUGADORES LOCALES · TECLADO O MANDOS</small></div><div class="menu-character"><span>NUEVO CONTENDIENTE</span><strong>LAURA + SEBASTIAN</strong><small>DOS AMIGOS. CUALQUIER ESQUINA.</small></div>`,
   );
   btn("versus", () => select(false));
   btn("practice", () => select(true));
@@ -283,10 +286,21 @@ function select(mode: boolean) {
   inputs.suspended = true;
   hud.hidden = true;
   fightTools.hidden = true;
+  renderSelection();
+}
+function renderSelection() {
   setOverlay(
-    `<div class="selection-panel"><p class="eyebrow">${practice ? "LABORATORIO DE COMBATE" : "ANTES DEL PRIMER GOLPE"}</p><h2>ELIGE TU ESQUINA</h2><div class="selections">${[0, 1].map((i) => `<div class="player-selection"><h3>${i === 1 && practice ? "RIVAL DE PRÁCTICA" : `JUGADOR ${i + 1}`}</h3><div class="fighter-profile"><img src="${portrait()}" alt="Retrato de la luchadora"/><div><strong>${fighters[i].name}</strong><small>${i === 0 ? "PERSONAJE DE REFERENCIA" : "MISMO PERSONAJE · ESPEJO"}</small></div></div><label>DISPOSITIVO<select id="device-${i}" ${practice && i === 1 ? "disabled" : ""}></select></label></div>`).join("")}</div><p class="selection-hint" id="device-hint">Teclado compartido, mandos o ambos. Tú eliges.</p><div class="selection-actions"><button class="secondary" id="back">VOLVER</button><button class="secondary" id="configure">CONTROLES</button><button class="primary" id="start">${practice ? "PRACTICAR" : "¡A PELEAR!"} ↗</button></div></div>`,
+    `<div class="selection-panel"><p class="eyebrow">${practice ? "LABORATORIO DE COMBATE" : "ANTES DEL PRIMER GOLPE"}</p><h2>ELIGE TU ESQUINA</h2><div class="selections">${[0, 1].map((i) => `<div class="player-selection"><h3>${i === 1 && practice ? "RIVAL DE PRÁCTICA" : `JUGADOR ${i + 1}`}</h3><div class="character-options">${visualCharacters.map((character) => `<button class="character-card" data-player="${i}" data-character="${character.id}" aria-label="Elegir ${character.name} para ${i === 1 && practice ? "rival de práctica" : `jugador ${i + 1}`}" aria-pressed="${chosen[i] === character.id}"><img src="${character.portrait}" alt=""/><span><strong>${character.name}</strong><small>${character.title}</small></span></button>`).join("")}</div><label>DISPOSITIVO<select id="device-${i}" ${practice && i === 1 ? "disabled" : ""}></select></label></div>`).join("")}</div><p class="selection-hint" id="device-hint">Cada esquina elige personaje. Los combates espejo están permitidos.</p><div class="selection-actions"><button class="secondary" id="back">VOLVER</button><button class="secondary" id="configure">CONTROLES</button><button class="primary" id="start">${practice ? "PRACTICAR" : "¡A PELEAR!"} ↗</button></div></div>`,
   );
   refreshPads();
+  document.querySelectorAll<HTMLButtonElement>("[data-character]").forEach(
+    (button) =>
+      (button.onclick = () => {
+        const player = Number(button.dataset.player) as 0 | 1;
+        chosen[player] = button.dataset.character as CharacterId;
+        renderSelection();
+      }),
+  );
   btn("back", menu);
   btn("configure", showControls);
   btn("start", () => {
@@ -345,7 +359,7 @@ function start() {
 }
 let lastHud = "";
 function updateHud() {
-  const markup = `<div class="health-row">${[0, 1].map((i) => `${i === 1 ? `<div class="timer round-clock"><span>${practice ? "PRÁCTICA" : `ROUND ${combat.round}`}</span><strong>${practice ? "∞" : Math.ceil(combat.ticks / 60)}</strong><b>VS</b></div>` : ""}<div class="health player-${i} ${i === 0 ? "player-one" : "player-two"}"><div class="name-row"><span class="player-number">P${i + 1}</span><h2>${fighters[chosen[i]].name}</h2><span class="round-pips" aria-label="${combat.wins[i]} rounds ganados">${"◆".repeat(combat.wins[i])}${"◇".repeat(2 - combat.wins[i])}</span></div><div class="health-track life-frame" role="progressbar" aria-label="Vida jugador ${i + 1}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${combat.fighters[i].hp}"><i class="life-fill" style="width:${combat.fighters[i].hp}%"></i></div><div class="meter-row"><div class="special-track energy-frame"><i style="width:${100 - (combat.fighters[i].cooldown / 180) * 100}%"></i></div><span>ESPECIAL ${combat.fighters[i].cooldown === 0 ? "LISTO" : "RECARGANDO"}</span></div><div class="combo-counter" aria-label="Combo jugador ${i + 1}" ${combat.combos[i].displayHits < 2 ? "hidden" : ""}>${combat.combos[i].displayHits} HITS</div></div>`).join("")}</div>${combat.phase === "round" ? `<div class="round-message">${combat.message}<small>SIGUIENTE ROUND</small></div>` : ""}`;
+  const markup = `<div class="health-row">${[0, 1].map((i) => `${i === 1 ? `<div class="timer round-clock"><span>${practice ? "PRÁCTICA" : `ROUND ${combat.round}`}</span><strong>${practice ? "∞" : Math.ceil(combat.ticks / 60)}</strong><b>VS</b></div>` : ""}<div class="health player-${i} ${i === 0 ? "player-one" : "player-two"}"><div class="name-row"><span class="player-number">P${i + 1}</span><h2>${visualCharacter(chosen[i]).name}</h2><span class="round-pips" aria-label="${combat.wins[i]} rounds ganados">${"◆".repeat(combat.wins[i])}${"◇".repeat(2 - combat.wins[i])}</span></div><div class="health-track life-frame" role="progressbar" aria-label="Vida jugador ${i + 1}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${combat.fighters[i].hp}"><i class="life-fill" style="width:${combat.fighters[i].hp}%"></i></div><div class="meter-row"><div class="special-track energy-frame"><i style="width:${100 - (combat.fighters[i].cooldown / 180) * 100}%"></i></div><span>ESPECIAL ${combat.fighters[i].cooldown === 0 ? "LISTO" : "RECARGANDO"}</span></div><div class="combo-counter" aria-label="Combo jugador ${i + 1}" ${combat.combos[i].displayHits < 2 ? "hidden" : ""}>${combat.combos[i].displayHits} HITS</div></div>`).join("")}</div>${combat.phase === "round" ? `<div class="round-message">${combat.message}<small>SIGUIENTE ROUND</small></div>` : ""}`;
   if (markup !== lastHud) {
     hud.innerHTML = markup;
     lastHud = markup;
@@ -388,7 +402,7 @@ function showResult() {
   fightTools.hidden = true;
   const winner = combat.wins[0] === 2 ? 0 : 1;
   setOverlay(
-    `<div class="pause-panel result-panel"><p class="eyebrow">LA AMISTAD SIGUE. EL MARCADOR TAMBIÉN.</p><h2>${fighters[chosen[winner]].name} GANA</h2><p>JUGADOR ${winner + 1} <span class="score">${combat.wins[0]} — ${combat.wins[1]}</span></p><button class="primary" id="rematch">OTRA RONDA ENTRE AMIGOS ↗</button><button class="secondary" id="reselect">CAMBIAR LUCHADORES</button><button class="text-button" id="result-menu">VOLVER AL MENÚ</button></div>`,
+    `<div class="pause-panel result-panel"><p class="eyebrow">LA AMISTAD SIGUE. EL MARCADOR TAMBIÉN.</p><h2>${visualCharacter(chosen[winner]).name} GANA</h2><p>JUGADOR ${winner + 1} <span class="score">${combat.wins[0]} — ${combat.wins[1]}</span></p><button class="primary" id="rematch">OTRA RONDA ENTRE AMIGOS ↗</button><button class="secondary" id="reselect">CAMBIAR LUCHADORES</button><button class="text-button" id="result-menu">VOLVER AL MENÚ</button></div>`,
   );
   btn("rematch", start);
   btn("reselect", () => select(false));

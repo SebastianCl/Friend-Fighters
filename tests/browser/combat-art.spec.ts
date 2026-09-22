@@ -1,5 +1,94 @@
 import { test, expect } from "@playwright/test";
 import { animationRegions } from "../../src/animation";
+import { visualCharacter } from "../../src/visual-assets";
+
+test("Sebastian tiene alfa real y 21 regiones completas sin recortes", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const sebastian = visualCharacter("sebastian");
+  const result = await page.evaluate(async (character) => {
+    const images: Record<string, HTMLImageElement> = {};
+    for (const [sheet, url] of Object.entries(character.sheets)) {
+      const img = new Image();
+      img.src = url;
+      await img.decode();
+      images[sheet] = img;
+    }
+    let transparent = 0;
+    const atlas = images.motion;
+    const full = document.createElement("canvas");
+    full.width = atlas.width;
+    full.height = atlas.height;
+    const fullContext = full.getContext("2d")!;
+    fullContext.drawImage(atlas, 0, 0);
+    const fullPixels = fullContext.getImageData(
+      0,
+      0,
+      full.width,
+      full.height,
+    ).data;
+    for (let index = 3; index < fullPixels.length; index += 4)
+      if (fullPixels[index] === 0) transparent++;
+
+    const regions = character.regions.map((region) => {
+      const canvas = document.createElement("canvas");
+      canvas.width = region.width;
+      canvas.height = region.height;
+      const context = canvas.getContext("2d")!;
+      context.drawImage(
+        images[region.sheet],
+        region.x,
+        region.y,
+        region.width,
+        region.height,
+        0,
+        0,
+        region.width,
+        region.height,
+      );
+      const pixels = context.getImageData(
+        0,
+        0,
+        region.width,
+        region.height,
+      ).data;
+      let solid = 0,
+        edge = 0;
+      for (let y = 0; y < region.height; y++)
+        for (let x = 0; x < region.width; x++) {
+          if (pixels[(y * region.width + x) * 4 + 3] > 128) {
+            solid++;
+            if (
+              x === 0 ||
+              y === 0 ||
+              x === region.width - 1 ||
+              y === region.height - 1
+            )
+              edge++;
+          }
+        }
+      return { key: region.key, solid, edge };
+    });
+    return {
+      width: atlas.width,
+      height: atlas.height,
+      transparent,
+      regions,
+    };
+  }, sebastian);
+
+  expect(result.width).toBe(1024);
+  expect(result.height).toBe(1536);
+  expect(result.transparent).toBeGreaterThan(
+    result.width * result.height * 0.5,
+  );
+  expect(result.regions).toHaveLength(21);
+  for (const region of result.regions) {
+    expect(region.solid, region.key).toBeGreaterThan(10000);
+    expect(region.edge, `${region.key} toca el borde`).toBe(0);
+  }
+});
 
 test("nuevas ilustraciones listas, sin poses vacías ni recortes en sus límites", async ({
   page,

@@ -1,7 +1,6 @@
 import Phaser from "phaser";
 import {
   animationFor,
-  animationRegions,
   attackPhase,
   type AnimationKey,
   type AnimationRegion,
@@ -12,7 +11,13 @@ import {
   LANDING_DUST_ANIMATION,
   LANDING_DUST_CONFIG,
 } from "./effects/landing-dust";
-import { visualFighter, visualStage } from "./visual-assets";
+import {
+  visualCharacter,
+  visualCharacters,
+  visualStage,
+  type CharacterId,
+  type VisualSheetKey,
+} from "./visual-assets";
 
 interface FrameArt extends AnimationRegion {
   footY: number;
@@ -22,6 +27,7 @@ export interface ArenaState {
   combat: Combat;
   screen: "menu" | "select" | "fight" | "result";
   paused: boolean;
+  characters: [CharacterId, CharacterId];
 }
 interface ArenaHooks {
   state: () => ArenaState;
@@ -39,7 +45,7 @@ export const presentation = {
 
 export function makeArena(hooks: ArenaHooks) {
   return class NeonArena extends Phaser.Scene {
-    art = new Map<AnimationKey, FrameArt>();
+    art = new Map<CharacterId, Map<AnimationKey, FrameArt>>();
     sprites: Phaser.GameObjects.Image[] = [];
     shadows: Phaser.GameObjects.Ellipse[] = [];
     rings: Phaser.GameObjects.Ellipse[] = [];
@@ -50,12 +56,13 @@ export function makeArena(hooks: ArenaHooks) {
     poseSince = [0, 0];
     loadFailed = false;
     preload() {
-      this.load.image("guard", visualFighter.sprite);
-      this.load.image("motion", "/art/combat-v2/movement-sheet.png");
-      this.load.image("air", "/art/combat-v2/air-sheet-v2.png");
+      for (const character of visualCharacters) {
+        for (const [sheet, source] of Object.entries(character.sheets))
+          this.load.image(`${character.id}-${sheet}`, source);
+        this.load.image(`${character.id}-portrait`, character.portrait);
+      }
       this.load.image("landing-dust-source", "/art/combat-v2/landing-dust.png");
       this.load.image("neon", visualStage.background);
-      this.load.image("portrait", visualFighter.portrait);
       this.load.on("loaderror", () => {
         this.loadFailed = true;
         hooks.error();
@@ -88,59 +95,64 @@ export function makeArena(hooks: ArenaHooks) {
           frameRate: LANDING_DUST_CONFIG.frameRate,
           repeat: 0,
         });
-        const pixels = new Map<
-          string,
-          { data: Uint8ClampedArray; width: number }
-        >();
-        for (const sheet of ["guard", "motion", "air"]) {
-          const img = this.textures
-            .get(sheet)
-            .getSourceImage() as HTMLImageElement;
-          const c = document.createElement("canvas");
-          c.width = img.width;
-          c.height = img.height;
-          const ctx = c.getContext("2d", { willReadFrequently: true })!;
-          ctx.drawImage(img, 0, 0);
-          pixels.set(sheet, {
-            data: ctx.getImageData(0, 0, c.width, c.height).data,
-            width: c.width,
-          });
-        }
-        for (const region of animationRegions) {
-          const source = pixels.get(region.sheet)!;
-          let left = region.width,
-            top = region.height,
-            right = 0,
-            bottom = 0;
-          for (let y = 0; y < region.height; y++)
-            for (let x = 0; x < region.width; x++) {
-              if (
-                source.data[
-                  ((region.y + y) * source.width + region.x + x) * 4 + 3
-                ] > 128
-              ) {
-                left = Math.min(left, x);
-                top = Math.min(top, y);
-                right = Math.max(right, x + 1);
-                bottom = Math.max(bottom, y + 1);
+        for (const character of visualCharacters) {
+          const pixels = new Map<
+            VisualSheetKey,
+            { data: Uint8ClampedArray; width: number }
+          >();
+          for (const sheet of ["guard", "motion", "air"] as const) {
+            const img = this.textures
+              .get(`${character.id}-${sheet}`)
+              .getSourceImage() as HTMLImageElement;
+            const c = document.createElement("canvas");
+            c.width = img.width;
+            c.height = img.height;
+            const ctx = c.getContext("2d", { willReadFrequently: true })!;
+            ctx.drawImage(img, 0, 0);
+            pixels.set(sheet, {
+              data: ctx.getImageData(0, 0, c.width, c.height).data,
+              width: c.width,
+            });
+          }
+          const characterArt = new Map<AnimationKey, FrameArt>();
+          for (const region of character.regions) {
+            const source = pixels.get(region.sheet)!;
+            let left = region.width,
+              top = region.height,
+              right = 0,
+              bottom = 0;
+            for (let y = 0; y < region.height; y++)
+              for (let x = 0; x < region.width; x++) {
+                if (
+                  source.data[
+                    ((region.y + y) * source.width + region.x + x) * 4 + 3
+                  ] > 128
+                ) {
+                  left = Math.min(left, x);
+                  top = Math.min(top, y);
+                  right = Math.max(right, x + 1);
+                  bottom = Math.max(bottom, y + 1);
+                }
               }
-            }
-          if (bottom === 0) throw new Error(`Empty animation ${region.key}`);
-          this.textures
-            .get(region.sheet)
-            .add(
-              region.key,
-              0,
-              region.x,
-              region.y,
-              region.width,
-              region.height,
-            );
-          this.art.set(region.key, {
-            ...region,
-            footY: bottom,
-            bounds: { left, top, right, bottom },
-          });
+            if (bottom === 0)
+              throw new Error(`Empty animation ${character.id}:${region.key}`);
+            this.textures
+              .get(`${character.id}-${region.sheet}`)
+              .add(
+                region.key,
+                0,
+                region.x,
+                region.y,
+                region.width,
+                region.height,
+              );
+            characterArt.set(region.key, {
+              ...region,
+              footY: bottom,
+              bounds: { left, top, right, bottom },
+            });
+          }
+          this.art.set(character.id, characterArt);
         }
         // Background is a fixed CSS layer: the combat camera can pull back during jumps.
         const shade = this.add.graphics();
@@ -158,7 +170,9 @@ export function makeArena(hooks: ArenaHooks) {
             ),
           );
           this.shadows.push(this.add.ellipse(0, 612, 190, 18, 0x08021a, 0.56));
-          this.sprites.push(this.add.image(0, 0, "guard", "guard").setDepth(2));
+          this.sprites.push(
+            this.add.image(0, 0, "laura-guard", "guard").setDepth(2),
+          );
           this.markers.push(
             this.add
               .text(0, 632, `P${i + 1}`, {
@@ -247,7 +261,9 @@ export function makeArena(hooks: ArenaHooks) {
           state.combat.phase !== "fight" && f.hp > 0
             ? "guard"
             : animationFor(f, this.clock, this.clock - this.poseSince[i]);
-        const art = this.art.get(key)!;
+        const characterId = state.characters[i];
+        const character = visualCharacter(characterId);
+        const art = this.art.get(characterId)!.get(key)!;
         const scale = presentation.fighterHeight / art.referenceHeight;
         let x = f.x * presentation.unit;
         const airborneOffset =
@@ -272,7 +288,7 @@ export function makeArena(hooks: ArenaHooks) {
         }
         const image = this.sprites[i];
         image
-          .setTexture(art.sheet, key)
+          .setTexture(`${character.id}-${art.sheet}`, key)
           .setOrigin(art.anchorX / art.width, art.footY / art.height)
           .setScale(scale * f.facing, scale)
           .setPosition(Math.round(x), Math.round(y));
@@ -292,6 +308,7 @@ export function makeArena(hooks: ArenaHooks) {
         this.game.canvas.dataset[`p${i + 1}GuardStun`] = String(f.guardStun);
         this.game.canvas.dataset[`p${i + 1}Y`] = String(f.y);
         this.game.canvas.dataset[`p${i + 1}Animation`] = key;
+        this.game.canvas.dataset[`p${i + 1}Character`] = characterId;
         this.game.canvas.dataset[`p${i + 1}X`] = String(Math.round(x));
         this.game.canvas.dataset[`p${i + 1}RenderedHeight`] = (
           art.referenceHeight *
