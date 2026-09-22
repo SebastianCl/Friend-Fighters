@@ -1,4 +1,25 @@
 import { test, expect } from "@playwright/test";
+
+test("el control de sonido se guarda y restaura", async ({ page }) => {
+  await page.goto("/");
+  const sound = page.locator("#sound");
+  await expect(sound).toContainText("SONIDO ON");
+  await expect(sound).toHaveAttribute("aria-label", "Silenciar sonido");
+  await sound.click();
+  await expect(sound).toContainText("SONIDO OFF");
+  await expect(sound).toHaveAttribute("aria-label", "Activar sonido");
+  await expect
+    .poll(() => page.evaluate(() => localStorage.getItem("ff-muted")))
+    .toBe("true");
+  await page.reload();
+  await expect(sound).toContainText("SONIDO OFF");
+  await sound.click();
+  await expect(sound).toContainText("SONIDO ON");
+  await expect
+    .poll(() => page.evaluate(() => localStorage.getItem("ff-muted")))
+    .toBe("false");
+});
+
 test("inicio, selección, controles guardados, práctica, pausa y reinicio", async ({
   page,
 }) => {

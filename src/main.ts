@@ -17,6 +17,13 @@ import {
   landedThisStep,
   landingDustDuration,
 } from "./effects/landing-dust";
+import {
+  SoundEffects,
+  captureCombatSoundState,
+  combatTransitionCues,
+  hitCue,
+  type SoundCue,
+} from "./audio";
 
 const app = document.querySelector<HTMLDivElement>("#app")!;
 app.innerHTML = `<div class="game-viewport"><section class="arena arcade-stage"><div id="game"></div><header class="arena-header"><a class="arcade-brand brand" href="#" aria-label="Menú principal"><span class="brand-icon">FF</span> FRIEND <b>FIGHTERS</b></a><p class="edition"><span></span> DISTRITO NEÓN <i>/</i> VOL. 02</p><div class="header-actions"><button id="sound" aria-label="Silenciar sonido">SONIDO ON</button><button id="fullscreen" aria-label="Pantalla completa" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 2H2v5M13 2h5v5M18 13v5h-5M7 18H2v-5"/></svg></button></div></header><div id="hud" hidden></div><div id="overlay"></div><footer class="arena-toolbar game-toolbar"><span id="mode-label">VERSUS LOCAL / EDICIÓN NEÓN</span><div id="fight-tools" hidden><button id="pause-button">Ⅱ PAUSA</button><button id="reset-practice" hidden>↺ REINICIAR PRÁCTICA</button></div><nav><button id="controls-top">GUÍA DE CONTROLES</button><a class="visual-preview-link" href="/visual-preview.html">NUEVO ESTILO VISUAL ↗</a></nav></footer></section></div><p id="asset-status" class="asset-status" role="status">Cargando la arena y las animaciones…</p><p id="fullscreen-status" class="sr-only" role="status"></p><dialog id="controls-dialog" aria-labelledby="controls-title"></dialog>`;
@@ -42,51 +49,51 @@ let muted = false;
 try {
   muted = localStorage.getItem("ff-muted") === "true";
 } catch {}
-let audio: AudioContext | undefined;
-function tone(blocked = false, special = false) {
-  if (muted) return;
-  try {
-    audio ??= new AudioContext();
-    void audio.resume();
-    const o = audio.createOscillator(),
-      g = audio.createGain();
-    o.type = "square";
-    o.frequency.setValueAtTime(
-      blocked ? 170 : special ? 95 : 260,
-      audio.currentTime,
-    );
-    o.frequency.exponentialRampToValueAtTime(45, audio.currentTime + 0.12);
-    g.gain.setValueAtTime(0.055, audio.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + 0.14);
-    o.connect(g);
-    g.connect(audio.destination);
-    o.start();
-    o.stop(audio.currentTime + 0.15);
-  } catch {}
-}
-function btn(id: string, fn: () => void) {
-  document.getElementById(id)!.onclick = fn;
+const sounds = new SoundEffects(muted);
+function btn(id: string, fn: () => void, cue: SoundCue | null = "ui-confirm") {
+  document.getElementById(id)!.onclick = () => {
+    if (cue) sounds.play(cue);
+    fn();
+  };
 }
 function soundLabel() {
-  document.getElementById("sound")!.innerHTML =
-    `SONIDO ${muted ? "OFF" : "ON"} <span>${muted ? "×" : "◖))"}</span>`;
+  const button = document.getElementById("sound")!;
+  button.innerHTML = `SONIDO ${muted ? "OFF" : "ON"} <span>${muted ? "×" : "◖))"}</span>`;
+  button.setAttribute(
+    "aria-label",
+    muted ? "Activar sonido" : "Silenciar sonido",
+  );
+  button.setAttribute("aria-pressed", String(!muted));
 }
 soundLabel();
-btn("sound", () => {
-  muted = !muted;
-  try {
-    localStorage.setItem("ff-muted", String(muted));
-  } catch {}
-  soundLabel();
-});
+btn(
+  "sound",
+  () => {
+    muted = !muted;
+    sounds.setMuted(muted);
+    try {
+      localStorage.setItem("ff-muted", String(muted));
+    } catch {}
+    soundLabel();
+    if (!muted) sounds.play("ui-confirm");
+  },
+  null,
+);
 const Arena = makeArena({
   state: () => ({ combat, screen, paused, characters: chosen }),
   advance: (delta) => {
     if (screen !== "fight" || paused) return;
     accumulator += delta;
     while (accumulator >= 1000 / 60) {
-      const airborneBeforeStep = combat.fighters.map((fighter) => fighter.y > 0);
+      const soundStateBeforeStep = captureCombatSoundState(combat);
+      const airborneBeforeStep = soundStateBeforeStep.fighters.map(
+        (fighter) => fighter.airborne,
+      );
       combat.step([inputs.frame(0), practice ? idle() : inputs.frame(1)]);
+      const soundStateAfterStep = captureCombatSoundState(combat);
+      combatTransitionCues(soundStateBeforeStep, soundStateAfterStep).forEach(
+        (cue) => sounds.play(cue),
+      );
       combat.fighters.forEach((fighter, index) => {
         if (landedThisStep(airborneBeforeStep[index], fighter.y)) {
           effects.spawn(LANDING_DUST_TYPE, {
@@ -96,7 +103,7 @@ const Arena = makeArena({
         }
       });
       for (const hit of combat.hits) {
-        tone(hit.blocked, hit.special);
+        sounds.play(hitCue(hit));
         if (!hit.blocked) {
           const effectType =
             hit.attackKind === "special"
@@ -220,7 +227,8 @@ effects.registerType(LANDING_DUST_TYPE, {
   offsetY: LANDING_DUST_CONFIG.offsetY,
   create: (effect, scene) => {
     const sprite =
-      effect.sprite ?? scene.add.sprite(0, 0, "landing-dust", 0).setOrigin(0.5, 1);
+      effect.sprite ??
+      scene.add.sprite(0, 0, "landing-dust", 0).setOrigin(0.5, 1);
     effect.sprite = sprite;
     sprite
       .setTexture("landing-dust", 0)
@@ -233,6 +241,7 @@ effects.registerType(LANDING_DUST_TYPE, {
 
 const fullscreenButton = document.getElementById("fullscreen")!;
 fullscreenButton.addEventListener("click", async () => {
+  sounds.play("ui-confirm");
   try {
     if (document.fullscreenElement) await document.exitFullscreen();
     else await document.documentElement.requestFullscreen();
@@ -296,25 +305,31 @@ function renderSelection() {
   document.querySelectorAll<HTMLButtonElement>("[data-character]").forEach(
     (button) =>
       (button.onclick = () => {
+        sounds.play("ui-confirm");
         const player = Number(button.dataset.player) as 0 | 1;
         chosen[player] = button.dataset.character as CharacterId;
         renderSelection();
       }),
   );
   btn("back", menu);
-  btn("configure", showControls);
-  btn("start", () => {
-    if (
-      !practice &&
-      inputs.devices[0] !== "keyboard" &&
-      inputs.devices[0] === inputs.devices[1]
-    ) {
-      document.getElementById("device-hint")!.textContent =
-        "Cada jugador necesita un mando distinto.";
-      return;
-    }
-    start();
-  });
+  btn("configure", showControls, null);
+  btn(
+    "start",
+    () => {
+      if (
+        !practice &&
+        inputs.devices[0] !== "keyboard" &&
+        inputs.devices[0] === inputs.devices[1]
+      ) {
+        document.getElementById("device-hint")!.textContent =
+          "Cada jugador necesita un mando distinto.";
+        sounds.play("ui-confirm");
+        return;
+      }
+      start();
+    },
+    null,
+  );
 }
 function refreshPads() {
   if (screen !== "select") return;
@@ -336,7 +351,10 @@ function refreshPads() {
     )
       inputs.devices[i] = "keyboard";
     s.value = inputs.devices[i];
-    s.onchange = () => (inputs.devices[i] = s.value);
+    s.onchange = () => {
+      sounds.play("ui-confirm");
+      inputs.devices[i] = s.value;
+    };
   }
 }
 function start() {
@@ -355,7 +373,7 @@ function start() {
     ? "PRÁCTICA / SIN LÍMITES"
     : "VERSUS LOCAL / AL MEJOR DE 3";
   updateHud();
-  tone();
+  sounds.play("round-start");
 }
 let lastHud = "";
 function updateHud() {
@@ -367,6 +385,7 @@ function updateHud() {
 }
 function pause(reason = "RESPIRA. LA RIVALIDAD ESPERA.") {
   if (screen !== "fight" || paused) return;
+  sounds.play("pause");
   paused = true;
   inputs.suspended = true;
   inputs.clear();
@@ -374,24 +393,30 @@ function pause(reason = "RESPIRA. LA RIVALIDAD ESPERA.") {
   setOverlay(
     `<div class="pause-panel"><p class="eyebrow">${reason}</p><h2>PAUSA</h2><button class="primary" id="resume">VOLVER AL COMBATE →</button><button class="secondary" id="pause-controls">CONTROLES</button><button class="text-button" id="exit">SALIR AL MENÚ</button><p id="pause-hint"></p></div>`,
   );
-  btn("resume", () => {
-    const pads = navigator.getGamepads?.() ?? [];
-    const absent = inputs.devices.some(
-      (d, i) => !(practice && i === 1) && d !== "keyboard" && !pads[Number(d)],
-    );
-    if (absent) {
-      document.getElementById("pause-hint")!.textContent =
-        "Reconecta el mando o vuelve al menú para elegir teclado.";
-      return;
-    }
-    paused = false;
-    inputs.clear();
-    combat.fighters.forEach((f) => (f.previous = idle()));
-    inputs.suspended = false;
-    setOverlay("");
-  });
+  btn(
+    "resume",
+    () => {
+      const pads = navigator.getGamepads?.() ?? [];
+      const absent = inputs.devices.some(
+        (d, i) =>
+          !(practice && i === 1) && d !== "keyboard" && !pads[Number(d)],
+      );
+      if (absent) {
+        document.getElementById("pause-hint")!.textContent =
+          "Reconecta el mando o vuelve al menú para elegir teclado.";
+        return;
+      }
+      paused = false;
+      inputs.clear();
+      combat.fighters.forEach((f) => (f.previous = idle()));
+      inputs.suspended = false;
+      setOverlay("");
+      sounds.play("resume");
+    },
+    null,
+  );
   btn("exit", menu);
-  btn("pause-controls", showControls);
+  btn("pause-controls", showControls, null);
 }
 function showResult() {
   combat.clearCombos();
@@ -404,13 +429,14 @@ function showResult() {
   setOverlay(
     `<div class="pause-panel result-panel"><p class="eyebrow">LA AMISTAD SIGUE. EL MARCADOR TAMBIÉN.</p><h2>${visualCharacter(chosen[winner]).name} GANA</h2><p>JUGADOR ${winner + 1} <span class="score">${combat.wins[0]} — ${combat.wins[1]}</span></p><button class="primary" id="rematch">OTRA RONDA ENTRE AMIGOS ↗</button><button class="secondary" id="reselect">CAMBIAR LUCHADORES</button><button class="text-button" id="result-menu">VOLVER AL MENÚ</button></div>`,
   );
-  btn("rematch", start);
+  btn("rematch", start, null);
   btn("reselect", () => select(false));
   btn("result-menu", menu);
 }
 const dialog = document.querySelector<HTMLDialogElement>("#controls-dialog")!;
 function showControls() {
   if (screen === "fight" && !paused) pause();
+  else sounds.play("ui-confirm");
   inputs.clear();
   dialog.innerHTML = `<div class="dialog-top"><p class="eyebrow">APRENDE. PRACTICA. REPITE.</p><button id="close-controls" aria-label="Cerrar controles">×</button></div><h2 id="controls-title">TUS REGLAS.<br>TUS CONTROLES.</h2><p class="control-help">Haz clic en una tecla para cambiarla. Mantén Bloqueo para defender de pie o Agacharse + Bloqueo para defender bajo. Altos: de pie o evadir agachado; medios: ambas guardias; bajos: agachado; aéreos (overhead): de pie. Los especiales bloqueados causan 2 de daño, sin KO. Durante guard stun no puedes moverte, saltar ni atacar: mantén Bloqueo y ajusta la postura ante cada golpe.</p><div class="bindings">${[0, 1].map((i) => `<div><h3>JUGADOR ${i + 1}</h3>${actions.map((a) => `<div class="binding"><span>${labels[a]}</span><button data-bind="${a}" data-player="${i}">${keyLabel(inputs.bindings[i][a])}</button></div>`).join("")}</div>`).join("")}</div><p id="binding-status" role="status">Los cambios se guardan en este navegador.</p><div class="pad-help"><strong>MANDOS ESTÁNDAR</strong><p>Cruceta / stick: moverse · A / ✕: puño · B / ○: patada · X / □: especial · Y / △: bloqueo<br>Start: pausa · Esc: pausa · R: reiniciar práctica</p><p>Pulsa un botón del mando para que el navegador lo detecte. Algunos teclados limitan pulsaciones simultáneas.</p></div>`;
   dialog.showModal();
@@ -418,6 +444,7 @@ function showControls() {
   document.querySelectorAll<HTMLButtonElement>("[data-bind]").forEach(
     (b) =>
       (b.onclick = () => {
+        sounds.play("ui-confirm");
         document.querySelectorAll("[data-bind]").forEach((el) => {
           const button = el as HTMLButtonElement;
           button.textContent = keyLabel(
@@ -514,8 +541,8 @@ function pollStart() {
   requestAnimationFrame(pollStart);
 }
 pollStart();
-btn("controls-top", showControls);
-btn("pause-button", () => pause());
+btn("controls-top", showControls, null);
+btn("pause-button", () => pause(), null);
 btn("reset-practice", () => {
   combat.resetPositions();
   inputs.clear();
@@ -523,6 +550,9 @@ btn("reset-practice", () => {
 document.querySelector<HTMLAnchorElement>(".brand")!.onclick = (e) => {
   e.preventDefault();
   if (screen === "fight") pause();
-  else menu();
+  else {
+    sounds.play("ui-confirm");
+    menu();
+  }
 };
 menu();
