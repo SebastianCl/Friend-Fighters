@@ -1,5 +1,5 @@
 export type Action =
-  "left" | "right" | "up" | "down" | "punch" | "kick" | "special";
+  "left" | "right" | "up" | "down" | "punch" | "kick" | "special" | "block";
 export type InputFrame = Record<Action, boolean>;
 export const idle = (): InputFrame => ({
   left: false,
@@ -9,6 +9,7 @@ export const idle = (): InputFrame => ({
   punch: false,
   kick: false,
   special: false,
+  block: false,
 });
 export type Pose =
   "idle" | "walk" | "jump" | "crouch" | "attack" | "block" | "hurt" | "fall";
@@ -202,15 +203,13 @@ export function guardFor(
   input: InputFrame,
   hitStunned = f.stun > 0,
 ): Stance | null {
-  const back = f.facing === 1 ? input.left : input.right;
   if (
     f.hp <= 0 ||
     f.y > 0 ||
     f.vy > 0 ||
     f.attack ||
     hitStunned ||
-    !back ||
-    input.left === input.right
+    !input.block
   )
     return null;
   return input.down ? "crouching" : "standing";

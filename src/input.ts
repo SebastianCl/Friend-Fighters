@@ -7,6 +7,7 @@ export const actions: Action[] = [
   "punch",
   "kick",
   "special",
+  "block",
 ];
 export const labels: Record<Action, string> = {
   left: "Izquierda",
@@ -16,6 +17,7 @@ export const labels: Record<Action, string> = {
   punch: "Puño",
   kick: "Patada",
   special: "Especial",
+  block: "Bloqueo",
 };
 export type Bindings = Record<Action, string>;
 const defaults: Bindings[] = [
@@ -27,6 +29,7 @@ const defaults: Bindings[] = [
     punch: "KeyF",
     kick: "KeyG",
     special: "KeyH",
+    block: "KeyE",
   },
   {
     left: "ArrowLeft",
@@ -36,8 +39,48 @@ const defaults: Bindings[] = [
     punch: "KeyJ",
     kick: "KeyK",
     special: "KeyL",
+    block: "KeyI",
   },
 ];
+const legacyActions = actions.filter((action) => action !== "block");
+const fallbackBlockKeys = ["KeyQ", "KeyU", "KeyO", "KeyP"];
+
+export function migrateBindings(stored: unknown): Bindings[] | null {
+  if (
+    !Array.isArray(stored) ||
+    stored.length !== 2 ||
+    !stored.every(
+      (binding) =>
+        binding &&
+        typeof binding === "object" &&
+        legacyActions.every(
+          (action) =>
+            typeof (binding as Partial<Bindings>)[action] === "string",
+        ),
+    )
+  )
+    return null;
+
+  const migrated = stored.map((binding) => ({ ...binding })) as Bindings[];
+  const used = new Set(
+    migrated.flatMap((binding) =>
+      Object.values(binding).filter(
+        (value): value is string => typeof value === "string",
+      ),
+    ),
+  );
+  for (let player = 0; player < migrated.length; player++) {
+    if (typeof migrated[player].block === "string") continue;
+    const preferred = defaults[player].block;
+    const block = [preferred, ...fallbackBlockKeys].find(
+      (key) => !used.has(key),
+    );
+    if (!block) return null;
+    migrated[player].block = block;
+    used.add(block);
+  }
+  return migrated;
+}
 export class Inputs {
   keys = new Set<string>();
   pressed = new Set<string>();
@@ -47,12 +90,12 @@ export class Inputs {
   constructor() {
     try {
       const stored = JSON.parse(localStorage.getItem("ff-bindings") || "null");
-      if (
-        Array.isArray(stored) &&
-        stored.length === 2 &&
-        stored.every((b) => actions.every((a) => typeof b[a] === "string"))
-      )
-        this.bindings = stored;
+      const migrated = migrateBindings(stored);
+      if (migrated) {
+        this.bindings = migrated;
+        if (stored.some((binding: Partial<Bindings>) => !binding.block))
+          this.save();
+      }
     } catch {}
     window.addEventListener("keydown", (e) => {
       if (
@@ -81,7 +124,8 @@ export class Inputs {
     if (this.devices[i] === "keyboard") {
       for (const a of actions) {
         const code = this.bindings[i][a];
-        input[a] = this.keys.has(code) || this.pressed.has(code);
+        input[a] =
+          this.keys.has(code) || (a !== "block" && this.pressed.has(code));
         this.pressed.delete(code);
       }
       return input;
@@ -95,6 +139,7 @@ export class Inputs {
     input.punch = !!pad.buttons[0]?.pressed;
     input.kick = !!pad.buttons[1]?.pressed;
     input.special = !!pad.buttons[2]?.pressed;
+    input.block = !!pad.buttons[3]?.pressed;
     return input;
   }
 }

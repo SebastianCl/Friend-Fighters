@@ -12,6 +12,13 @@ test("inicio, selección, controles guardados, práctica, pausa y reinicio", asy
   });
   await page.getByRole("button", { name: "GUÍA DE CONTROLES" }).click();
   await expect(page.getByRole("dialog")).toBeVisible();
+  await expect(page.locator('[data-bind="block"][data-player="0"]')).toHaveText(
+    "E",
+  );
+  await expect(page.locator('[data-bind="block"][data-player="1"]')).toHaveText(
+    "I",
+  );
+  await expect(page.getByRole("dialog")).toContainText("Y / △: bloqueo");
   await page.locator('[data-bind="punch"][data-player="0"]').click();
   await page.keyboard.press("KeyQ");
   await expect(page.locator('[data-bind="punch"][data-player="0"]')).toHaveText(

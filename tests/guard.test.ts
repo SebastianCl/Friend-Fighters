@@ -20,8 +20,7 @@ function setup(defender = 1, reversed = false) {
   c.fighters[1].x = reversed ? 290 : 390;
   c.step([idle(), idle()]);
   const target = c.fighters[defender];
-  const back = target.facing === 1 ? "left" : "right";
-  return { c, target, attacker: 1 - defender, back };
+  return { c, target, attacker: 1 - defender };
 }
 function contact(c: Combat, attacker: number, move: Move, input = idle()) {
   const f = c.fighters[attacker];
@@ -55,13 +54,13 @@ describe.each([0, 1])("defensor P%i", (defender) => {
       it.each(["standing", "crouching"] as const)(
         `${type} contra %s`,
         (stance) => {
-          const { c, target, attacker, back } = setup(defender, reversed);
+          const { c, target, attacker } = setup(defender, reversed);
           // Isolate the compatibility rule with an actual contact at both heights.
           contact(
             c,
             attacker,
             testMove(type),
-            frame({ [back]: true, down: stance === "crouching" }),
+            frame({ block: true, down: stance === "crouching" }),
           );
           const blocked = stance === "standing" ? standing : crouching;
           expect(c.hits[0].blocked).toBe(blocked);
@@ -72,30 +71,26 @@ describe.each([0, 1])("defensor P%i", (defender) => {
       );
     }
     it("evade un alto sin producir contacto ni chip", () => {
-      const { c, target, attacker, back } = setup(defender, reversed);
+      const { c, target, attacker } = setup(defender, reversed);
       contact(
         c,
         attacker,
         { ...resolveMove(moves.punch, "standing"), chipDamage: 2 },
-        frame({ [back]: true, down: true }),
+        frame({ block: true, down: true }),
       );
       expect(c.hits).toEqual([]);
       expect(target.hp).toBe(100);
       expect(target.guardStun).toBe(0);
     });
-    it("exige atrás exclusivo y no permite guardia en el aire o hit stun", () => {
+    it("exige bloqueo y no permite guardia en el aire o hit stun", () => {
       for (const invalid of [
-        "both",
-        "forward",
+        "no-block",
         "air",
         "hit-stun",
         "recovery",
       ] as const) {
-        const { c, target, attacker, back } = setup(defender, reversed);
-        let input = frame({ [back]: true });
-        if (invalid === "both") input = frame({ left: true, right: true });
-        if (invalid === "forward")
-          input = frame({ [back === "left" ? "right" : "left"]: true });
+        const { c, target, attacker } = setup(defender, reversed);
+        const input = invalid === "no-block" ? idle() : frame({ block: true });
         if (invalid === "air") target.y = 10;
         if (invalid === "hit-stun") target.stun = 1;
         if (invalid === "recovery")
@@ -115,6 +110,17 @@ describe.each([0, 1])("defensor P%i", (defender) => {
         expect(c.hits[0].blocked, invalid).toBe(false);
       }
     });
+    it.each(["left", "right"] as const)(
+      "%s mueve pero nunca bloquea por sí sola",
+      (direction) => {
+        const { c, target, attacker } = setup(defender, reversed);
+        const x = target.x;
+        contact(c, attacker, testMove("mid"), frame({ [direction]: true }));
+        expect(target.hp).toBe(89);
+        expect(c.hits[0].blocked).toBe(false);
+        expect(target.x).not.toBe(x);
+      },
+    );
   });
 });
 
@@ -122,13 +128,13 @@ describe("chip y configuración", () => {
   it.each(["punch", "kick", "special"] as const)(
     "%s reemplaza daño por chip una sola vez",
     (kind) => {
-      const { c, attacker, target, back } = setup();
+      const { c, attacker, target } = setup();
       const move = resolveMove(moves[kind], "standing");
-      contact(c, attacker, move, frame({ [back]: true }));
+      contact(c, attacker, move, frame({ block: true }));
       expect(target.hp).toBe(100 - move.chipDamage);
       expect(target.guardStun).toBe(move.guardStunFrames);
       for (let i = 0; i < move.active; i++)
-        c.step([idle(), frame({ [back]: true })]);
+        c.step([idle(), frame({ block: true })]);
       expect(target.hp).toBe(100 - move.chipDamage);
     },
   );
@@ -138,13 +144,13 @@ describe("chip y configuración", () => {
     );
   });
   it("chip letal configurable resuelve KO y limpia estados", () => {
-    const { c, target, attacker, back } = setup();
+    const { c, target, attacker } = setup();
     target.hp = 2;
     contact(
       c,
       attacker,
       { ...moves.special, chipCanKO: true },
-      frame({ [back]: true }),
+      frame({ block: true }),
     );
     expect(target.hp).toBe(0);
     expect(target.pose).toBe("fall");
@@ -183,16 +189,17 @@ describe("chip y configuración", () => {
 
 describe("guard stun", () => {
   it("dura N pasos completos, impide acciones y no almacena pulsaciones", () => {
-    const { c, target, attacker, back } = setup();
+    const { c, target, attacker } = setup();
     contact(
       c,
       attacker,
       testMove("mid", { guardStunFrames: 3 }),
-      frame({ [back]: true }),
+      frame({ block: true }),
     );
     const x = target.x;
     const incompatible = frame({
-      [back]: true,
+      block: true,
+      right: true,
       up: true,
       punch: true,
       kick: true,
@@ -215,19 +222,19 @@ describe("guard stun", () => {
     expect(target.y).toBeGreaterThan(0);
     expect(target.attack?.kind).toBe("punch");
   });
-  it("permite cambiar postura y requiere atrás ante cada contacto", () => {
-    const { c, target, attacker, back } = setup();
+  it("permite cambiar postura y requiere bloqueo ante cada contacto", () => {
+    const { c, target, attacker } = setup();
     contact(
       c,
       attacker,
       testMove("mid", { guardStunFrames: 18 }),
-      frame({ [back]: true }),
+      frame({ block: true }),
     );
     contact(
       c,
       attacker,
       testMove("low", { guardStunFrames: 8 }),
-      frame({ [back]: true, down: true }),
+      frame({ block: true, down: true }),
     );
     expect(target.hp).toBe(100);
     expect(target.guardStun).toBe(17);
@@ -237,7 +244,7 @@ describe("guard stun", () => {
       c,
       attacker,
       testMove("overhead", { guardStunFrames: 20 }),
-      frame({ [back]: true }),
+      frame({ block: true }),
     );
     expect(target.hp).toBe(100);
     expect(target.guardStun).toBe(20);
@@ -248,8 +255,8 @@ describe("guard stun", () => {
     expect(target.stun).toBe(20);
   });
   it("mantiene cuerpo agachado durante bloqueo y evade altos posteriores", () => {
-    const { c, target, attacker, back } = setup();
-    const input = frame({ [back]: true, down: true });
+    const { c, target, attacker } = setup();
+    const input = frame({ block: true, down: true });
     contact(c, attacker, testMove("low"), input);
     contact(c, attacker, resolveMove(moves.punch, "standing"), input);
     expect(c.hits).toEqual([]);
@@ -257,11 +264,18 @@ describe("guard stun", () => {
     expect(target.guardStun).toBe(11);
   });
   it("guardia equivocada durante stun recibe daño normal", () => {
-    const { c, target, attacker, back } = setup();
-    contact(c, attacker, testMove("mid"), frame({ [back]: true }));
-    contact(c, attacker, testMove("low"), frame({ [back]: true }));
+    const { c, target, attacker } = setup();
+    contact(c, attacker, testMove("mid"), frame({ block: true }));
+    contact(c, attacker, testMove("low"), frame({ block: true }));
     expect(target.hp).toBe(89);
     expect(target.guardStun).toBe(0);
+  });
+  it("mantener bloqueo fuera de guard stun no impide moverse", () => {
+    const c = new Combat();
+    const x = c.fighters[0].x;
+    c.step([frame({ block: true, right: true }), idle()]);
+    expect(c.fighters[0].x).toBeGreaterThan(x);
+    expect(c.fighters[0].pose).toBe("walk");
   });
   it("restaura guardia y postura en práctica y reinicio", () => {
     const { c, target } = setup();
@@ -283,11 +297,11 @@ describe("guard stun", () => {
 
 describe("contratos de estado y variantes", () => {
   it("guardia no depende de la pose y excluye personajes derrotados", () => {
-    const { target, back } = setup();
+    const { target } = setup();
     target.pose = "hurt";
-    expect(guardFor(target, frame({ [back]: true }))).toBe("standing");
+    expect(guardFor(target, frame({ block: true }))).toBe("standing");
     target.hp = 0;
-    expect(guardFor(target, frame({ [back]: true }))).toBeNull();
+    expect(guardFor(target, frame({ block: true }))).toBeNull();
   });
   it("conserva la variante agachada aunque se suelte abajo durante el ataque", () => {
     const c = new Combat();
@@ -311,7 +325,7 @@ describe("contratos de estado y variantes", () => {
     for (let n = 0; n <= moves.special.startup; n++) {
       c.step([
         frame({ down: true, special: true }),
-        frame({ down: true, right: true }),
+        frame({ down: true, block: true }),
       ]);
     }
     expect(c.fighters[1].hp).toBe(95);

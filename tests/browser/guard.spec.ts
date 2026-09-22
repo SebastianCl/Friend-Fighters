@@ -9,6 +9,7 @@ const keys = [
     punch: "KeyF",
     kick: "KeyG",
     special: "KeyH",
+    block: "KeyE",
   },
   {
     left: "ArrowLeft",
@@ -18,6 +19,7 @@ const keys = [
     punch: "KeyJ",
     kick: "KeyK",
     special: "KeyL",
+    block: "KeyI",
   },
 ];
 const tick = (page: Page, frames = 1) => page.clock.runFor(frames * 17);
@@ -71,7 +73,7 @@ for (const defender of [0, 1])
           await hold(page, [keys[0].right], 80);
           await hold(page, [keys[0].right, keys[0].up], 50);
         }
-        // Use real input to put the defender at a wall; holding back cannot leave range.
+        // Use real movement input to put both fighters in reliable contact range.
         await hold(
           page,
           keys.map((k) => (defenderOnRight ? k.right : k.left)),
@@ -118,7 +120,7 @@ for (const defender of [0, 1])
 
       // Standing mid block and prohibited actions throughout the guard-stun window.
       await start();
-      await page.keyboard.down(back);
+      await page.keyboard.down(d.block);
       let state = await attackUntilContact(a.kick, 100, true);
       expect(state.animation).toBe("block");
       await page.screenshot({
@@ -142,7 +144,7 @@ for (const defender of [0, 1])
 
       // Crouching low block, plus an in-stun posture change.
       await start();
-      await page.keyboard.down(back);
+      await page.keyboard.down(d.block);
       await page.keyboard.down(d.down);
       await page.keyboard.down(a.down);
       state = await attackUntilContact(a.kick, 100, true);
@@ -157,6 +159,7 @@ for (const defender of [0, 1])
       await finish();
 
       await start();
+      // Back remains pure movement and cannot block the incoming low attack.
       await page.keyboard.down(back);
       await page.keyboard.down(a.down);
       await attackUntilContact(a.kick, 89, false);
@@ -165,7 +168,7 @@ for (const defender of [0, 1])
       // Special contacts crouching bodies too; both guards take exactly 2 chip.
       for (const crouching of [false, true]) {
         await start();
-        await page.keyboard.down(back);
+        await page.keyboard.down(d.block);
         if (crouching) await page.keyboard.down(d.down);
         await attackUntilContact(a.special, 98, true);
         await tick(page, 8);
@@ -176,7 +179,7 @@ for (const defender of [0, 1])
       // Start a descending aerial kick: its active frames reach the crouching body
       // near landing, while retaining the overhead type resolved at attack startup.
       await start();
-      await page.keyboard.down(back);
+      await page.keyboard.down(d.block);
       await page.keyboard.down(d.down);
       await hold(page, [a.up], 28);
       expect((await read(page, attacker)).y).toBeGreaterThan(0);
@@ -185,3 +188,42 @@ for (const defender of [0, 1])
       expect(errors).toEqual([]);
     });
   }
+
+test("mando estándar bloquea con Y / triángulo", async ({ page }) => {
+  await page.addInitScript(() => {
+    const pad = {
+      index: 0,
+      id: "Virtual standard controller",
+      mapping: "standard",
+      buttons: Array.from({ length: 17 }, () => ({
+        pressed: false,
+        value: 0,
+        touched: false,
+      })),
+      axes: [0, 0],
+    };
+    Object.assign(window, { guardTestPad: pad });
+    Object.defineProperty(navigator, "getGamepads", { value: () => [pad] });
+  });
+  await page.goto("/");
+  await expect(page.locator("#app")).toHaveAttribute("data-ready", "true");
+  await page.clock.install();
+  await page.clock.pauseAt(await page.evaluate(() => Date.now() + 1000));
+  await page.getByRole("button", { name: "JUGAR VERSUS" }).click();
+  await page.selectOption("#device-1", "0");
+  await page.getByRole("button", { name: "¡A PELEAR!" }).click();
+  await hold(page, ["KeyD"], 65);
+  await page.evaluate(() => {
+    (window as any).guardTestPad.buttons[3].pressed = true;
+  });
+  await page.keyboard.down("KeyG");
+  await tick(page, 14);
+  await page.keyboard.up("KeyG");
+  await expect(
+    page.getByRole("progressbar", { name: "Vida jugador 2" }),
+  ).toHaveAttribute("aria-valuenow", "100");
+  await expect(page.locator("canvas")).toHaveAttribute(
+    "data-p2-animation",
+    "block",
+  );
+});

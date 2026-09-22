@@ -32,16 +32,17 @@ npm run preview
 | Puño      | F         | J         |
 | Patada    | G         | K         |
 | Especial  | H         | L         |
+| Bloqueo   | E         | I         |
 
-- Mantén atrás (dirección contraria al rival) para bloquear de pie; abajo + atrás para bloquear agachado. Ambas direcciones horizontales a la vez no bloquean. No puedes bloquear en el aire, atacando, recuperándote de un ataque o durante hit stun.
+- Mantén **Bloqueo** para defender de pie; Agacharse + Bloqueo activa la guardia baja. Izquierda y derecha sirven únicamente para moverse. No puedes bloquear en el aire, atacando, recuperándote de un ataque o durante hit stun.
 - Los altos se bloquean de pie y se evaden agachado; los medios se bloquean en ambas posturas; los bajos solo agachado; los overhead solo de pie. Los imbloqueables nunca se bloquean. Sin contacto físico no hay daño ni bloqueo.
 - Puño de pie: alto. Patada y especial de pie: medios. Puño agachado: medio. Patada y especial agachados: bajos. Ataques aéreos: overhead (su tipo se conserva al aterrizar).
 - Bloquear evita el daño normal. Solo los especiales producen chip: 2 puntos, sin reducir la vida por debajo de 1.
-- El guard stun dura 8 frames para puño, 12 para patada y 18 para especial, a 60 Hz. Impide moverse, saltar y atacar; permite cambiar de postura. Debes mantener atrás y elegir la guardia correcta ante cada nuevo golpe. Soltar atrás permite recibir daño. Las pulsaciones durante stun no se almacenan: suelta y vuelve a pulsar para saltar o atacar.
+- El guard stun dura 8 frames para puño, 12 para patada y 18 para especial, a 60 Hz. Impide moverse, saltar y atacar; permite cambiar de postura. Debes mantener Bloqueo y elegir la guardia correcta ante cada nuevo golpe. Soltar Bloqueo permite recibir daño. Las pulsaciones durante stun no se almacenan: suelta y vuelve a pulsar para saltar o atacar.
 - Suelta y vuelve a pulsar para repetir un ataque. El especial recarga durante tres segundos.
 - **Esc** o **Start** pausa. **R** reinicia la práctica. Cambiar de pestaña/ventana o desconectar un mando asignado pausa el juego.
 - **Guía de controles** permite cambiar y guardar teclas en este navegador. Escape, R, Tab, Enter y Espacio están reservados; no se admiten duplicados.
-- Mandos estándar: cruceta/stick para moverse; A/✕ para puño, B/○ para patada, X/□ para especial. Pulsa un botón para que el navegador detecte el mando y asígnalo en la selección. Los menús se operan con ratón/teclado.
+- Mandos estándar: cruceta/stick para moverse; A/✕ para puño, B/○ para patada, X/□ para especial y Y/△ para bloqueo. Pulsa un botón para que el navegador detecte el mando y asígnalo en la selección. Los menús se operan con ratón/teclado.
 - Admitidos: teclado compartido, dos mandos, teclado + mando. Las pulsaciones simultáneas en teclado dependen de su capacidad física.
 - El icono de la esquina superior derecha activa la pantalla completa.
 

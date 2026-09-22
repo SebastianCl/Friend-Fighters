@@ -33,11 +33,11 @@ describe("motor de combate", () => {
     c.step([frame({ kick: true }), idle()]);
     expect(c.fighters[0].attack?.kind).toBe("punch");
   });
-  it("bloquea al retroceder, sin daño", () => {
+  it("bloquea con el botón dedicado, sin daño", () => {
     const c = new Combat();
     close(c);
     c.fighters[1].x = 325;
-    advance(c, 7, frame({ punch: true }), frame({ right: true }));
+    advance(c, 7, frame({ punch: true }), frame({ block: true }));
     expect(c.fighters[1].hp).toBe(100);
     expect(c.fighters[1].pose).toBe("block");
   });
@@ -46,7 +46,7 @@ describe("motor de combate", () => {
     close(c);
     c.fighters[1].x = 320;
     c.fighters[1].y = 20;
-    advance(c, 7, frame({ punch: true }), frame({ right: true, down: true }));
+    advance(c, 7, frame({ punch: true }), frame({ block: true, down: true }));
     expect(c.fighters[1].hp).toBeLessThan(100);
   });
   it("el especial exige recarga", () => {
