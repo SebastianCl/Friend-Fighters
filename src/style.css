@@ -1133,3 +1133,22 @@ dialog h2 {
     gap: 15px;
   }
 }
+
+.visual-preview-link {
+  display: block;
+  margin: 12px 0;
+  color: #ed815e;
+  font: bold 10px monospace;
+  letter-spacing: 1px;
+  text-underline-offset: 5px;
+}
+@media (max-width: 620px) {
+  .intro {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .visual-preview-link {
+    font-size: 8px;
+    margin: 0;
+  }
+}

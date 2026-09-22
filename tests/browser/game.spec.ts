@@ -76,7 +76,9 @@ test("partida real con teclado, resultado y revancha", async ({ page }) => {
       });
     }
   }
-  await expect(page.locator(".result-panel")).toContainText("RIO GANA");
+  await expect(page.locator(".result-panel")).toContainText(
+    "LUCHADORA 01 GANA",
+  );
   await page.screenshot({ path: "test-results/result.png" });
   await page.getByRole("button", { name: "OTRA RONDA ENTRE AMIGOS" }).click();
   await expect(page.locator(".result-panel")).toHaveCount(0);

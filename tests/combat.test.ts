@@ -1,5 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { Combat, idle, moves, type InputFrame } from "../src/combat";
+import {
+  Combat,
+  combatSpace,
+  idle,
+  moves,
+  type InputFrame,
+} from "../src/combat";
 const frame = (patch: Partial<InputFrame> = {}) => ({ ...idle(), ...patch });
 function advance(c: Combat, n: number, a = idle(), b = idle()) {
   for (let i = 0; i < n; i++) c.step([a, b]);
@@ -57,9 +63,14 @@ describe("motor de combate", () => {
   it("limita el escenario y separa cuerpos", () => {
     const c = new Combat();
     advance(c, 300, frame({ left: true }), frame({ right: true }));
-    expect(c.fighters.map((f) => f.x)).toEqual([28, 612]);
+    expect(c.fighters.map((f) => f.x)).toEqual([
+      combatSpace.minX,
+      combatSpace.maxX,
+    ]);
     advance(c, 300, frame({ right: true }), frame({ left: true }));
-    expect(c.fighters[1].x - c.fighters[0].x).toBeGreaterThanOrEqual(30);
+    expect(c.fighters[1].x - c.fighters[0].x).toBeGreaterThanOrEqual(
+      combatSpace.separation,
+    );
   });
   it("cambia orientación cuando cambia el lado del rival", () => {
     const c = new Combat();
@@ -145,7 +156,7 @@ describe("motor de combate", () => {
     expect(c.fighters[1].hp).toBe(100);
     expect(c.phase).toBe("fight");
     c.resetPositions();
-    expect(c.fighters.map((f) => f.x)).toEqual([220, 420]);
+    expect(c.fighters.map((f) => f.x)).toEqual([...combatSpace.startX]);
   });
   it("completa diez partidas consecutivas de dos rounds sin errores de puntuación", () => {
     for (let n = 0; n < 10; n++) {
@@ -173,15 +184,15 @@ describe("motor de combate", () => {
 });
 it("mantiene separación corporal al llegar a las paredes", () => {
   for (const positions of [
-    [600, 612],
-    [28, 40],
+    [combatSpace.maxX - 12, combatSpace.maxX],
+    [combatSpace.minX, combatSpace.minX + 12],
   ]) {
     const c = new Combat();
     c.fighters[0].x = positions[0];
     c.fighters[1].x = positions[1];
     c.step([idle(), idle()]);
-    expect(c.fighters[1].x - c.fighters[0].x).toBe(30);
-    expect(c.fighters[0].x).toBeGreaterThanOrEqual(28);
-    expect(c.fighters[1].x).toBeLessThanOrEqual(612);
+    expect(c.fighters[1].x - c.fighters[0].x).toBe(combatSpace.separation);
+    expect(c.fighters[0].x).toBeGreaterThanOrEqual(combatSpace.minX);
+    expect(c.fighters[1].x).toBeLessThanOrEqual(combatSpace.maxX);
   }
 });

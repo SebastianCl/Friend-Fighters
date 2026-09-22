@@ -1,0 +1,514 @@
+@import "./visual-preview.css";
+#app,
+.game-viewport {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  min-height: 280px;
+  overflow: hidden;
+}
+.game-viewport {
+  background: radial-gradient(ellipse, #291444, #080516 70%);
+}
+#game {
+  position: absolute;
+  inset: 0;
+}
+#game canvas {
+  display: block;
+  width: 1280px !important;
+  height: 720px !important;
+  image-rendering: pixelated;
+}
+.arena-header {
+  z-index: 10;
+}
+.header-actions {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+.header-actions button {
+  border: 0;
+  background: none;
+  color: #e9dbfb;
+  font: 10px monospace;
+  letter-spacing: 1px;
+}
+.header-actions svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: #fff258;
+  stroke-width: 2;
+}
+.game-toolbar {
+  z-index: 10;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+.game-toolbar nav {
+  gap: 20px;
+}
+.game-toolbar a {
+  font-size: 8px;
+  color: #b9a0d9;
+  text-decoration: none;
+}
+.game-toolbar a:hover {
+  color: #fff258;
+}
+#mode-label {
+  color: #bdb0d4;
+  font-size: 8px;
+  max-width: 270px;
+}
+#fight-tools {
+  display: flex;
+  gap: 22px;
+}
+#fight-tools[hidden] {
+  display: none;
+}
+#fight-tools button {
+  padding: 6px 0;
+  background: none;
+  border: 0;
+  color: #f0e1ff;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+#fight-tools button[hidden] {
+  display: none;
+}
+#overlay {
+  position: absolute;
+  inset: 51px 0 44px;
+  z-index: 8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #10092369;
+}
+#overlay.empty {
+  pointer-events: none;
+  background: none;
+}
+#overlay:has(.menu-panel) {
+  justify-content: flex-start;
+  background: linear-gradient(
+    90deg,
+    #100821eb 0%,
+    #100a22b8 40%,
+    #100a2200 73%
+  );
+}
+.menu-panel {
+  padding: 0 0 16px 100px;
+  width: 660px;
+}
+.mini-label {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: #69e7ff;
+  margin-bottom: 28px;
+}
+.mini-label span {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: #69e7ff;
+  margin-right: 10px;
+  box-shadow: 0 0 12px #69e7ff;
+}
+.menu-panel h1 {
+  font:
+    900 92px/0.87 Impact,
+    "Arial Black",
+    sans-serif;
+  letter-spacing: 1px;
+  margin: 0;
+  text-shadow: 5px 5px #150c33;
+}
+.menu-panel h1 em {
+  color: #fff258;
+  font-style: normal;
+  display: block;
+  margin-top: 10px;
+}
+.menu-panel p {
+  font:
+    17px/1.6 "Courier New",
+    monospace;
+  color: #cbbddd;
+  margin: 24px 0 26px;
+}
+.primary,
+.secondary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 17px 19px;
+  border: 1px solid transparent;
+  font:
+    700 12px "Courier New",
+    monospace;
+  letter-spacing: 1px;
+  text-align: left;
+}
+.primary {
+  background: #fff258;
+  color: #201235;
+  box-shadow: 4px 4px #715139;
+}
+.secondary {
+  background: #201132c9;
+  border-color: #9171a8;
+  color: #efe0ff;
+  box-shadow: 4px 4px #10091d;
+}
+.primary:disabled,
+.secondary:disabled {
+  opacity: 0.45;
+  cursor: wait;
+}
+.menu-panel > button {
+  width: 355px;
+  margin: 13px 0;
+}
+.menu-panel small {
+  display: block;
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: #a894c2;
+  margin-top: 22px;
+}
+.menu-character {
+  position: absolute;
+  right: 145px;
+  bottom: 19px;
+  width: 260px;
+  text-align: center;
+  text-shadow: 2px 2px #12081e;
+}
+.menu-character span {
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: #ff73d8;
+}
+.menu-character strong {
+  display: block;
+  font-size: 24px;
+  margin-top: 7px;
+  letter-spacing: 1px;
+}
+.menu-character small {
+  display: block;
+  font-size: 7px;
+  letter-spacing: 1px;
+  margin-top: 7px;
+  color: #d7b6e4;
+}
+.selection-panel,
+.pause-panel {
+  background: linear-gradient(120deg, #1e1239f5, #100b26f5);
+  border: 1px solid #8d72a5;
+  box-shadow: 7px 7px #0603189c;
+  padding: 30px 34px;
+  width: 740px;
+}
+.eyebrow {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: #6fe2ef;
+  margin: 0 0 12px;
+}
+.selection-panel h2,
+.pause-panel h2 {
+  font:
+    900 35px/1.1 "Courier New",
+    monospace;
+  letter-spacing: -1px;
+  margin: 12px 0 23px;
+  color: #fff258;
+}
+.selections {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.player-selection {
+  padding: 16px;
+  background: #0c082196;
+  border: 1px solid #54426b;
+}
+.player-selection h3 {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #64e5ff;
+  margin: 0 0 17px;
+}
+.player-selection:nth-child(2) h3 {
+  color: #ff7cda;
+}
+.fighter-profile {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+.fighter-profile img {
+  width: 102px;
+  height: 102px;
+  image-rendering: pixelated;
+  object-fit: cover;
+  border: 2px solid #564071;
+}
+.fighter-profile strong {
+  font-size: 15px;
+  letter-spacing: 1px;
+}
+.fighter-profile small {
+  display: block;
+  color: #bfa2d1;
+  letter-spacing: 1px;
+  font-size: 7px;
+  line-height: 1.6;
+  margin-top: 10px;
+}
+.selections label {
+  display: block;
+  font-size: 8px;
+  letter-spacing: 2px;
+  margin-top: 22px;
+  color: #b3a0c7;
+}
+.selections select {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  background: #26143c;
+  border: 1px solid #786087;
+  color: #e8dbf2;
+  font: 12px monospace;
+  padding: 10px;
+}
+.selections select:disabled {
+  opacity: 0.55;
+}
+.selection-hint {
+  font-size: 10px;
+  color: #d0b1e0;
+  margin: 18px 0 0;
+}
+.selection-actions {
+  display: flex;
+  gap: 13px;
+  margin-top: 22px;
+}
+.selection-actions button {
+  flex: 1;
+  justify-content: center;
+  font-size: 10px;
+  padding: 14px;
+}
+.pause-panel {
+  width: 500px;
+  text-align: center;
+}
+.pause-panel h2 {
+  font-size: 48px;
+  margin-bottom: 24px;
+}
+.pause-panel .primary,
+.pause-panel .secondary {
+  width: 100%;
+  justify-content: center;
+  margin: 12px 0;
+}
+.text-button {
+  background: none;
+  border: 0;
+  color: #c0a3d9;
+  font-size: 9px;
+  letter-spacing: 1px;
+  padding: 14px;
+}
+.pause-panel p {
+  font-size: 11px;
+  line-height: 1.6;
+  color: #cdb3df;
+}
+.pause-panel .eyebrow {
+  font-size: 8px;
+}
+.score {
+  display: block;
+  font-size: 40px;
+  letter-spacing: 8px;
+  color: #f4e6ff;
+  margin: 15px 0 25px;
+}
+.result-panel h2 {
+  font-size: 34px;
+}
+#pause-hint {
+  font-size: 10px;
+  color: #fff258;
+}
+#hud {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  pointer-events: none;
+}
+.health-row {
+  position: absolute;
+  left: 34px;
+  right: 34px;
+  top: 72px;
+  display: grid;
+  grid-template-columns: 1fr 122px 1fr;
+  align-items: start;
+}
+.health .life-fill {
+  display: block;
+}
+.health .name-row h2 {
+  font-size: 20px;
+}
+.health.player-two .player-number {
+  order: 3;
+}
+.health.player-two .name-row h2 {
+  order: 2;
+}
+.health.player-two .round-pips {
+  order: 1;
+}
+.health.player-two .meter-row .energy-frame {
+  order: 2;
+}
+.health.player-two .meter-row > span {
+  order: 1;
+}
+.round-message {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 44%;
+  background: #100726e8;
+  border-top: 1px solid #76558c;
+  border-bottom: 1px solid #76558c;
+  text-align: center;
+  padding: 22px;
+  font-size: 34px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: #fff258;
+  text-shadow: 3px 3px #100922;
+}
+.round-message small {
+  font-size: 9px;
+  letter-spacing: 4px;
+  color: #c0a3d9;
+  display: block;
+  margin-top: 12px;
+}
+#controls-dialog {
+  width: min(650px, 94vw);
+}
+.dialog-top {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+}
+.dialog-top > button {
+  border: 1px solid #7f6496;
+  background: #281638;
+  color: #f6dfff;
+  font-size: 26px;
+  width: 34px;
+  height: 34px;
+}
+#controls-title {
+  font-size: 32px;
+  letter-spacing: -1px;
+  color: #fff258;
+  margin: 14px 0;
+}
+.control-help {
+  font:
+    13px/1.6 Arial,
+    sans-serif;
+  color: #c5b6d0;
+}
+.bindings {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 26px;
+}
+.bindings h3 {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: #69e3ff;
+}
+.bindings > div:nth-child(2) h3 {
+  color: #ff7ade;
+}
+.binding {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #51395f;
+  padding: 7px 0;
+  font-size: 12px;
+}
+.binding > button {
+  background: #362146;
+  border: 1px solid #8b65a2;
+  color: #fff258;
+  min-width: 44px;
+  height: 29px;
+  font: 13px monospace;
+}
+#binding-status {
+  font-size: 11px;
+  color: #f8d795;
+  min-height: 24px;
+}
+.pad-help {
+  border-top: 1px solid #50345f;
+  padding-top: 17px;
+  font:
+    12px/1.6 Arial,
+    sans-serif;
+  color: #bcaccb;
+}
+.pad-help strong {
+  font: 10px monospace;
+  color: #74deeb;
+}
+#retry-assets {
+  background: #fff258;
+  color: #211233;
+  border: 0;
+  padding: 8px;
+  margin-left: 8px;
+  font-size: 11px;
+}
+@media (max-width: 650px) {
+  #controls-title {
+    font-size: 24px;
+  }
+  .bindings {
+    gap: 15px;
+  }
+  .control-help {
+    font-size: 12px;
+  }
+}
+
+#game {
+  background: #120c35 url("/art/visual-v1/neon-street.png") center / cover
+    no-repeat;
+}

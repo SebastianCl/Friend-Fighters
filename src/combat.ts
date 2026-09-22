@@ -34,9 +34,9 @@ const animations = {
 };
 export const fighters: FighterDefinition[] = [
   {
-    id: "rio",
-    name: "RIO",
-    title: "Fuego del barrio",
+    id: "fighter-01",
+    name: "LUCHADORA 01",
+    title: "Personaje de referencia",
     color: 0xeb6841,
     light: 0xffbc82,
     skin: 0xd9976c,
@@ -44,9 +44,9 @@ export const fighters: FighterDefinition[] = [
     animations,
   },
   {
-    id: "nox",
-    name: "NOX",
-    title: "Calma antes del golpe",
+    id: "mirror-01",
+    name: "ESPEJO",
+    title: "Mismo personaje · otra esquina",
     color: 0x69c6ba,
     light: 0xc3ead6,
     skin: 0xaf795d,
@@ -71,7 +71,7 @@ export const moves: MoveSetDefinition = {
     startup: 6,
     active: 4,
     recovery: 13,
-    reach: 42,
+    reach: 84,
     stun: 14,
     push: 7,
     cooldown: 0,
@@ -81,7 +81,7 @@ export const moves: MoveSetDefinition = {
     startup: 11,
     active: 5,
     recovery: 19,
-    reach: 58,
+    reach: 114,
     stun: 20,
     push: 12,
     cooldown: 0,
@@ -91,12 +91,34 @@ export const moves: MoveSetDefinition = {
     startup: 17,
     active: 7,
     recovery: 30,
-    reach: 73,
+    reach: 120,
     stun: 26,
     push: 22,
     cooldown: 180,
   },
 };
+export const combatSpace = {
+  minX: 90,
+  maxX: 550,
+  separation: 100,
+  bodyHalfWidth: 30,
+  standingHeight: 210,
+  crouchingHeight: 144,
+  punchHeight: 155,
+  kickHeight: 135,
+  lowHeight: 90,
+  startX: [180, 460] as const,
+};
+export function hitHeight(f: Fighter): number {
+  return (
+    f.y +
+    (f.attack?.crouched
+      ? combatSpace.lowHeight
+      : f.attack?.kind === "kick"
+        ? combatSpace.kickHeight
+        : combatSpace.punchHeight)
+  );
+}
 export interface Fighter {
   x: number;
   y: number;
@@ -133,7 +155,10 @@ const makeFighter = (x: number, facing: 1 | -1): Fighter => ({
   previous: idle(),
 });
 export class Combat {
-  fighters: [Fighter, Fighter] = [makeFighter(220, 1), makeFighter(420, -1)];
+  fighters: [Fighter, Fighter] = [
+    makeFighter(combatSpace.startX[0], 1),
+    makeFighter(combatSpace.startX[1], -1),
+  ];
   wins = [0, 0];
   ticks = 3600;
   phase: "fight" | "round" | "over" = "fight";
@@ -144,7 +169,10 @@ export class Combat {
   hits: Hit[] = [];
   constructor(public practice = false) {}
   resetPositions() {
-    this.fighters = [makeFighter(220, 1), makeFighter(420, -1)];
+    this.fighters = [
+      makeFighter(combatSpace.startX[0], 1),
+      makeFighter(combatSpace.startX[1], -1),
+    ];
     this.ticks = 3600;
     this.phase = "fight";
     this.hits = [];
@@ -180,7 +208,7 @@ export class Combat {
         }
         if (!input.down || f.y > 0) {
           const d = Number(input.right) - Number(input.left);
-          f.x += d * 2.25;
+          f.x += d * (f.y > 0 ? 4 : 2.25);
           if (d && f.y === 0) f.pose = "walk";
         }
         for (const kind of ["special", "kick", "punch"] as const) {
@@ -206,15 +234,25 @@ export class Combat {
         f.vy -= 0.38;
         if (f.y === 0) f.vy = 0;
       }
-      f.x = Math.max(28, Math.min(612, f.x));
+      f.x = Math.max(combatSpace.minX, Math.min(combatSpace.maxX, f.x));
       f.previous = { ...input };
     }
     const [a, b] = this.fighters;
-    if (Math.abs(a.x - b.x) < 30 && Math.abs(a.y - b.y) < 60) {
+    if (
+      Math.abs(a.x - b.x) < combatSpace.separation &&
+      a.y === 0 &&
+      b.y === 0
+    ) {
       const [left, right] = a.x <= b.x ? [a, b] : [b, a];
-      const push = (30 - (right.x - left.x)) / 2;
-      left.x = Math.max(28, Math.min(582, left.x - push));
-      right.x = Math.max(left.x + 30, Math.min(612, right.x + push));
+      const push = (combatSpace.separation - (right.x - left.x)) / 2;
+      left.x = Math.max(
+        combatSpace.minX,
+        Math.min(combatSpace.maxX - combatSpace.separation, left.x - push),
+      );
+      right.x = Math.max(
+        left.x + combatSpace.separation,
+        Math.min(combatSpace.maxX, right.x + push),
+      );
     }
     // Collect both contacts before applying damage so simultaneous hits are symmetric.
     const contacts: {
@@ -222,21 +260,24 @@ export class Combat {
       blocked: boolean;
       move: Move;
       special: boolean;
+      hitY: number;
     }[] = [];
     this.fighters.forEach((f, i) => {
       const attack = f.attack;
       if (!attack || wasStunned[i]) return;
       const move = moves[attack.kind],
         target = this.fighters[1 - i];
-      const attackY =
-        f.y + (attack.crouched ? 21 : attack.kind === "kick" ? 34 : 43);
-      const targetHeight = target.pose === "crouch" ? 37 : 66;
+      const attackY = hitHeight(f);
+      const targetHeight =
+        target.pose === "crouch" || target.attack?.crouched
+          ? combatSpace.crouchingHeight
+          : combatSpace.standingHeight;
       if (
         !attack.hit &&
         attack.frame >= move.startup &&
         attack.frame < move.startup + move.active &&
         (target.x - f.x) * f.facing > 0 &&
-        Math.abs(target.x - f.x) <= move.reach + 14 &&
+        Math.abs(target.x - f.x) <= move.reach + combatSpace.bodyHalfWidth &&
         attackY >= target.y - 5 &&
         attackY <= target.y + targetHeight
       ) {
@@ -248,6 +289,7 @@ export class Combat {
             back && target.y === 0 && !target.attack && target.stun === 0,
           move,
           special: attack.kind === "special",
+          hitY: attackY,
         });
         attack.hit = true;
       }
@@ -257,7 +299,7 @@ export class Combat {
         f.pose = f.y > 0 ? "jump" : "idle";
       }
     });
-    for (const { i, blocked, move, special } of contacts) {
+    for (const { i, blocked, move, special, hitY } of contacts) {
       const f = this.fighters[i],
         t = this.fighters[1 - i];
       t.hp = Math.max(0, t.hp - (blocked ? 0 : move.damage));
@@ -265,12 +307,15 @@ export class Combat {
       t.pose = blocked ? "block" : t.hp === 0 ? "fall" : "hurt";
       t.attack = null;
       t.x = Math.max(
-        28,
-        Math.min(612, t.x + f.facing * (blocked ? move.push / 2 : move.push)),
+        combatSpace.minX,
+        Math.min(
+          combatSpace.maxX,
+          t.x + f.facing * (blocked ? move.push / 2 : move.push),
+        ),
       );
       this.hits.push({
-        x: (f.x + t.x) / 2,
-        y: 284 - f.y - 40,
+        x: t.x - f.facing * combatSpace.bodyHalfWidth,
+        y: hitY,
         blocked,
         special,
       });

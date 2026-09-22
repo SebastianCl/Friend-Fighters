@@ -1,11 +1,21 @@
 import Phaser from "phaser";
 import { Combat, fighters, idle } from "./combat";
-import { createTextures, portrait } from "./art";
+import { makeArena } from "./arena-renderer";
+import { visualFighter } from "./visual-assets";
+const portrait = () => visualFighter.portrait;
 import { Inputs, actions, labels, keyLabel } from "./input";
-import "./style.css";
+import "./game.css";
 
 const app = document.querySelector<HTMLDivElement>("#app")!;
-app.innerHTML = `<header class="topbar"><a class="brand" href="#" aria-label="Inicio"><span class="brand-mark">FF<span>✦</span></span> FIGHTER FRIENDS<span class="brand-dot">®</span></a><div class="top-meta"><span class="status-dot"></span> LOCAL MULTIPLAYER <span class="edition">VOL. 01 / ARCADE CLUB</span></div><button id="sound" class="icon-button" aria-label="Silenciar sonido">SONIDO ON <span>◖))</span></button></header><main><div class="section-line"><span><i></i> EL BARRIO ES TU ARENA</span><span>EST. 2026 — INSERT FRIENDS, NOT COINS</span></div><div class="heading"><div><p class="eyebrow">BUENOS AMIGOS. MALOS RIVALES.</p><h1>FIGHTER<span>FRIENDS<span class="title-star">✳</span></span></h1></div><div class="intro"><span class="tag">2 JUGADORES · 1 TECLADO · CERO EXCUSAS</span><p>La próxima ronda se juega entre amigos.<br>Elige tu esquina. Haz que cuente.</p><button id="controls-top" class="text-button">GUÍA DE CONTROLES <span>↗</span></button></div></div><section class="cabinet"><div class="cabinet-bar"><span><i></i> <span id="arena-label">ESCENARIO 01</span> <b>/</b> EL BARRIO</span><span id="mode-label">VERSUS LOCAL <b>●</b> 60 FPS</span></div><div class="screen"><div id="game"></div><div id="overlay"></div><div id="hud" hidden></div><div id="fight-tools" hidden><button id="pause-button">Ⅱ PAUSA</button><button id="reset-practice" hidden>↺ REINICIAR PRÁCTICA</button></div></div><div class="cabinet-bottom"><span><span class="live-dot"></span> LISTO PARA LA PRÓXIMA RONDA</span><span>640 × 360 <b>·</b> PIXEL PERFECT</span></div></section><section class="lower"><div class="roster-title"><span class="eyebrow">CONOCE A TU RIVAL</span><h2>Dos esquinas.<br>La misma oportunidad.</h2><p>Luchadores originales. Un solo objetivo.</p></div><div class="fighter-card coral"><span class="number">01</span><img src="${portrait(fighters[0])}" alt="Rio, luchador con uniforme coral"/><div><span class="eyebrow">FUEGO DEL BARRIO</span><h3>RIO <span>↗</span></h3><p>Puños rápidos. Espíritu indomable.</p></div></div><div class="fighter-card mint"><span class="number">02</span><img src="${portrait(fighters[1])}" alt="Nox, luchador con uniforme verde"/><div><span class="eyebrow">CALMA ANTES DEL GOLPE</span><h3>NOX <span>↗</span></h3><p>Cabeza fría. Golpes que hablan.</p></div></div></section><footer><span>HECHO PARA COMPARTIR EL TECLADO.</span><span>PRIMERA EDICIÓN <b>✦</b> PERSONAJES GENÉRICOS / V0.1</span></footer></main><dialog id="controls-dialog" aria-labelledby="controls-title"></dialog>`;
+app.innerHTML = `<div class="game-viewport"><section class="arena arcade-stage"><div id="game"></div><header class="arena-header"><a class="arcade-brand brand" href="#" aria-label="Menú principal"><span class="brand-icon">FF</span> FIGHTER <b>FRIENDS</b></a><p class="edition"><span></span> DISTRITO NEÓN <i>/</i> VOL. 02</p><div class="header-actions"><button id="sound" aria-label="Silenciar sonido">SONIDO ON</button><button id="fullscreen" aria-label="Pantalla completa" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 2H2v5M13 2h5v5M18 13v5h-5M7 18H2v-5"/></svg></button></div></header><div id="hud" hidden></div><div id="overlay"></div><footer class="arena-toolbar game-toolbar"><span id="mode-label">VERSUS LOCAL / EDICIÓN NEÓN</span><div id="fight-tools" hidden><button id="pause-button">Ⅱ PAUSA</button><button id="reset-practice" hidden>↺ REINICIAR PRÁCTICA</button></div><nav><button id="controls-top">GUÍA DE CONTROLES</button><a class="visual-preview-link" href="/visual-preview.html">NUEVO ESTILO VISUAL ↗</a></nav></footer></section></div><p id="asset-status" class="asset-status" role="status">Cargando la arena y las animaciones…</p><p id="fullscreen-status" class="sr-only" role="status"></p><dialog id="controls-dialog" aria-labelledby="controls-title"></dialog>`;
+let assetsReady = false;
+const stage = document.querySelector<HTMLElement>(".arcade-stage")!;
+const viewport = document.querySelector<HTMLElement>(".game-viewport")!;
+function resizeStage() {
+  stage.style.transform = `translate(-50%, -50%) scale(${Math.min(viewport.clientWidth / 1280, viewport.clientHeight / 720)})`;
+}
+new ResizeObserver(resizeStage).observe(viewport);
+resizeStage();
 const overlay = document.querySelector<HTMLDivElement>("#overlay")!;
 const hud = document.querySelector<HTMLDivElement>("#hud")!;
 const fightTools = document.querySelector<HTMLDivElement>("#fight-tools")!;
@@ -57,82 +67,82 @@ btn("sound", () => {
   } catch {}
   soundLabel();
 });
-class Arena extends Phaser.Scene {
-  sprites: Phaser.GameObjects.Image[] = [];
-  shadows: Phaser.GameObjects.Ellipse[] = [];
-  fx!: Phaser.GameObjects.Graphics;
-  create() {
-    createTextures(this);
-    this.add.image(0, 0, "arena").setOrigin(0);
-    this.shadows = [
-      this.add.ellipse(220, 285, 48, 8, 0x0a1924, 0.55),
-      this.add.ellipse(420, 285, 48, 8, 0x0a1924, 0.55),
-    ];
-    this.sprites = [
-      this.add.image(220, 284, "rio-guard-0-punch"),
-      this.add.image(420, 284, "nox-guard-0-punch"),
-    ];
-    this.fx = this.add.graphics();
-  }
-  update(time: number, delta: number) {
-    if (screen === "fight" && !paused) {
-      accumulator += Math.min(delta, 100);
-      while (accumulator >= 1000 / 60) {
-        combat.step([inputs.frame(0), practice ? idle() : inputs.frame(1)]);
-        for (const hit of combat.hits) {
-          tone(hit.blocked, hit.special);
-          const flash = this.add.star(
-            hit.x,
-            hit.y,
-            6,
-            3,
-            hit.special ? 23 : 14,
-            hit.blocked ? 0xc3ead6 : 0xffce82,
-          );
-          this.tweens.add({
-            targets: flash,
-            alpha: 0,
-            scale: 1.8,
-            duration: 140,
-            onComplete: () => flash.destroy(),
-          });
-        }
-        accumulator -= 1000 / 60;
+const Arena = makeArena({
+  state: () => ({ combat, screen, paused }),
+  advance: (delta) => {
+    if (screen !== "fight" || paused) return;
+    accumulator += delta;
+    while (accumulator >= 1000 / 60) {
+      combat.step([inputs.frame(0), practice ? idle() : inputs.frame(1)]);
+      for (const hit of combat.hits) {
+        tone(hit.blocked, hit.special);
+        (game.scene.getScenes(true)[0] as InstanceType<typeof Arena>).impact(
+          hit,
+        );
       }
-      updateHud();
-      if (combat.phase === "over") showResult();
+      accumulator -= 1000 / 60;
+      if (combat.phase === "over") break;
     }
-    const frame = Math.floor(time / 170) % 2;
-    this.sprites.forEach((sprite, i) => {
-      const f = combat.fighters[i];
-      const pose = screen === "menu" ? "idle" : f.pose;
-      const d = fighters[chosen[i]];
-      sprite.setTexture(
-        `${d.id}-${d.animations[pose]}-${frame}-${f.attack?.kind ?? "punch"}`,
-      );
-      if (pose !== "attack")
-        sprite.setTexture(`${d.id}-${d.animations[pose]}-${frame}-punch`);
-      const drawX = pose === "fall" ? Math.max(40, Math.min(600, f.x)) : f.x;
-      sprite.setPosition(Math.round(drawX), Math.round(284 - f.y - 34));
-      sprite.setFlipX(f.facing === -1);
-      this.shadows[i].setPosition(f.x, 285).setScale(1 - f.y / 260);
-    });
-  }
-}
-new Phaser.Game({
-  type: Phaser.AUTO,
+    updateHud();
+    if (combat.phase === "over") showResult();
+  },
+  ready: () => {
+    assetsReady = true;
+    document.getElementById("asset-status")!.hidden = true;
+    app.dataset.ready = "true";
+    document
+      .querySelectorAll<HTMLButtonElement>("[data-requires-assets]")
+      .forEach((b) => (b.disabled = false));
+  },
+  error: () => {
+    const status = document.getElementById("asset-status")!;
+    status.hidden = false;
+    status.innerHTML =
+      'No se pudieron cargar las ilustraciones. <button id="retry-assets">REINTENTAR</button>';
+    document.getElementById("retry-assets")!.onclick = () => location.reload();
+  },
+});
+const game: Phaser.Game = new Phaser.Game({
+  type: Phaser.CANVAS,
   parent: "game",
-  width: 640,
-  height: 360,
+  width: 1280,
+  height: 720,
   pixelArt: true,
   roundPixels: true,
-  backgroundColor: "#182b36",
+  transparent: true,
   scene: Arena,
-  scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+  scale: { mode: Phaser.Scale.NONE },
   audio: { noAudio: true },
   banner: false,
 });
+const fullscreenButton = document.getElementById("fullscreen")!;
+fullscreenButton.addEventListener("click", async () => {
+  try {
+    if (document.fullscreenElement) await document.exitFullscreen();
+    else await document.documentElement.requestFullscreen();
+  } catch {
+    const status = document.getElementById("fullscreen-status")!;
+    status.className = "fullscreen-notice";
+    status.textContent =
+      "No se pudo activar la pantalla completa. Puedes usar F11.";
+  }
+});
+document.addEventListener("fullscreenchange", () => {
+  fullscreenButton.setAttribute(
+    "aria-pressed",
+    String(!!document.fullscreenElement),
+  );
+  fullscreenButton.setAttribute(
+    "aria-label",
+    document.fullscreenElement
+      ? "Salir de pantalla completa"
+      : "Pantalla completa",
+  );
+  resizeStage();
+});
 function setOverlay(html: string) {
+  app.dataset.screen = screen;
+  app.dataset.paused = String(paused);
   overlay.innerHTML = html;
   overlay.classList.toggle("empty", !html);
 }
@@ -146,9 +156,9 @@ function menu() {
   hud.hidden = true;
   fightTools.hidden = true;
   document.getElementById("mode-label")!.innerHTML =
-    "VERSUS LOCAL <b>●</b> 60 FPS";
+    "VERSUS LOCAL / DISTRITO NEÓN";
   setOverlay(
-    `<div class="menu-panel"><div class="mini-label"><span></span> EL RETO ESTÁ SERVIDO</div><h2>TU AMIGO.<br>TU PRÓXIMO RIVAL.</h2><p>Un clásico de las maquinitas.<br>Una rivalidad completamente nueva.</p><button class="primary" id="versus">JUGAR VERSUS <span>↗</span></button><button class="secondary" id="practice">ENTRAR A PRÁCTICA <span>→</span></button><small>2 JUGADORES LOCALES · TECLADO O MANDOS</small></div><div class="arena-stamp"><span>FF</span>FIGHT CLUB<br><b>OPEN EVERY DAY</b></div>`,
+    `<div class="menu-panel"><div class="mini-label"><span></span> VOL. 02 / DISTRITO NEÓN</div><h1>FIGHTER<br><em>FRIENDS</em></h1><p>La misma amistad.<br>Una nueva rivalidad.</p><button class="primary" id="versus" data-requires-assets ${assetsReady ? "" : "disabled"}>JUGAR VERSUS <span>↗</span></button><button class="secondary" id="practice" data-requires-assets ${assetsReady ? "" : "disabled"}>ENTRAR A PRÁCTICA <span>→</span></button><small>2 JUGADORES LOCALES · TECLADO O MANDOS</small></div><div class="menu-character"><span>PERSONAJE 01</span><strong>LUCHADORA 01</strong><small>EL PRIMER ROUND EMPIEZA CONTIGO.</small></div>`,
   );
   btn("versus", () => select(false));
   btn("practice", () => select(true));
@@ -160,22 +170,7 @@ function select(mode: boolean) {
   hud.hidden = true;
   fightTools.hidden = true;
   setOverlay(
-    `<div class="selection-panel"><p class="eyebrow">${practice ? "LABORATORIO DE COMBATE" : "ANTES DEL PRIMER GOLPE"}</p><h2>ELIGE TU ESQUINA</h2><div class="selections">${[0, 1].map((i) => `<div><h3>${i === 1 && practice ? "RIVAL DE PRÁCTICA" : `JUGADOR ${i + 1}`}</h3><div class="choices">${fighters.map((f, n) => `<button class="choice ${chosen[i] === n ? "selected" : ""}" data-player="${i}" data-fighter="${n}" aria-pressed="${chosen[i] === n}"><img src="${portrait(f)}" alt=""/><strong>${f.name}</strong></button>`).join("")}</div><label>DISPOSITIVO<select id="device-${i}" ${practice && i === 1 ? "disabled" : ""}></select></label></div>`).join("")}</div><p class="selection-hint" id="device-hint">Teclado compartido, mandos o ambos. Tú eliges.</p><div class="selection-actions"><button class="secondary" id="back">VOLVER</button><button class="secondary" id="configure">CONTROLES</button><button class="primary" id="start">${practice ? "PRACTICAR" : "¡A PELEAR!"} ↗</button></div></div>`,
-  );
-  document.querySelectorAll<HTMLButtonElement>(".choice").forEach(
-    (b) =>
-      (b.onclick = () => {
-        chosen[Number(b.dataset.player)] = Number(b.dataset.fighter);
-        document
-          .querySelectorAll<HTMLButtonElement>(
-            `.choice[data-player="${b.dataset.player}"]`,
-          )
-          .forEach((c) => {
-            const selected = c === b;
-            c.classList.toggle("selected", selected);
-            c.setAttribute("aria-pressed", String(selected));
-          });
-      }),
+    `<div class="selection-panel"><p class="eyebrow">${practice ? "LABORATORIO DE COMBATE" : "ANTES DEL PRIMER GOLPE"}</p><h2>ELIGE TU ESQUINA</h2><div class="selections">${[0, 1].map((i) => `<div class="player-selection"><h3>${i === 1 && practice ? "RIVAL DE PRÁCTICA" : `JUGADOR ${i + 1}`}</h3><div class="fighter-profile"><img src="${portrait()}" alt="Retrato de la luchadora"/><div><strong>${fighters[i].name}</strong><small>${i === 0 ? "PERSONAJE DE REFERENCIA" : "MISMO PERSONAJE · ESPEJO"}</small></div></div><label>DISPOSITIVO<select id="device-${i}" ${practice && i === 1 ? "disabled" : ""}></select></label></div>`).join("")}</div><p class="selection-hint" id="device-hint">Teclado compartido, mandos o ambos. Tú eliges.</p><div class="selection-actions"><button class="secondary" id="back">VOLVER</button><button class="secondary" id="configure">CONTROLES</button><button class="primary" id="start">${practice ? "PRACTICAR" : "¡A PELEAR!"} ↗</button></div></div>`,
   );
   refreshPads();
   btn("back", menu);
@@ -217,6 +212,7 @@ function refreshPads() {
   }
 }
 function start() {
+  if (!assetsReady) return;
   combat = new Combat(practice);
   screen = "fight";
   paused = false;
@@ -233,8 +229,13 @@ function start() {
   updateHud();
   tone();
 }
+let lastHud = "";
 function updateHud() {
-  hud.innerHTML = `<div class="health-row">${[0, 1].map((i) => `${i === 1 ? `<div class="timer">${practice ? "∞" : Math.ceil(combat.ticks / 60)}<small>${practice ? "PRÁCTICA" : `ROUND ${combat.round}`}</small></div>` : ""}<div class="health player-${i}"><div class="health-name"><strong>${fighters[chosen[i]].name}</strong><span>${"●".repeat(combat.wins[i])}${"○".repeat(2 - combat.wins[i])} <b>J${i + 1}</b></span></div><div class="health-track"><i style="width:${combat.fighters[i].hp}%"></i></div><div class="special-track"><i style="width:${100 - (combat.fighters[i].cooldown / 180) * 100}%"></i></div><small>ESPECIAL ${combat.fighters[i].cooldown === 0 ? "LISTO" : "RECARGANDO"}</small></div>`).join("")}</div>${combat.phase === "round" ? `<div class="round-message">${combat.message}</div>` : ""}`;
+  const markup = `<div class="health-row">${[0, 1].map((i) => `${i === 1 ? `<div class="timer round-clock"><span>${practice ? "PRÁCTICA" : `ROUND ${combat.round}`}</span><strong>${practice ? "∞" : Math.ceil(combat.ticks / 60)}</strong><b>VS</b></div>` : ""}<div class="health player-${i} ${i === 0 ? "player-one" : "player-two"}"><div class="name-row"><span class="player-number">P${i + 1}</span><h2>${fighters[chosen[i]].name}</h2><span class="round-pips" aria-label="${combat.wins[i]} rounds ganados">${"◆".repeat(combat.wins[i])}${"◇".repeat(2 - combat.wins[i])}</span></div><div class="health-track life-frame" role="progressbar" aria-label="Vida jugador ${i + 1}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${combat.fighters[i].hp}"><i class="life-fill" style="width:${combat.fighters[i].hp}%"></i></div><div class="meter-row"><div class="special-track energy-frame"><i style="width:${100 - (combat.fighters[i].cooldown / 180) * 100}%"></i></div><span>ESPECIAL ${combat.fighters[i].cooldown === 0 ? "LISTO" : "RECARGANDO"}</span></div></div>`).join("")}</div>${combat.phase === "round" ? `<div class="round-message">${combat.message}<small>SIGUIENTE ROUND</small></div>` : ""}`;
+  if (markup !== lastHud) {
+    hud.innerHTML = markup;
+    lastHud = markup;
+  }
 }
 function pause(reason = "RESPIRA. LA RIVALIDAD ESPERA.") {
   if (screen !== "fight" || paused) return;
@@ -257,7 +258,7 @@ function pause(reason = "RESPIRA. LA RIVALIDAD ESPERA.") {
     }
     paused = false;
     inputs.clear();
-    combat.fighters.forEach((f) => (f.previous = { ...inputs.frame(0) }));
+    combat.fighters.forEach((f) => (f.previous = idle()));
     inputs.suspended = false;
     setOverlay("");
   });
