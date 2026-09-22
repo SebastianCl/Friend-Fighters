@@ -253,6 +253,9 @@ export function makeArena(hooks: ArenaHooks) {
           o.setVisible(show),
         );
         this.game.canvas.dataset[`p${i + 1}Stance`] = f.stance;
+        this.game.canvas.dataset[`p${i + 1}HitStun`] = String(f.hitStun);
+        this.game.canvas.dataset[`p${i + 1}AttackPhase`] =
+          attackPhase(f) ?? "none";
         this.game.canvas.dataset[`p${i + 1}GuardStun`] = String(f.guardStun);
         this.game.canvas.dataset[`p${i + 1}Y`] = String(f.y);
         this.game.canvas.dataset[`p${i + 1}Animation`] = key;

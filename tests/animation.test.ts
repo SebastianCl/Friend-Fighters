@@ -7,6 +7,7 @@ describe("animaciones sincronizadas con el combate", () => {
     const c = new Combat();
     const f = c.fighters[0];
     f.attack = {
+      id: 1,
       kind: "punch",
       frame: 1,
       hit: false,
@@ -32,6 +33,7 @@ describe("animaciones sincronizadas con el combate", () => {
       ["special", "low-special", "special-hit"],
     ] as const) {
       f.attack = {
+        id: 1,
         kind,
         frame: moves[kind].startup + 1,
         hit: false,

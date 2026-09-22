@@ -512,3 +512,16 @@
   background: #120c35 url("/art/visual-v1/neon-street.png") center / cover
     no-repeat;
 }
+
+.combo-counter {
+  margin-top: 12px;
+  color: #78edff;
+  font-size: 28px;
+  font-weight: 900;
+  text-shadow: 2px 2px 0 #100726;
+  letter-spacing: 2px;
+}
+.player-two .combo-counter {
+  color: #ff85e1;
+  text-align: right;
+}

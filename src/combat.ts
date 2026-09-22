@@ -76,7 +76,9 @@ export interface Move {
   active: number;
   recovery: number;
   reach: number;
-  stun: number;
+  hitStun: number;
+  /** Optional shorter continuation window; never extends hit stun. */
+  comboWindowFrames?: number;
   push: number;
   cooldown: number;
 }
@@ -111,7 +113,7 @@ export const moves: MoveSetDefinition = {
     active: 4,
     recovery: 13,
     reach: 84,
-    stun: 14,
+    hitStun: 30,
     push: 7,
     cooldown: 0,
   },
@@ -131,7 +133,7 @@ export const moves: MoveSetDefinition = {
     active: 5,
     recovery: 19,
     reach: 114,
-    stun: 20,
+    hitStun: 44,
     push: 12,
     cooldown: 0,
   },
@@ -151,7 +153,7 @@ export const moves: MoveSetDefinition = {
     active: 7,
     recovery: 30,
     reach: 120,
-    stun: 26,
+    hitStun: 26,
     push: 22,
     cooldown: 180,
   },
@@ -179,10 +181,11 @@ export interface Fighter {
   facing: 1 | -1;
   pose: Pose;
   cooldown: number;
-  stun: number;
+  hitStun: number;
   guardStun: number;
   stance: Stance;
   attack: null | {
+    id: number;
     kind: keyof MoveSetDefinition;
     frame: number;
     hit: boolean;
@@ -191,7 +194,30 @@ export interface Fighter {
   };
   previous: InputFrame;
 }
+export interface ComboState {
+  id: number;
+  defender: number;
+  hits: number;
+  remaining: number;
+  active: boolean;
+  displayHits: number;
+  displayFrames: number;
+}
+export const comboDisplayFrames = 60;
+const makeCombo = (defender: number): ComboState => ({
+  id: 0,
+  defender,
+  hits: 0,
+  remaining: 0,
+  active: false,
+  displayHits: 0,
+  displayFrames: 0,
+});
+
 export interface Hit {
+  attacker: number;
+  defender: number;
+  attackId: number;
   x: number;
   y: number;
   blocked: boolean;
@@ -201,7 +227,7 @@ export interface Hit {
 export function guardFor(
   f: Fighter,
   input: InputFrame,
-  hitStunned = f.stun > 0,
+  hitStunned = f.hitStun > 0,
 ): Stance | null {
   if (
     f.hp <= 0 ||
@@ -223,7 +249,7 @@ export function resolveContact(move: Move, hp: number, guard: Stance | null) {
   return {
     blocked,
     hp: Math.max(minimum, hp - (blocked ? move.chipDamage : move.damage)),
-    hitStun: blocked ? 0 : move.stun,
+    hitStun: blocked ? 0 : move.hitStun,
     guardStun: blocked ? move.guardStunFrames : 0,
     push: blocked ? move.push / 2 : move.push,
   };
@@ -236,7 +262,7 @@ const makeFighter = (x: number, facing: 1 | -1): Fighter => ({
   facing,
   pose: "idle",
   cooldown: 0,
-  stun: 0,
+  hitStun: 0,
   guardStun: 0,
   stance: "standing",
   attack: null,
@@ -255,11 +281,45 @@ export class Combat {
   roundWinner = -1;
   message = "";
   hits: Hit[] = [];
+  combos: [ComboState, ComboState] = [makeCombo(1), makeCombo(0)];
+  private nextAttackId = 1;
+  private nextComboId = 1;
+
+  clearCombos() {
+    this.combos = [makeCombo(1), makeCombo(0)];
+  }
+  private endCombo(i: number) {
+    const combo = this.combos[i];
+    if (!combo.active) return;
+    combo.active = false;
+    combo.remaining = 0;
+    if (combo.hits >= 2) combo.displayFrames = comboDisplayFrames;
+  }
+  private registerComboHit(i: number, move: Move, continues: boolean) {
+    const combo = this.combos[i];
+    if (!continues) {
+      this.endCombo(i);
+      combo.id = this.nextComboId++;
+      combo.defender = 1 - i;
+      combo.hits = 0;
+    }
+    combo.active = true;
+    combo.hits++;
+    combo.remaining = Math.max(
+      0,
+      Math.min(move.hitStun, move.comboWindowFrames ?? move.hitStun),
+    );
+    if (combo.hits >= 2) {
+      combo.displayHits = combo.hits;
+      combo.displayFrames = 0;
+    }
+  }
   constructor(
     public practice = false,
     public moveSet: MoveSetDefinition = moves,
   ) {}
   resetPositions() {
+    this.clearCombos();
     this.fighters = [
       makeFighter(combatSpace.startX[0], 1),
       makeFighter(combatSpace.startX[1], -1),
@@ -271,6 +331,10 @@ export class Combat {
   }
   step(inputs: [InputFrame, InputFrame]) {
     this.hits = [];
+    for (const combo of this.combos) {
+      if (combo.displayFrames > 0 && --combo.displayFrames === 0)
+        combo.displayHits = 0;
+    }
     if (this.phase !== "fight") {
       if (this.phase === "round" && --this.transition <= 0) {
         this.resetPositions();
@@ -278,23 +342,36 @@ export class Combat {
       }
       return;
     }
-    const wasStunned = this.fighters.map((f) => f.stun > 0);
+    const wasStunned = this.fighters.map((f) => f.hitStun > 0);
+    // Eligibility belongs to the start of the tick, just like guard eligibility.
+    const continues = this.combos.map(
+      (combo, i) =>
+        combo.active &&
+        combo.defender === 1 - i &&
+        combo.remaining > 0 &&
+        wasStunned[1 - i] &&
+        this.fighters[1 - i].hp > 0,
+    );
+    this.combos.forEach((combo, i) => {
+      if (!continues[i]) this.endCombo(i);
+      if (combo.active) combo.remaining--;
+    });
     for (let i = 0; i < 2; i++) {
       const f = this.fighters[i],
         opponent = this.fighters[1 - i],
         input = inputs[i];
       f.cooldown = Math.max(0, f.cooldown - 1);
-      if (!f.attack && f.stun === 0) f.facing = opponent.x >= f.x ? 1 : -1;
+      if (!f.attack && f.hitStun === 0) f.facing = opponent.x >= f.x ? 1 : -1;
       if (f.hp <= 0) {
         f.pose = "fall";
-        f.stun = f.guardStun = 0;
+        f.hitStun = f.guardStun = 0;
         f.stance = "standing";
         f.attack = null;
         f.previous = { ...input };
         continue;
       }
-      if (f.stun > 0) {
-        f.stun--;
+      if (f.hitStun > 0) {
+        f.hitStun--;
       } else if (f.guardStun > 0) {
         f.guardStun--;
         f.stance = input.down ? "crouching" : "standing";
@@ -319,6 +396,7 @@ export class Combat {
           const move = resolveMove(this.moveSet[kind], context);
           if (move.cooldown === 0 || f.cooldown === 0) {
             f.attack = {
+              id: this.nextAttackId++,
               kind,
               frame: 0,
               hit: false,
@@ -367,6 +445,8 @@ export class Combat {
       result: ReturnType<typeof resolveContact>;
       special: boolean;
       hitY: number;
+      attackId: number;
+      move: Move;
     }[] = [];
     this.fighters.forEach((f, i) => {
       const attack = f.attack;
@@ -392,6 +472,8 @@ export class Combat {
           result: resolveContact(move, target.hp, guards[1 - i]),
           special: attack.kind === "special",
           hitY: attackY,
+          attackId: attack.id,
+          move,
         });
         attack.hit = true;
       }
@@ -401,16 +483,17 @@ export class Combat {
         f.pose = f.y > 0 ? "jump" : "idle";
       }
     });
-    for (const { i, result, special, hitY } of contacts) {
+    for (const { i, result, special, hitY, attackId, move } of contacts) {
       const f = this.fighters[i],
         t = this.fighters[1 - i];
       const { blocked } = result;
+      if (!blocked) this.registerComboHit(i, move, continues[i]);
       t.hp = result.hp;
-      t.stun = result.hitStun;
+      t.hitStun = result.hitStun;
       t.guardStun = blocked ? Math.max(t.guardStun, result.guardStun) : 0;
       t.pose = t.hp === 0 ? "fall" : blocked ? "block" : "hurt";
       if (t.hp === 0) {
-        t.stun = t.guardStun = 0;
+        t.hitStun = t.guardStun = 0;
         t.stance = "standing";
       }
       t.attack = null;
@@ -419,17 +502,33 @@ export class Combat {
         Math.min(combatSpace.maxX, t.x + f.facing * result.push),
       );
       this.hits.push({
+        attacker: i,
+        defender: 1 - i,
+        attackId,
         x: t.x - f.facing * combatSpace.bodyHalfWidth,
         y: hitY,
         blocked,
         special,
       });
     }
+    // Resolve interruptions only after both contacts have been credited.
+    this.combos.forEach((combo, i) => {
+      if (
+        combo.remaining <= 0 ||
+        this.fighters[1 - i].hitStun === 0 ||
+        this.fighters.some((f) => f.hp === 0) ||
+        contacts.some(
+          (contact) => contact.i === 1 - i && !contact.result.blocked,
+        )
+      ) {
+        this.endCombo(i);
+      }
+    });
     if (this.practice) {
       this.fighters.forEach((f) => {
         if (f.hp === 0) {
           f.hp = 100;
-          f.stun = f.guardStun = 0;
+          f.hitStun = f.guardStun = 0;
           f.stance = "standing";
           f.attack = null;
           f.pose = "idle";
@@ -439,6 +538,7 @@ export class Combat {
     }
     this.ticks = Math.max(0, this.ticks - 1);
     if (a.hp === 0 || b.hp === 0 || this.ticks === 0) {
+      this.combos.forEach((_, i) => this.endCombo(i));
       const winner = a.hp === b.hp ? -1 : a.hp > b.hp ? 0 : 1;
       this.roundWinner = winner;
       if (winner >= 0) this.wins[winner]++;

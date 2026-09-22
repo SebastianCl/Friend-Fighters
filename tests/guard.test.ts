@@ -25,6 +25,7 @@ function setup(defender = 1, reversed = false) {
 function contact(c: Combat, attacker: number, move: Move, input = idle()) {
   const f = c.fighters[attacker];
   f.attack = {
+    id: 1,
     kind: "punch",
     frame: move.startup,
     hit: false,
@@ -66,7 +67,7 @@ describe.each([0, 1])("defensor P%i", (defender) => {
           expect(c.hits[0].blocked).toBe(blocked);
           expect(target.hp).toBe(blocked ? 100 : 89);
           expect(target.guardStun).toBe(blocked ? 12 : 0);
-          expect(target.stun).toBe(blocked ? 0 : 20);
+          expect(target.hitStun).toBe(blocked ? 0 : moves.kick.hitStun);
         },
       );
     }
@@ -92,9 +93,10 @@ describe.each([0, 1])("defensor P%i", (defender) => {
         const { c, target, attacker } = setup(defender, reversed);
         const input = invalid === "no-block" ? idle() : frame({ block: true });
         if (invalid === "air") target.y = 10;
-        if (invalid === "hit-stun") target.stun = 1;
+        if (invalid === "hit-stun") target.hitStun = 1;
         if (invalid === "recovery")
           target.attack = {
+            id: 2,
             kind: "punch",
             crouched: false,
             hit: true,
@@ -154,7 +156,7 @@ describe("chip y configuración", () => {
     );
     expect(target.hp).toBe(0);
     expect(target.pose).toBe("fall");
-    expect(target.stun).toBe(0);
+    expect(target.hitStun).toBe(0);
     expect(target.guardStun).toBe(0);
     expect(c.phase).toBe("round");
   });
@@ -252,7 +254,7 @@ describe("guard stun", () => {
     contact(c, attacker, testMove("mid"), idle());
     expect(target.hp).toBe(89);
     expect(target.guardStun).toBe(0);
-    expect(target.stun).toBe(20);
+    expect(target.hitStun).toBe(moves.kick.hitStun);
   });
   it("mantiene cuerpo agachado durante bloqueo y evade altos posteriores", () => {
     const { c, target, attacker } = setup();
@@ -263,7 +265,7 @@ describe("guard stun", () => {
     expect(target.hp).toBe(100);
     expect(target.guardStun).toBe(11);
   });
-  it("guardia equivocada durante stun recibe daño normal", () => {
+  it("guardia equivocada durante guard stun recibe daño normal", () => {
     const { c, target, attacker } = setup();
     contact(c, attacker, testMove("mid"), frame({ block: true }));
     contact(c, attacker, testMove("low"), frame({ block: true }));

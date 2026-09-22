@@ -147,6 +147,7 @@ function setOverlay(html: string) {
   overlay.classList.toggle("empty", !html);
 }
 function menu() {
+  combat.clearCombos();
   screen = "menu";
   paused = false;
   inputs.suspended = true;
@@ -158,7 +159,7 @@ function menu() {
   document.getElementById("mode-label")!.innerHTML =
     "VERSUS LOCAL / DISTRITO NEÓN";
   setOverlay(
-    `<div class="menu-panel"><div class="mini-label"><span></span> VOL. 02 / DISTRITO NEÓN</div><h1>FRIENDS<br><em>FIGHTERS</em></h1><p>La misma amistad.<br>Una nueva rivalidad.</p><button class="primary" id="versus" data-requires-assets ${assetsReady ? "" : "disabled"}>JUGAR VERSUS <span>↗</span></button><button class="secondary" id="practice" data-requires-assets ${assetsReady ? "" : "disabled"}>ENTRAR A PRÁCTICA <span>→</span></button><small>2 JUGADORES LOCALES · TECLADO O MANDOS</small></div><div class="menu-character"><span>PERSONAJE 01</span><strong>LUCHADORA 01</strong><small>EL PRIMER ROUND EMPIEZA CONTIGO.</small></div>`,
+    `<div class="menu-panel"><div class="mini-label"><span></span> VOL. 02 / DISTRITO NEÓN</div><h1>FRIEND<br><em>FIGHTERS</em></h1><p>La misma amistad.<br>Una nueva rivalidad.</p><button class="primary" id="versus" data-requires-assets ${assetsReady ? "" : "disabled"}>JUGAR VERSUS <span>↗</span></button><button class="secondary" id="practice" data-requires-assets ${assetsReady ? "" : "disabled"}>ENTRAR A PRÁCTICA <span>→</span></button><small>2 JUGADORES LOCALES · TECLADO O MANDOS</small></div><div class="menu-character"><span>PERSONAJE 01</span><strong>LUCHADORA 01</strong><small>EL PRIMER ROUND EMPIEZA CONTIGO.</small></div>`,
   );
   btn("versus", () => select(false));
   btn("practice", () => select(true));
@@ -231,7 +232,7 @@ function start() {
 }
 let lastHud = "";
 function updateHud() {
-  const markup = `<div class="health-row">${[0, 1].map((i) => `${i === 1 ? `<div class="timer round-clock"><span>${practice ? "PRÁCTICA" : `ROUND ${combat.round}`}</span><strong>${practice ? "∞" : Math.ceil(combat.ticks / 60)}</strong><b>VS</b></div>` : ""}<div class="health player-${i} ${i === 0 ? "player-one" : "player-two"}"><div class="name-row"><span class="player-number">P${i + 1}</span><h2>${fighters[chosen[i]].name}</h2><span class="round-pips" aria-label="${combat.wins[i]} rounds ganados">${"◆".repeat(combat.wins[i])}${"◇".repeat(2 - combat.wins[i])}</span></div><div class="health-track life-frame" role="progressbar" aria-label="Vida jugador ${i + 1}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${combat.fighters[i].hp}"><i class="life-fill" style="width:${combat.fighters[i].hp}%"></i></div><div class="meter-row"><div class="special-track energy-frame"><i style="width:${100 - (combat.fighters[i].cooldown / 180) * 100}%"></i></div><span>ESPECIAL ${combat.fighters[i].cooldown === 0 ? "LISTO" : "RECARGANDO"}</span></div></div>`).join("")}</div>${combat.phase === "round" ? `<div class="round-message">${combat.message}<small>SIGUIENTE ROUND</small></div>` : ""}`;
+  const markup = `<div class="health-row">${[0, 1].map((i) => `${i === 1 ? `<div class="timer round-clock"><span>${practice ? "PRÁCTICA" : `ROUND ${combat.round}`}</span><strong>${practice ? "∞" : Math.ceil(combat.ticks / 60)}</strong><b>VS</b></div>` : ""}<div class="health player-${i} ${i === 0 ? "player-one" : "player-two"}"><div class="name-row"><span class="player-number">P${i + 1}</span><h2>${fighters[chosen[i]].name}</h2><span class="round-pips" aria-label="${combat.wins[i]} rounds ganados">${"◆".repeat(combat.wins[i])}${"◇".repeat(2 - combat.wins[i])}</span></div><div class="health-track life-frame" role="progressbar" aria-label="Vida jugador ${i + 1}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${combat.fighters[i].hp}"><i class="life-fill" style="width:${combat.fighters[i].hp}%"></i></div><div class="meter-row"><div class="special-track energy-frame"><i style="width:${100 - (combat.fighters[i].cooldown / 180) * 100}%"></i></div><span>ESPECIAL ${combat.fighters[i].cooldown === 0 ? "LISTO" : "RECARGANDO"}</span></div><div class="combo-counter" aria-label="Combo jugador ${i + 1}" ${combat.combos[i].displayHits < 2 ? "hidden" : ""}>${combat.combos[i].displayHits} HITS</div></div>`).join("")}</div>${combat.phase === "round" ? `<div class="round-message">${combat.message}<small>SIGUIENTE ROUND</small></div>` : ""}`;
   if (markup !== lastHud) {
     hud.innerHTML = markup;
     lastHud = markup;
@@ -266,6 +267,8 @@ function pause(reason = "RESPIRA. LA RIVALIDAD ESPERA.") {
   btn("pause-controls", showControls);
 }
 function showResult() {
+  combat.clearCombos();
+  updateHud();
   screen = "result";
   inputs.suspended = true;
   inputs.clear();
