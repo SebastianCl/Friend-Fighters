@@ -51,6 +51,7 @@ export class VisualEffectsManager {
     effect.position = position;
     effect.elapsed = 0;
     config.create(effect, this._scene);
+    effect.graphics?.setPosition(position.x, position.y).setDepth(7);
 
     this._active.push(effect);
     return effect;
@@ -60,6 +61,7 @@ export class VisualEffectsManager {
     for (let i = this._active.length - 1; i >= 0; i--) {
       const effect = this._active[i];
       effect.update(delta);
+      this._typeConfigs.get(effect.type)?.update?.(effect, delta);
 
       if (effect.isDone) {
         effect.destroy();

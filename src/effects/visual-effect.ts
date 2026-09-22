@@ -1,7 +1,7 @@
 export class VisualEffect {
   type!: string;
   position!: { x: number; y: number };
-  graphics!: Phaser.GameObjects.Graphics;
+  graphics?: Phaser.GameObjects.Graphics;
   ttl: number;
   elapsed: number = 0;
 
@@ -24,7 +24,7 @@ export class VisualEffect {
   destroy(): void {
     if (this.graphics) {
       this.graphics.destroy();
-      this.graphics = undefined as any;
+      this.graphics = undefined;
     }
   }
 }

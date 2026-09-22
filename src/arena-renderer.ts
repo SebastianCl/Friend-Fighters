@@ -7,6 +7,7 @@ import {
   type AnimationRegion,
 } from "./animation";
 import { type Combat, type Hit } from "./combat";
+import { cameraShakeForHit } from "./effects/camera-shake";
 import { visualFighter, visualStage } from "./visual-assets";
 
 interface FrameArt extends AnimationRegion {
@@ -21,7 +22,7 @@ export interface ArenaState {
 interface ArenaHooks {
   state: () => ArenaState;
   advance: (delta: number) => void;
-  ready: () => void;
+  ready: (scene: Phaser.Scene) => void;
   error: () => void;
 }
 export const presentation = {
@@ -151,7 +152,7 @@ export function makeArena(hooks: ArenaHooks) {
         );
         this.game.canvas.dataset.cameraZoom = "1.000";
         this.game.canvas.dataset.ready = "true";
-        hooks.ready();
+        hooks.ready(this);
       } catch (error) {
         console.error(error);
         this.loadFailed = true;
@@ -180,16 +181,16 @@ export function makeArena(hooks: ArenaHooks) {
           ring.destroy();
         },
       });
-      if (!hit.blocked)
-        this.cameras.main.shake(
-          hit.special ? 100 : 45,
-          hit.special ? 0.003 : 0.001,
-        );
+      const shake = cameraShakeForHit(hit);
+      if (shake) this.cameras.main.shake(shake.duration, shake.intensity, true);
     }
     update(_time: number, delta: number) {
       if (this.loadFailed || !this.energy) return;
       hooks.advance(Math.min(delta, 100));
       const state = hooks.state();
+      this.game.canvas.dataset.cameraShakeActive = String(
+        this.cameras.main.shakeEffect.isRunning,
+      );
       if (!state.paused) this.clock += Math.min(delta, 100) * 0.06;
       this.tweens.timeScale = state.paused ? 0 : 1;
       this.energy.clear();

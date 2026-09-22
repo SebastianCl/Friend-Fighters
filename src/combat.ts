@@ -218,6 +218,7 @@ export interface Hit {
   attacker: number;
   defender: number;
   attackId: number;
+  attackKind: keyof MoveSetDefinition;
   x: number;
   y: number;
   blocked: boolean;
@@ -453,6 +454,7 @@ export class Combat {
       special: boolean;
       hitY: number;
       attackId: number;
+      attackKind: keyof MoveSetDefinition;
       move: Move;
     }[] = [];
     this.fighters.forEach((f, i) => {
@@ -480,6 +482,7 @@ export class Combat {
           special: attack.kind === "special",
           hitY: attackY,
           attackId: attack.id,
+          attackKind: attack.kind,
           move,
         });
         attack.hit = true;
@@ -490,7 +493,15 @@ export class Combat {
         f.pose = f.y > 0 ? "jump" : "idle";
       }
     });
-    for (const { i, result, special, hitY, attackId, move } of contacts) {
+    for (const {
+      i,
+      result,
+      special,
+      hitY,
+      attackId,
+      attackKind,
+      move,
+    } of contacts) {
       const f = this.fighters[i],
         t = this.fighters[1 - i];
       const { blocked } = result;
@@ -512,6 +523,7 @@ export class Combat {
         attacker: i,
         defender: 1 - i,
         attackId,
+        attackKind,
         x: t.x - f.facing * combatSpace.bodyHalfWidth,
         y: hitY,
         blocked,
