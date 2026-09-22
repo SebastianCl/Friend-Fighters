@@ -1,4 +1,4 @@
-# Fighter Friends · Combate neón
+# Friend Fighters · Combate neón
 
 La dirección visual aprobada ya está integrada en `/`, con versus local y práctica. `/visual-preview.html` conserva la prueba estática como referencia artística.
 
