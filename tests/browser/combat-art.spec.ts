@@ -100,6 +100,7 @@ test("nuevas ilustraciones listas, sin poses vacías ni recortes en sus límites
       {};
     for (const [sheet, url] of [
       ["guard", "/art/visual-v1/fighter-guard.png"],
+      ["breathe", "/art/combat-v2/laura-idle-breathe.png"],
       ["motion", "/art/combat-v2/movement-sheet.png"],
       ["air", "/art/combat-v2/air-sheet-v2.png"],
     ]) {
@@ -135,6 +136,92 @@ test("nuevas ilustraciones listas, sin poses vacías ni recortes en sus límites
     expect(frame.count, frame.key).toBeGreaterThan(1500);
     expect(frame.edge, `${frame.key} toca el borde`).toBe(0);
   }
+});
+
+test("Laura respira en guardia sin saltar de tamaño ni mover los pies", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await expect(page.locator("#app")).toHaveAttribute("data-ready", "true");
+  const frames = await page.evaluate(async () => {
+    const sources = [
+      "/art/visual-v1/fighter-guard.png",
+      "/art/combat-v2/laura-idle-breathe.png",
+    ];
+    return Promise.all(
+      sources.map(async (source) => {
+        const image = new Image();
+        image.src = source;
+        await image.decode();
+        const canvas = document.createElement("canvas");
+        canvas.width = image.naturalWidth;
+        canvas.height = image.naturalHeight;
+        const context = canvas.getContext("2d")!;
+        context.drawImage(image, 0, 0);
+        const pixels = context.getImageData(
+          0,
+          0,
+          canvas.width,
+          canvas.height,
+        ).data;
+        let left = canvas.width,
+          top = canvas.height,
+          right = 0,
+          bottom = 0,
+          transparent = 0,
+          edge = 0;
+        for (let y = 0; y < canvas.height; y++)
+          for (let x = 0; x < canvas.width; x++) {
+            const alpha = pixels[(y * canvas.width + x) * 4 + 3];
+            if (alpha === 0) transparent++;
+            if (alpha > 128) {
+              left = Math.min(left, x);
+              top = Math.min(top, y);
+              right = Math.max(right, x + 1);
+              bottom = Math.max(bottom, y + 1);
+              if (
+                x === 0 ||
+                y === 0 ||
+                x === canvas.width - 1 ||
+                y === canvas.height - 1
+              )
+                edge++;
+            }
+          }
+        return {
+          width: canvas.width,
+          height: canvas.height,
+          bounds: { left, top, right, bottom },
+          transparent,
+          edge,
+        };
+      }),
+    );
+  });
+
+  expect(frames[0].width).toBe(1024);
+  expect(frames[1].width).toBe(1024);
+  expect(frames[0].height).toBe(1536);
+  expect(frames[1].height).toBe(1536);
+  for (const frame of frames) {
+    expect(frame.transparent).toBeGreaterThan(1024 * 1536 * 0.5);
+    expect(frame.edge).toBe(0);
+  }
+  expect(
+    Math.abs(frames[0].bounds.bottom - frames[1].bounds.bottom),
+  ).toBeLessThanOrEqual(8);
+  expect(
+    Math.abs(frames[0].bounds.top - frames[1].bounds.top),
+  ).toBeLessThanOrEqual(8);
+
+  await page.getByRole("button", { name: "ENTRAR A PRÁCTICA" }).click();
+  await page.getByRole("button", { name: "PRACTICAR", exact: false }).click();
+  const canvas = page.locator("canvas");
+  await expect(canvas).toHaveAttribute("data-p1-character", "laura");
+  await expect(canvas).toHaveAttribute("data-p1-animation", "breathe", {
+    timeout: 3000,
+  });
+  await expect(canvas).toHaveAttribute("data-p1-rendered-height", "420.000");
 });
 
 test("cada jugador conserva su tamaño al saltar, caminar y atacar", async ({

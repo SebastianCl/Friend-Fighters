@@ -100,7 +100,7 @@ export function makeArena(hooks: ArenaHooks) {
             VisualSheetKey,
             { data: Uint8ClampedArray; width: number }
           >();
-          for (const sheet of ["guard", "motion", "air"] as const) {
+          for (const sheet of ["guard", "breathe", "motion", "air"] as const) {
             const img = this.textures
               .get(`${character.id}-${sheet}`)
               .getSourceImage() as HTMLImageElement;

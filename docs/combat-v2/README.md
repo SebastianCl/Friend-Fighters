@@ -8,6 +8,7 @@ Se conservaron el escenario, el sprite de guardia y el retrato de `public/art/vi
 
 - `public/art/combat-v2/movement-sheet.png`: caminar (dos pasos), ascenso y descenso del salto, agacharse, bloqueo, reacción al daño, caída, anticipación e impacto de puño/patada/especial, puño y patada agachados.
 - `public/art/combat-v2/air-sheet-v2.png`: guardia alternativa de respiración, puño aéreo, patada aérea y especial agachado.
+- `public/art/combat-v2/laura-idle-breathe.png`: segunda guardia de Laura, derivada de su sprite principal con una relajación leve de hombros y brazos. Sustituye la pose de respiración de la hoja aérea durante el reposo para conservar escala, trazo y apoyo de pies.
 
 Ambas hojas tienen 1254 × 1254 píxeles y transparencia real. Los prompts originales están en `animation-prompt.md` y `supplement-prompt.md`. Las imágenes se copiaron del resultado de image_gen sin reemplazar el dibujo por figuras programáticas.
 

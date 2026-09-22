@@ -24,9 +24,10 @@ import {
   hitCue,
   type SoundCue,
 } from "./audio";
+import { MusicPlayer } from "./music";
 
 const app = document.querySelector<HTMLDivElement>("#app")!;
-app.innerHTML = `<div class="game-viewport"><section class="arena arcade-stage"><div id="game"></div><header class="arena-header"><a class="arcade-brand brand" href="#" aria-label="Menú principal"><span class="brand-icon">FF</span> FRIEND <b>FIGHTERS</b></a><p class="edition"><span></span> DISTRITO NEÓN <i>/</i> VOL. 02</p><div class="header-actions"><button id="sound" aria-label="Silenciar sonido">SONIDO ON</button><button id="fullscreen" aria-label="Pantalla completa" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 2H2v5M13 2h5v5M18 13v5h-5M7 18H2v-5"/></svg></button></div></header><div id="hud" hidden></div><div id="overlay"></div><footer class="arena-toolbar game-toolbar"><span id="mode-label">VERSUS LOCAL / EDICIÓN NEÓN</span><div id="fight-tools" hidden><button id="pause-button">Ⅱ PAUSA</button><button id="reset-practice" hidden>↺ REINICIAR PRÁCTICA</button></div><nav><button id="controls-top">GUÍA DE CONTROLES</button><a class="visual-preview-link" href="/visual-preview.html">NUEVO ESTILO VISUAL ↗</a></nav></footer></section></div><p id="asset-status" class="asset-status" role="status">Cargando la arena y las animaciones…</p><p id="fullscreen-status" class="sr-only" role="status"></p><dialog id="controls-dialog" aria-labelledby="controls-title"></dialog>`;
+app.innerHTML = `<div class="game-viewport"><section class="arena arcade-stage"><div id="game"></div><header class="arena-header"><a class="arcade-brand brand" href="#" aria-label="Menú principal"><span class="brand-icon">FF</span> FRIEND <b>FIGHTERS</b></a><p class="edition"><span></span> DISTRITO NEÓN <i>/</i> VOL. 02</p><div class="header-actions"><button id="sound" aria-label="Silenciar sonido">SONIDO ON</button><button id="music" aria-label="Silenciar música" aria-pressed="true">MÚSICA ON</button><button id="fullscreen" aria-label="Pantalla completa" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 2H2v5M13 2h5v5M18 13v5h-5M7 18H2v-5"/></svg></button></div></header><div id="hud" hidden></div><div id="overlay"></div><footer class="arena-toolbar game-toolbar"><span id="mode-label">VERSUS LOCAL / EDICIÓN NEÓN</span><div id="fight-tools" hidden><button id="pause-button">Ⅱ PAUSA</button><button id="reset-practice" hidden>↺ REINICIAR PRÁCTICA</button></div><nav><button id="controls-top">GUÍA DE CONTROLES</button><a class="visual-preview-link" href="/visual-preview.html">NUEVO ESTILO VISUAL ↗</a></nav></footer></section></div><p id="asset-status" class="asset-status" role="status">Cargando la arena y las animaciones…</p><p id="fullscreen-status" class="sr-only" role="status"></p><dialog id="controls-dialog" aria-labelledby="controls-title"></dialog>`;
 let assetsReady = false;
 const stage = document.querySelector<HTMLElement>(".arcade-stage")!;
 const viewport = document.querySelector<HTMLElement>(".game-viewport")!;
@@ -46,10 +47,21 @@ let combat = new Combat(),
   practice = false,
   accumulator = 0;
 let muted = false;
+let musicMuted = false;
 try {
   muted = localStorage.getItem("ff-muted") === "true";
+  musicMuted = localStorage.getItem("ff-music-muted") === "true";
 } catch {}
 const sounds = new SoundEffects(muted);
+const music = new MusicPlayer(musicMuted);
+app.addEventListener("pointerdown", () => music.unlock(), {
+  once: true,
+  capture: true,
+});
+window.addEventListener("keydown", () => music.unlock(), {
+  once: true,
+  capture: true,
+});
 function btn(id: string, fn: () => void, cue: SoundCue | null = "ui-confirm") {
   document.getElementById(id)!.onclick = () => {
     if (cue) sounds.play(cue);
@@ -66,6 +78,28 @@ function soundLabel() {
   button.setAttribute("aria-pressed", String(!muted));
 }
 soundLabel();
+function musicLabel() {
+  const button = document.getElementById("music")!;
+  button.textContent = `MÚSICA ${musicMuted ? "OFF" : "ON"}`;
+  button.setAttribute(
+    "aria-label",
+    musicMuted ? "Activar música" : "Silenciar música",
+  );
+  button.setAttribute("aria-pressed", String(!musicMuted));
+}
+musicLabel();
+btn(
+  "music",
+  () => {
+    musicMuted = !musicMuted;
+    music.setMuted(musicMuted);
+    try {
+      localStorage.setItem("ff-music-muted", String(musicMuted));
+    } catch {}
+    musicLabel();
+  },
+  null,
+);
 btn(
   "sound",
   () => {
@@ -275,6 +309,8 @@ function menu() {
   combat.clearCombos();
   screen = "menu";
   paused = false;
+  music.setPaused(false);
+  music.setTheme("menu");
   inputs.suspended = true;
   inputs.clear();
   combat = new Combat();
@@ -292,6 +328,8 @@ function menu() {
 function select(mode: boolean) {
   practice = mode;
   screen = "select";
+  music.setPaused(false);
+  music.setTheme("menu");
   inputs.suspended = true;
   hud.hidden = true;
   fightTools.hidden = true;
@@ -362,6 +400,8 @@ function start() {
   combat = new Combat(practice);
   screen = "fight";
   paused = false;
+  music.setPaused(false);
+  music.setTheme("fight");
   accumulator = 0;
   inputs.clear();
   inputs.suspended = false;
@@ -387,6 +427,7 @@ function pause(reason = "RESPIRA. LA RIVALIDAD ESPERA.") {
   if (screen !== "fight" || paused) return;
   sounds.play("pause");
   paused = true;
+  music.setPaused(true);
   inputs.suspended = true;
   inputs.clear();
   accumulator = 0;
@@ -407,6 +448,7 @@ function pause(reason = "RESPIRA. LA RIVALIDAD ESPERA.") {
         return;
       }
       paused = false;
+      music.setPaused(false);
       inputs.clear();
       combat.fighters.forEach((f) => (f.previous = idle()));
       inputs.suspended = false;
@@ -422,6 +464,8 @@ function showResult() {
   combat.clearCombos();
   updateHud();
   screen = "result";
+  music.setPaused(false);
+  music.setTheme("result");
   inputs.suspended = true;
   inputs.clear();
   fightTools.hidden = true;

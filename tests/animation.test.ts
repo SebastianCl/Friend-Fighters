@@ -61,8 +61,9 @@ describe("animaciones sincronizadas con el combate", () => {
   it("tiene regiones válidas para todas las poses nuevas", () => {
     expect(new Set(animationRegions.map((r) => r.key)).size).toBe(21);
     for (const r of animationRegions) {
-      const w = r.sheet === "guard" ? 1024 : 1254,
-        h = r.sheet === "guard" ? 1536 : 1254;
+      const fullBody = r.sheet === "guard" || r.sheet === "breathe";
+      const w = fullBody ? 1024 : 1254,
+        h = fullBody ? 1536 : 1254;
       expect(r.x + r.width).toBeLessThanOrEqual(w);
       expect(r.y + r.height).toBeLessThanOrEqual(h);
       expect(r.anchorX).toBeGreaterThan(0);

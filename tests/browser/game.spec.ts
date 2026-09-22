@@ -20,6 +20,38 @@ test("el control de sonido se guarda y restaura", async ({ page }) => {
     .toBe("false");
 });
 
+test("música y efectos conservan preferencias independientes", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto("/");
+  const music = page.locator("#music");
+  const sound = page.locator("#sound");
+  await expect(music).toHaveText("MÚSICA ON");
+  await expect(music).toHaveAttribute("aria-label", "Silenciar música");
+  await music.click();
+  await expect(music).toHaveText("MÚSICA OFF");
+  await expect(sound).toContainText("SONIDO ON");
+  await expect
+    .poll(() => page.evaluate(() => localStorage.getItem("ff-music-muted")))
+    .toBe("true");
+  await page.reload();
+  await expect(music).toHaveText("MÚSICA OFF");
+  await sound.click();
+  await expect(music).toHaveText("MÚSICA OFF");
+  await music.click();
+  await expect(music).toHaveText("MÚSICA ON");
+  await expect(sound).toContainText("SONIDO OFF");
+  await page.getByRole("button", { name: "ENTRAR A PRÁCTICA" }).click();
+  await page.getByRole("button", { name: "PRACTICAR", exact: false }).click();
+  await page.keyboard.press("Escape");
+  await expect(page.locator(".pause-panel")).toBeVisible();
+  await page.getByRole("button", { name: "VOLVER AL COMBATE" }).click();
+  await page.keyboard.press("Escape");
+  await page.getByRole("button", { name: "SALIR AL MENÚ" }).click();
+  await expect(page.getByRole("button", { name: "JUGAR VERSUS" })).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
 test("inicio, selección, controles guardados, práctica, pausa y reinicio", async ({
   page,
 }) => {

@@ -23,7 +23,7 @@ export type AnimationKey =
   | "low-special";
 export interface AnimationRegion {
   key: AnimationKey;
-  sheet: "motion" | "air" | "guard";
+  sheet: "motion" | "air" | "guard" | "breathe";
   x: number;
   y: number;
   width: number;
@@ -205,13 +205,13 @@ export const animationRegions: AnimationRegion[] = [
   },
   {
     key: "breathe",
-    sheet: "air",
+    sheet: "breathe",
     x: 0,
     y: 0,
-    width: 627,
-    height: 627,
-    anchorX: 320,
-    referenceHeight: 434,
+    width: 1024,
+    height: 1536,
+    anchorX: 512,
+    referenceHeight: 1388,
   },
   {
     key: "air-punch",

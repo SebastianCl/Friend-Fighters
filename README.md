@@ -45,6 +45,7 @@ npm run preview
 - Mandos estándar: cruceta/stick para moverse; A/✕ para puño, B/○ para patada, X/□ para especial y Y/△ para bloqueo. Pulsa un botón para que el navegador detecte el mando y asígnalo en la selección. Los menús se operan con ratón/teclado.
 - Admitidos: teclado compartido, dos mandos, teclado + mando. Las pulsaciones simultáneas en teclado dependen de su capacidad física.
 - El icono de la esquina superior derecha activa la pantalla completa.
+- **SONIDO** controla los efectos y **MÚSICA** controla por separado los temas chiptune. Ambas preferencias se guardan en el navegador. La música comienza con el primer clic o tecla, se atenúa durante la pausa y se retoma desde el mismo compás al volver a activarla.
 
 Versus: 100 de vida, rounds de 60 segundos, gana quien consigue dos rounds. Un empate repite el mismo round sin conceder puntos. Práctica: rival inmóvil, sin reloj ni victoria, vida restaurada al agotarse y botón de reinicio de posiciones.
 
@@ -55,6 +56,7 @@ Versus: 100 de vida, rounds de 60 segundos, gana quien consigue dos rounds. Un e
 - `src/arena-renderer.ts`: carga de ilustraciones, anclajes, cámara, efectos y presentación en Phaser Canvas 2D.
 - `src/input.ts`: teclado, mandos y preferencias de teclas.
 - `src/main.ts` y `src/game.css`: flujo de menús, interfaz y conexión con el motor.
+- `src/audio.ts` y `src/music.ts`: efectos sintetizados y temas chiptune programados con Web Audio.
 - `src/visual-assets.ts`: referencias de la dirección artística aprobada.
 
 Los ataques declaran `attackType`, `contactHeight`, `chipDamage`, `guardStunFrames`, `chipCanKO` y variantes por contexto (`standing`, `crouching`, `airborne`). `resolveMove` guarda una copia de la variante al iniciar el ataque. `guardCompatibility`, `guardFor` y `resolveContact` concentran las reglas; `Combat` admite un conjunto de movimientos opcional para probar o incorporar configuraciones. La altura de contacto es independiente del tipo de bloqueo. `stun` representa hit stun y `guardStun` la restricción defensiva; `stance` define la postura corporal sin depender de la animación. Un nuevo bloqueo conserva el mayor guard stun entre el restante y el nuevo. El empuje bloqueado es la mitad del normal.

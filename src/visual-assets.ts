@@ -31,6 +31,7 @@ export const visualFighter: VisualCharacterAsset = {
   portrait: "/art/visual-v1/fighter-portrait.png",
   sheets: {
     guard: "/art/visual-v1/fighter-guard.png",
+    breathe: "/art/combat-v2/laura-idle-breathe.png",
     motion: "/art/combat-v2/movement-sheet.png",
     air: "/art/combat-v2/air-sheet-v2.png",
   },
@@ -65,7 +66,7 @@ const sebastianRegion = (
 /** Regions follow the generated figures instead of assuming a uniform grid. */
 export const sebastianRegions: readonly AnimationRegion[] = [
   sebastianRegion("guard", "guard", 57, 25, 166, 263),
-  sebastianRegion("breathe", "air", 312, 25, 164, 262),
+  sebastianRegion("breathe", "breathe", 312, 25, 164, 262),
   sebastianRegion("walk-a", "motion", 568, 25, 162, 262),
   sebastianRegion("walk-b", "motion", 812, 25, 181, 261),
   sebastianRegion("rise", "motion", 48, 303, 183, 235),
@@ -97,6 +98,7 @@ export const visualCharacters: readonly VisualCharacterAsset[] = [
     portrait: "/art/characters/sebastian/portrait.png",
     sheets: {
       guard: sebastianAtlas,
+      breathe: sebastianAtlas,
       motion: sebastianAtlas,
       air: sebastianAtlas,
     },

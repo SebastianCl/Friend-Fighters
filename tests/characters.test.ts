@@ -23,6 +23,7 @@ describe("catálogo visual de personajes", () => {
     for (const character of visualCharacters) {
       expect(Object.keys(character.sheets).sort()).toEqual([
         "air",
+        "breathe",
         "guard",
         "motion",
       ]);
@@ -36,7 +37,8 @@ describe("catálogo visual de personajes", () => {
     for (const character of visualCharacters) {
       for (const region of character.regions) {
         const isLauraGuard =
-          character.id === "laura" && region.sheet === "guard";
+          character.id === "laura" &&
+          (region.sheet === "guard" || region.sheet === "breathe");
         const width =
           character.id === "sebastian" || isLauraGuard ? 1024 : 1254;
         const height =

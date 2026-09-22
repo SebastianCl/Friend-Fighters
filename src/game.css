@@ -25,7 +25,7 @@
 }
 .header-actions {
   display: flex;
-  gap: 24px;
+  gap: 16px;
   align-items: center;
 }
 .header-actions button {
@@ -34,6 +34,8 @@
   color: #e9dbfb;
   font: 10px monospace;
   letter-spacing: 1px;
+  white-space: nowrap;
+  padding: 4px 0;
 }
 .header-actions svg {
   width: 17px;
