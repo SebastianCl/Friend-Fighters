@@ -33,4 +33,24 @@ describe("VisualEffectsManager", () => {
     manager.update(20);
     expect(graphics.destroy).toHaveBeenCalledOnce();
   });
+
+  it("reinicia Screen Flash con la intensidad más reciente y omite bloqueos", () => {
+    const manager = new VisualEffectsManager();
+    const flash = vi.fn();
+    const flashEffect = { alpha: 1 };
+    manager.init({
+      cameras: { main: { flash, flashEffect } },
+    } as unknown as Phaser.Scene);
+
+    manager.flashForHit({ attackKind: "punch", blocked: false });
+    expect(flashEffect.alpha).toBe(0.035);
+    expect(flash).toHaveBeenLastCalledWith(45, 255, 255, 255, true);
+
+    manager.flashForHit({ attackKind: "special", blocked: false });
+    expect(flashEffect.alpha).toBe(0.12);
+    expect(flash).toHaveBeenLastCalledWith(80, 255, 255, 255, true);
+
+    manager.flashForHit({ attackKind: "kick", blocked: true });
+    expect(flash).toHaveBeenCalledTimes(2);
+  });
 });

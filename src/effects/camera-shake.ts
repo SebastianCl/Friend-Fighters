@@ -1,6 +1,7 @@
 import type { Hit } from "../combat";
+import { impactLevelForHit, type ImpactLevel } from "./impact-level";
 
-export type CameraShakeLevel = "light" | "medium" | "heavy";
+export type CameraShakeLevel = ImpactLevel;
 
 export interface CameraShakeConfig {
   intensity: number;
@@ -17,14 +18,6 @@ export const CAMERA_SHAKE_CONFIG: Record<CameraShakeLevel, CameraShakeConfig> =
 export function cameraShakeForHit(
   hit: Pick<Hit, "attackKind" | "blocked">,
 ): CameraShakeConfig | null {
-  if (hit.blocked) return null;
-
-  const level: CameraShakeLevel =
-    hit.attackKind === "special"
-      ? "heavy"
-      : hit.attackKind === "kick"
-        ? "medium"
-        : "light";
-
-  return CAMERA_SHAKE_CONFIG[level];
+  const level = impactLevelForHit(hit);
+  return level ? CAMERA_SHAKE_CONFIG[level] : null;
 }

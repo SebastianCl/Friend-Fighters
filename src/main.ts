@@ -90,6 +90,7 @@ const Arena = makeArena({
             y: presentation.groundY - hit.y * presentation.unit,
           });
         }
+        effects.flashForHit(hit);
         (game.scene.getScenes(true)[0] as InstanceType<typeof Arena>).impact(
           hit,
         );

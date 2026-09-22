@@ -1,5 +1,8 @@
 import { VisualEffect, EffectConfig } from "./visual-effect";
 import Phaser from "phaser";
+import type { Hit } from "../combat";
+import { impactLevelForHit } from "./impact-level";
+import { SCREEN_FLASH_CONFIG } from "./screen-flash";
 
 export class VisualEffectsManager {
   private static _instance: VisualEffectsManager | null = null;
@@ -30,6 +33,16 @@ export class VisualEffectsManager {
 
   registerType(type: string, config: EffectConfig): void {
     this._typeConfigs.set(type, config);
+  }
+
+  flashForHit(hit: Pick<Hit, "attackKind" | "blocked">): void {
+    const level = impactLevelForHit(hit);
+    if (!level) return;
+
+    const camera = this._scene.cameras.main;
+    const config = SCREEN_FLASH_CONFIG[level];
+    camera.flashEffect.alpha = config.opacity;
+    camera.flash(config.duration, 255, 255, 255, true);
   }
 
   spawn(type: string, position: { x: number; y: number }): VisualEffect | null {

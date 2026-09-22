@@ -191,6 +191,9 @@ export function makeArena(hooks: ArenaHooks) {
       this.game.canvas.dataset.cameraShakeActive = String(
         this.cameras.main.shakeEffect.isRunning,
       );
+      this.game.canvas.dataset.screenFlashActive = String(
+        this.cameras.main.flashEffect.isRunning,
+      );
       if (!state.paused) this.clock += Math.min(delta, 100) * 0.06;
       this.tweens.timeScale = state.paused ? 0 : 1;
       this.energy.clear();

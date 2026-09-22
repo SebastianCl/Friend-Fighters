@@ -47,10 +47,12 @@ test("reinicia el shake en impactos simultáneos y vuelve a cámara normal", asy
   await expect(healthP1).toHaveAttribute("aria-valuenow", "93");
   await expect(healthP2).toHaveAttribute("aria-valuenow", "93");
   await expect(canvas).toHaveAttribute("data-camera-shake-active", "true");
+  await expect(canvas).toHaveAttribute("data-screen-flash-active", "true");
   await expect(canvas).toHaveAttribute("data-camera-zoom", "1.000");
 
   await tick(page, 10);
   await expect(canvas).toHaveAttribute("data-camera-shake-active", "false");
+  await expect(canvas).toHaveAttribute("data-screen-flash-active", "false");
   await expect(canvas).toHaveAttribute("data-camera-zoom", "1.000");
   expect(errors).toEqual([]);
 });
@@ -75,6 +77,7 @@ test("un bloqueo no inicia Camera Shake y el combate sigue funcionando", async (
   await expect(health).toHaveAttribute("aria-valuenow", "100");
   await expect(canvas).toHaveAttribute("data-p2-animation", "block");
   await expect(canvas).toHaveAttribute("data-camera-shake-active", "false");
+  await expect(canvas).toHaveAttribute("data-screen-flash-active", "false");
 
   await page.keyboard.down("KeyF");
   for (let frame = 0; frame < 30; frame++) {
@@ -84,5 +87,6 @@ test("un bloqueo no inicia Camera Shake y el combate sigue funcionando", async (
   await page.keyboard.up("KeyF");
   await expect(health).toHaveAttribute("aria-valuenow", "93");
   await expect(canvas).toHaveAttribute("data-camera-shake-active", "true");
+  await expect(canvas).toHaveAttribute("data-screen-flash-active", "true");
   expect(errors).toEqual([]);
 });
