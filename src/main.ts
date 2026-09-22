@@ -25,6 +25,9 @@ import {
   type SoundCue,
 } from "./audio";
 import { MusicPlayer } from "./music";
+import { createTournament, type Tournament } from "./tournament";
+import { createTournamentParticipants } from "./tournament-setup";
+import { renderTournamentBracket } from "./tournament-view";
 
 const app = document.querySelector<HTMLDivElement>("#app")!;
 app.innerHTML = `<div class="game-viewport"><section class="arena arcade-stage"><div id="game"></div><header class="arena-header"><a class="arcade-brand brand" href="#" aria-label="Menú principal"><span class="brand-icon">FF</span> FRIEND <b>FIGHTERS</b></a><div class="header-actions"><button id="sound" aria-label="Silenciar sonido">SONIDO ON</button><button id="music" aria-label="Silenciar música" aria-pressed="true">MÚSICA ON</button><button id="fullscreen" aria-label="Pantalla completa" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 2H2v5M13 2h5v5M18 13v5h-5M7 18H2v-5"/></svg></button></div></header><div id="hud" hidden></div><div id="overlay"></div><footer class="arena-toolbar game-toolbar"><span id="mode-label">VERSUS LOCAL / EDICIÓN NEÓN</span><div id="fight-tools" hidden><button id="pause-button">Ⅱ PAUSA</button><button id="reset-practice" hidden>↺ REINICIAR PRÁCTICA</button></div><nav><button id="controls-top">GUÍA DE CONTROLES</button><a class="visual-preview-link" href="/visual-preview.html">NUEVO ESTILO VISUAL ↗</a></nav></footer></section></div><p id="asset-status" class="asset-status" role="status">Cargando la arena y las animaciones…</p><p id="fullscreen-status" class="sr-only" role="status"></p><dialog id="controls-dialog" aria-labelledby="controls-title"></dialog>`;
@@ -42,10 +45,19 @@ const fightTools = document.querySelector<HTMLDivElement>("#fight-tools")!;
 const inputs = new Inputs();
 let combat = new Combat(),
   chosen: [CharacterId, CharacterId] = ["laura", "sebastian"],
-  screen: "menu" | "select" | "fight" | "result" = "menu",
+  screen:
+    | "menu"
+    | "select"
+    | "fight"
+    | "result"
+    | "tournament"
+    | "tournament-select" = "menu",
   paused = false,
   practice = false,
+  tournamentFight = false,
   accumulator = 0;
+let tournament: Tournament<CharacterId> | null = null;
+let tournamentPlayerCharacter: CharacterId = visualCharacters[0].id;
 let muted = false;
 let musicMuted = false;
 try {
@@ -114,7 +126,15 @@ btn(
   null,
 );
 const Arena = makeArena({
-  state: () => ({ combat, screen, paused, characters: chosen }),
+  state: () => ({
+    combat,
+    screen:
+      screen === "tournament" || screen === "tournament-select"
+        ? "menu"
+        : screen,
+    paused,
+    characters: chosen,
+  }),
   advance: (delta) => {
     if (screen !== "fight" || paused) return;
     accumulator += delta;
@@ -315,17 +335,86 @@ function menu() {
   inputs.clear();
   combat = new Combat();
   chosen = ["laura", "sebastian"];
+  tournamentFight = false;
   hud.hidden = true;
   fightTools.hidden = true;
-  document.getElementById("mode-label")!.innerHTML =
-    "VERSUS LOCAL";
+  document.getElementById("mode-label")!.innerHTML = "VERSUS LOCAL";
   setOverlay(
-    `<div class="menu-panel"><h1>FRIEND<br><em>FIGHTERS</em></h1><p>Amigos y rivales.</p><button class="primary" id="versus" data-requires-assets ${assetsReady ? "" : "disabled"}>JUGAR VERSUS <span>↗</span></button><button class="secondary" id="practice" data-requires-assets ${assetsReady ? "" : "disabled"}>ENTRAR A PRÁCTICA <span>→</span></button></div>`,
+    `<div class="menu-panel"><h1>FRIEND<br><em>FIGHTERS</em></h1><p>Amigos y rivales.</p><button class="primary" id="versus" data-requires-assets ${assetsReady ? "" : "disabled"}>JUGAR VERSUS <span>↗</span></button><button class="secondary" id="practice" data-requires-assets ${assetsReady ? "" : "disabled"}>ENTRAR A PRÁCTICA <span>→</span></button><button class="secondary" id="tournament">VER TORNEO <span>→</span></button></div>`,
   );
   btn("versus", () => select(false));
   btn("practice", () => select(true));
+  btn("tournament", openTournamentSelection);
+}
+function openTournamentSelection() {
+  screen = "tournament-select";
+  tournamentFight = false;
+  music.setPaused(false);
+  music.setTheme("menu");
+  inputs.suspended = true;
+  inputs.clear();
+  hud.hidden = true;
+  fightTools.hidden = true;
+  document.getElementById("mode-label")!.textContent = "SELECCIÓN DE TORNEO";
+  setOverlay(
+    `<div class="selection-panel tournament-selection-panel"><p class="eyebrow">CUATRO PLAZAS · ELIMINACIÓN DIRECTA</p><h2>ELIGE TU PERSONAJE</h2><p class="selection-hint">Tu elección será PLAYER. Los CPUs completarán el cuadro.</p><div class="tournament-character-options">${visualCharacters.map((character) => `<button class="character-card" data-tournament-character="${character.id}" aria-label="Elegir ${character.name} para PLAYER" aria-pressed="${tournamentPlayerCharacter === character.id}"><img src="${character.portrait}" alt=""/><span><strong>${character.name}</strong><small>${character.title}</small></span></button>`).join("")}</div><div class="selection-actions"><button class="secondary" id="tournament-selection-back">VOLVER</button><button class="primary" id="tournament-confirm">CREAR TORNEO →</button></div></div>`,
+  );
+  document
+    .querySelectorAll<HTMLButtonElement>("[data-tournament-character]")
+    .forEach(
+      (button) =>
+        (button.onclick = () => {
+          sounds.play("ui-confirm");
+          tournamentPlayerCharacter = button.dataset
+            .tournamentCharacter as CharacterId;
+          openTournamentSelection();
+        }),
+    );
+  btn("tournament-selection-back", menu);
+  btn("tournament-confirm", () => {
+    const characterCatalog = visualCharacters.map(({ id }) => id);
+    tournament = createTournament(
+      createTournamentParticipants(tournamentPlayerCharacter, characterCatalog),
+    );
+    showTournament();
+  });
+}
+function showTournament() {
+  const activeTournament = tournament;
+  if (!activeTournament) return;
+  tournamentFight = false;
+  screen = "tournament";
+  music.setPaused(false);
+  music.setTheme("menu");
+  inputs.suspended = true;
+  inputs.clear();
+  hud.hidden = true;
+  fightTools.hidden = true;
+  document.getElementById("mode-label")!.textContent =
+    `TORNEO / ${activeTournament.rounds[0].length * 2} PARTICIPANTES`;
+  setOverlay(renderTournamentBracket(activeTournament));
+  btn("tournament-back", menu);
+  if (activeTournament.getCurrentMatch()) {
+    const startButton = document.getElementById(
+      "tournament-start",
+    ) as HTMLButtonElement;
+    startButton.disabled = !assetsReady;
+    btn("tournament-start", startTournamentMatch);
+  }
+}
+function startTournamentMatch() {
+  if (!assetsReady) return;
+  const activeTournament = tournament;
+  if (!activeTournament) return;
+  const match = activeTournament.getCurrentMatch();
+  if (!match) return;
+  chosen = [match.participants[0].character, match.participants[1].character];
+  practice = false;
+  tournamentFight = true;
+  start();
 }
 function select(mode: boolean) {
+  tournamentFight = false;
   practice = mode;
   screen = "select";
   music.setPaused(false);
@@ -337,7 +426,7 @@ function select(mode: boolean) {
 }
 function renderSelection() {
   setOverlay(
-    `<div class="selection-panel"><p class="eyebrow">${practice ? "LABORATORIO DE COMBATE" : "ANTES DEL PRIMER GOLPE"}</p><h2>ELIGE TU ESQUINA</h2><div class="selections">${[0, 1].map((i) => `<div class="player-selection"><h3>${i === 1 && practice ? "RIVAL DE PRÁCTICA" : `JUGADOR ${i + 1}`}</h3><div class="character-options">${visualCharacters.map((character) => `<button class="character-card" data-player="${i}" data-character="${character.id}" aria-label="Elegir ${character.name} para ${i === 1 && practice ? "rival de práctica" : `jugador ${i + 1}`}" aria-pressed="${chosen[i] === character.id}"><img src="${character.portrait}" alt=""/><span><strong>${character.name}</strong><small>${character.title}</small></span></button>`).join("")}</div><label>DISPOSITIVO<select id="device-${i}" ${practice && i === 1 ? "disabled" : ""}></select></label></div>`).join("")}</div><div class="selection-actions"><button class="secondary" id="back">VOLVER</button><button class="secondary" id="configure">CONTROLES</button><button class="primary" id="start">${practice ? "PRACTICAR" : "¡A PELEAR!"} ↗</button></div></div>`,
+    `<div class="selection-panel"><p class="eyebrow">${practice ? "LABORATORIO DE COMBATE" : "ANTES DEL PRIMER GOLPE"}</p><h2>ELIGE TU ESQUINA</h2><div class="selections">${[0, 1].map((i) => `<div class="player-selection"><h3>${i === 1 && practice ? "RIVAL DE PRÁCTICA" : `JUGADOR ${i + 1}`}</h3><div class="character-options">${visualCharacters.map((character) => `<button class="character-card" data-player="${i}" data-character="${character.id}" aria-label="Elegir ${character.name} para ${i === 1 && practice ? "rival de práctica" : `jugador ${i + 1}`}" aria-pressed="${chosen[i] === character.id}"><img src="${character.portrait}" alt=""/><span><strong>${character.name}</strong><small>${character.title}</small></span></button>`).join("")}</div><label>DISPOSITIVO<select id="device-${i}" ${practice && i === 1 ? "disabled" : ""}></select></label></div>`).join("")}</div><p id="device-hint" class="selection-hint" role="status"></p><div class="selection-actions"><button class="secondary" id="back">VOLVER</button><button class="secondary" id="configure">CONTROLES</button><button class="primary" id="start">${practice ? "PRACTICAR" : "¡A PELEAR!"} ↗</button></div></div>`,
   );
   refreshPads();
   document.querySelectorAll<HTMLButtonElement>("[data-character]").forEach(
@@ -409,9 +498,11 @@ function start() {
   hud.hidden = false;
   fightTools.hidden = false;
   document.getElementById("reset-practice")!.hidden = !practice;
-  document.getElementById("mode-label")!.textContent = practice
-    ? "PRÁCTICA / SIN LÍMITES"
-    : "VERSUS LOCAL / AL MEJOR DE 3";
+  document.getElementById("mode-label")!.textContent = tournamentFight
+    ? "TORNEO / AL MEJOR DE 3"
+    : practice
+      ? "PRÁCTICA / SIN LÍMITES"
+      : "VERSUS LOCAL / AL MEJOR DE 3";
   updateHud();
   sounds.play("round-start");
 }
@@ -470,6 +561,23 @@ function showResult() {
   inputs.clear();
   fightTools.hidden = true;
   const winner = combat.wins[0] === 2 ? 0 : 1;
+  if (tournamentFight) {
+    const activeTournament = tournament;
+    if (!activeTournament) throw new Error("No active tournament.");
+    const match = activeTournament.getCurrentMatch();
+    if (!match) throw new Error("No active tournament match.");
+    activeTournament.recordWinner(match.participants[winner].id);
+    const champion = activeTournament.getChampion();
+    if (champion) {
+      showTournament();
+      return;
+    }
+    setOverlay(
+      `<div class="pause-panel result-panel"><p class="eyebrow">COMBATE DE TORNEO TERMINADO</p><h2>${visualCharacter(chosen[winner]).name} GANA</h2><p>${match.participants[winner].id} <span class="score">${combat.wins[0]} — ${combat.wins[1]}</span></p><button class="primary" id="tournament-result-bracket">VER CUADRO ACTUALIZADO →</button></div>`,
+    );
+    btn("tournament-result-bracket", showTournament);
+    return;
+  }
   setOverlay(
     `<div class="pause-panel result-panel"><p class="eyebrow">LA AMISTAD SIGUE. EL MARCADOR TAMBIÉN.</p><h2>${visualCharacter(chosen[winner]).name} GANA</h2><p>JUGADOR ${winner + 1} <span class="score">${combat.wins[0]} — ${combat.wins[1]}</span></p><button class="primary" id="rematch">OTRA RONDA ENTRE AMIGOS ↗</button><button class="secondary" id="reselect">CAMBIAR LUCHADORES</button><button class="text-button" id="result-menu">VOLVER AL MENÚ</button></div>`,
   );
