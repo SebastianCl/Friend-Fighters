@@ -252,6 +252,9 @@ export function makeArena(hooks: ArenaHooks) {
         [image, this.shadows[i], this.rings[i], this.markers[i]].forEach((o) =>
           o.setVisible(show),
         );
+        this.game.canvas.dataset[`p${i + 1}Stance`] = f.stance;
+        this.game.canvas.dataset[`p${i + 1}GuardStun`] = String(f.guardStun);
+        this.game.canvas.dataset[`p${i + 1}Y`] = String(f.y);
         this.game.canvas.dataset[`p${i + 1}Animation`] = key;
         this.game.canvas.dataset[`p${i + 1}X`] = String(Math.round(x));
         this.game.canvas.dataset[`p${i + 1}RenderedHeight`] = (

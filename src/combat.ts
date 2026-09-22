@@ -54,7 +54,22 @@ export const fighters: FighterDefinition[] = [
     animations,
   },
 ];
+export type AttackType = "high" | "mid" | "low" | "overhead" | "unblockable";
+export type Stance = "standing" | "crouching";
+export type AttackContext = Stance | "airborne";
+export const guardCompatibility: Record<AttackType, readonly Stance[]> = {
+  high: ["standing"],
+  mid: ["standing", "crouching"],
+  low: ["crouching"],
+  overhead: ["standing"],
+  unblockable: [],
+};
 export interface Move {
+  attackType: AttackType;
+  contactHeight: number;
+  chipDamage: number;
+  guardStunFrames: number;
+  chipCanKO: boolean;
   damage: number;
   startup: number;
   active: number;
@@ -64,9 +79,32 @@ export interface Move {
   push: number;
   cooldown: number;
 }
-export type MoveSetDefinition = Record<"punch" | "kick" | "special", Move>;
+export interface MoveDefinition extends Move {
+  variants: Record<AttackContext, Partial<Move>>;
+}
+export type MoveSetDefinition = Record<
+  "punch" | "kick" | "special",
+  MoveDefinition
+>;
+export function resolveMove(
+  definition: MoveDefinition,
+  context: AttackContext,
+): Move {
+  const { variants, ...base } = definition;
+  return { ...base, ...variants[context] };
+}
 export const moves: MoveSetDefinition = {
   punch: {
+    attackType: "high",
+    contactHeight: 155,
+    chipDamage: 0,
+    guardStunFrames: 8,
+    chipCanKO: false,
+    variants: {
+      standing: {},
+      crouching: { attackType: "mid", contactHeight: 90 },
+      airborne: { attackType: "overhead", contactHeight: 155 },
+    },
     damage: 7,
     startup: 6,
     active: 4,
@@ -77,6 +115,16 @@ export const moves: MoveSetDefinition = {
     cooldown: 0,
   },
   kick: {
+    attackType: "mid",
+    contactHeight: 135,
+    chipDamage: 0,
+    guardStunFrames: 12,
+    chipCanKO: false,
+    variants: {
+      standing: {},
+      crouching: { attackType: "low", contactHeight: 90 },
+      airborne: { attackType: "overhead", contactHeight: 135 },
+    },
     damage: 11,
     startup: 11,
     active: 5,
@@ -87,6 +135,16 @@ export const moves: MoveSetDefinition = {
     cooldown: 0,
   },
   special: {
+    attackType: "mid",
+    contactHeight: 135,
+    chipDamage: 2,
+    guardStunFrames: 18,
+    chipCanKO: false,
+    variants: {
+      standing: {},
+      crouching: { attackType: "low", contactHeight: 90 },
+      airborne: { attackType: "overhead", contactHeight: 155 },
+    },
     damage: 18,
     startup: 17,
     active: 7,
@@ -110,14 +168,7 @@ export const combatSpace = {
   startX: [180, 460] as const,
 };
 export function hitHeight(f: Fighter): number {
-  return (
-    f.y +
-    (f.attack?.crouched
-      ? combatSpace.lowHeight
-      : f.attack?.kind === "kick"
-        ? combatSpace.kickHeight
-        : combatSpace.punchHeight)
-  );
+  return f.y + (f.attack?.move.contactHeight ?? combatSpace.punchHeight);
 }
 export interface Fighter {
   x: number;
@@ -128,11 +179,14 @@ export interface Fighter {
   pose: Pose;
   cooldown: number;
   stun: number;
+  guardStun: number;
+  stance: Stance;
   attack: null | {
     kind: keyof MoveSetDefinition;
     frame: number;
     hit: boolean;
     crouched: boolean;
+    move: Move;
   };
   previous: InputFrame;
 }
@@ -141,6 +195,39 @@ export interface Hit {
   y: number;
   blocked: boolean;
   special: boolean;
+}
+/** Guard is input-driven even during guard stun; presentation never decides defense. */
+export function guardFor(
+  f: Fighter,
+  input: InputFrame,
+  hitStunned = f.stun > 0,
+): Stance | null {
+  const back = f.facing === 1 ? input.left : input.right;
+  if (
+    f.hp <= 0 ||
+    f.y > 0 ||
+    f.vy > 0 ||
+    f.attack ||
+    hitStunned ||
+    !back ||
+    input.left === input.right
+  )
+    return null;
+  return input.down ? "crouching" : "standing";
+}
+export function canBlock(type: AttackType, guard: Stance | null): boolean {
+  return guard !== null && guardCompatibility[type].includes(guard);
+}
+export function resolveContact(move: Move, hp: number, guard: Stance | null) {
+  const blocked = canBlock(move.attackType, guard);
+  const minimum = blocked && !move.chipCanKO && hp > 0 ? 1 : 0;
+  return {
+    blocked,
+    hp: Math.max(minimum, hp - (blocked ? move.chipDamage : move.damage)),
+    hitStun: blocked ? 0 : move.stun,
+    guardStun: blocked ? move.guardStunFrames : 0,
+    push: blocked ? move.push / 2 : move.push,
+  };
 }
 const makeFighter = (x: number, facing: 1 | -1): Fighter => ({
   x,
@@ -151,6 +238,8 @@ const makeFighter = (x: number, facing: 1 | -1): Fighter => ({
   pose: "idle",
   cooldown: 0,
   stun: 0,
+  guardStun: 0,
+  stance: "standing",
   attack: null,
   previous: idle(),
 });
@@ -167,7 +256,10 @@ export class Combat {
   roundWinner = -1;
   message = "";
   hits: Hit[] = [];
-  constructor(public practice = false) {}
+  constructor(
+    public practice = false,
+    public moveSet: MoveSetDefinition = moves,
+  ) {}
   resetPositions() {
     this.fighters = [
       makeFighter(combatSpace.startX[0], 1),
@@ -196,14 +288,24 @@ export class Combat {
       if (!f.attack && f.stun === 0) f.facing = opponent.x >= f.x ? 1 : -1;
       if (f.hp <= 0) {
         f.pose = "fall";
+        f.stun = f.guardStun = 0;
+        f.stance = "standing";
+        f.attack = null;
+        f.previous = { ...input };
         continue;
       }
       if (f.stun > 0) {
         f.stun--;
+      } else if (f.guardStun > 0) {
+        f.guardStun--;
+        f.stance = input.down ? "crouching" : "standing";
+        f.pose = "block";
       } else if (!f.attack) {
+        f.stance = input.down && f.y === 0 ? "crouching" : "standing";
         f.pose = f.y > 0 ? "jump" : input.down ? "crouch" : "idle";
         if (input.up && !f.previous.up && f.y === 0) {
           f.vy = 7.6;
+          f.stance = "standing";
           f.pose = "jump";
         }
         if (!input.down || f.y > 0) {
@@ -212,19 +314,20 @@ export class Combat {
           if (d && f.y === 0) f.pose = "walk";
         }
         for (const kind of ["special", "kick", "punch"] as const) {
-          if (
-            input[kind] &&
-            !f.previous[kind] &&
-            (kind !== "special" || f.cooldown === 0)
-          ) {
+          if (!input[kind] || f.previous[kind]) continue;
+          const context: AttackContext =
+            f.y > 0 || f.vy > 0 ? "airborne" : f.stance;
+          const move = resolveMove(this.moveSet[kind], context);
+          if (move.cooldown === 0 || f.cooldown === 0) {
             f.attack = {
               kind,
               frame: 0,
               hit: false,
-              crouched: input.down && f.y === 0,
+              crouched: context === "crouching",
+              move,
             };
             f.pose = "attack";
-            if (kind === "special") f.cooldown = moves.special.cooldown;
+            if (move.cooldown > 0) f.cooldown = move.cooldown;
             break;
           }
         }
@@ -255,21 +358,25 @@ export class Combat {
       );
     }
     // Collect both contacts before applying damage so simultaneous hits are symmetric.
+    // Snapshot eligibility before advancing attacks: neither player may guard on
+    // their last recovery/hit-stun tick due to iteration order.
+    const guards = this.fighters.map((f, i) =>
+      guardFor(f, inputs[i], wasStunned[i]),
+    );
     const contacts: {
       i: number;
-      blocked: boolean;
-      move: Move;
+      result: ReturnType<typeof resolveContact>;
       special: boolean;
       hitY: number;
     }[] = [];
     this.fighters.forEach((f, i) => {
       const attack = f.attack;
       if (!attack || wasStunned[i]) return;
-      const move = moves[attack.kind],
+      const move = attack.move,
         target = this.fighters[1 - i];
       const attackY = hitHeight(f);
       const targetHeight =
-        target.pose === "crouch" || target.attack?.crouched
+        target.stance === "crouching"
           ? combatSpace.crouchingHeight
           : combatSpace.standingHeight;
       if (
@@ -281,13 +388,9 @@ export class Combat {
         attackY >= target.y - 5 &&
         attackY <= target.y + targetHeight
       ) {
-        const back =
-          target.facing === 1 ? inputs[1 - i].left : inputs[1 - i].right;
         contacts.push({
           i,
-          blocked:
-            back && target.y === 0 && !target.attack && target.stun === 0,
-          move,
+          result: resolveContact(move, target.hp, guards[1 - i]),
           special: attack.kind === "special",
           hitY: attackY,
         });
@@ -299,19 +402,22 @@ export class Combat {
         f.pose = f.y > 0 ? "jump" : "idle";
       }
     });
-    for (const { i, blocked, move, special, hitY } of contacts) {
+    for (const { i, result, special, hitY } of contacts) {
       const f = this.fighters[i],
         t = this.fighters[1 - i];
-      t.hp = Math.max(0, t.hp - (blocked ? 0 : move.damage));
-      t.stun = blocked ? 8 : move.stun;
-      t.pose = blocked ? "block" : t.hp === 0 ? "fall" : "hurt";
+      const { blocked } = result;
+      t.hp = result.hp;
+      t.stun = result.hitStun;
+      t.guardStun = blocked ? Math.max(t.guardStun, result.guardStun) : 0;
+      t.pose = t.hp === 0 ? "fall" : blocked ? "block" : "hurt";
+      if (t.hp === 0) {
+        t.stun = t.guardStun = 0;
+        t.stance = "standing";
+      }
       t.attack = null;
       t.x = Math.max(
         combatSpace.minX,
-        Math.min(
-          combatSpace.maxX,
-          t.x + f.facing * (blocked ? move.push / 2 : move.push),
-        ),
+        Math.min(combatSpace.maxX, t.x + f.facing * result.push),
       );
       this.hits.push({
         x: t.x - f.facing * combatSpace.bodyHalfWidth,
@@ -324,7 +430,9 @@ export class Combat {
       this.fighters.forEach((f) => {
         if (f.hp === 0) {
           f.hp = 100;
-          f.stun = 0;
+          f.stun = f.guardStun = 0;
+          f.stance = "standing";
+          f.attack = null;
           f.pose = "idle";
         }
       });

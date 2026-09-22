@@ -1,4 +1,4 @@
-import { moves, type Fighter } from "./combat";
+import { type Fighter } from "./combat";
 export type AnimationKey =
   | "guard"
   | "breathe"
@@ -250,7 +250,7 @@ export function attackPhase(
 ): "startup" | "active" | "recovery" | null {
   if (!f.attack) return null;
   const elapsed = Math.max(0, f.attack.frame - 1),
-    move = moves[f.attack.kind];
+    move = f.attack.move;
   return elapsed < move.startup
     ? "startup"
     : elapsed < move.startup + move.active
@@ -264,14 +264,15 @@ export function animationFor(
   poseAge = 100,
 ): AnimationKey {
   if (f.hp === 0) return poseAge < 7 ? "hurt" : "fall";
-  if (f.pose === "hurt" || f.pose === "block") return f.pose;
+  if (f.pose === "block") return f.stance === "crouching" ? "crouch" : "block";
+  if (f.pose === "hurt") return "hurt";
   if (f.attack) {
     const phase = attackPhase(f),
       kind = f.attack.kind;
     const contact =
       phase === "active" ||
       (phase === "recovery" &&
-        f.attack.frame < moves[kind].startup + moves[kind].active + 5);
+        f.attack.frame < f.attack.move.startup + f.attack.move.active + 5);
     if (f.y > 0)
       return contact
         ? kind === "kick"
@@ -298,7 +299,7 @@ export function animationFor(
           : "special-hit";
     if (
       phase === "recovery" &&
-      f.attack.frame > moves[kind].startup + moves[kind].active + 10
+      f.attack.frame > f.attack.move.startup + f.attack.move.active + 10
     )
       return "guard";
     return kind === "punch"

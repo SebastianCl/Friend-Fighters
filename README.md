@@ -33,7 +33,11 @@ npm run preview
 | Patada    | G         | K         |
 | Especial  | H         | L         |
 
-- Mantén la dirección contraria al rival para bloquear en el suelo. No hay daño al bloquear. Agacharse evita los puños altos; los ataques bajos y aéreos tienen poses propias.
+- Mantén atrás (dirección contraria al rival) para bloquear de pie; abajo + atrás para bloquear agachado. Ambas direcciones horizontales a la vez no bloquean. No puedes bloquear en el aire, atacando, recuperándote de un ataque o durante hit stun.
+- Los altos se bloquean de pie y se evaden agachado; los medios se bloquean en ambas posturas; los bajos solo agachado; los overhead solo de pie. Los imbloqueables nunca se bloquean. Sin contacto físico no hay daño ni bloqueo.
+- Puño de pie: alto. Patada y especial de pie: medios. Puño agachado: medio. Patada y especial agachados: bajos. Ataques aéreos: overhead (su tipo se conserva al aterrizar).
+- Bloquear evita el daño normal. Solo los especiales producen chip: 2 puntos, sin reducir la vida por debajo de 1.
+- El guard stun dura 8 frames para puño, 12 para patada y 18 para especial, a 60 Hz. Impide moverse, saltar y atacar; permite cambiar de postura. Debes mantener atrás y elegir la guardia correcta ante cada nuevo golpe. Soltar atrás permite recibir daño. Las pulsaciones durante stun no se almacenan: suelta y vuelve a pulsar para saltar o atacar.
 - Suelta y vuelve a pulsar para repetir un ataque. El especial recarga durante tres segundos.
 - **Esc** o **Start** pausa. **R** reinicia la práctica. Cambiar de pestaña/ventana o desconectar un mando asignado pausa el juego.
 - **Guía de controles** permite cambiar y guardar teclas en este navegador. Escape, R, Tab, Enter y Espacio están reservados; no se admiten duplicados.
@@ -51,6 +55,8 @@ Versus: 100 de vida, rounds de 60 segundos, gana quien consigue dos rounds. Un e
 - `src/input.ts`: teclado, mandos y preferencias de teclas.
 - `src/main.ts` y `src/game.css`: flujo de menús, interfaz y conexión con el motor.
 - `src/visual-assets.ts`: referencias de la dirección artística aprobada.
+
+Los ataques declaran `attackType`, `contactHeight`, `chipDamage`, `guardStunFrames`, `chipCanKO` y variantes por contexto (`standing`, `crouching`, `airborne`). `resolveMove` guarda una copia de la variante al iniciar el ataque. `guardCompatibility`, `guardFor` y `resolveContact` concentran las reglas; `Combat` admite un conjunto de movimientos opcional para probar o incorporar configuraciones. La altura de contacto es independiente del tipo de bloqueo. `stun` representa hit stun y `guardStun` la restricción defensiva; `stance` define la postura corporal sin depender de la animación. Un nuevo bloqueo conserva el mayor guard stun entre el restante y el nuevo. El empuje bloqueado es la mitad del normal.
 
 La apariencia se mantiene separada de daño y tiempos. Las hojas de futuros personajes deberán registrar regiones, anclajes y altura anatómica, y conservar los mismos estados de animación. El motor no debe deducir las cajas de daño a partir de los píxeles del traje.
 

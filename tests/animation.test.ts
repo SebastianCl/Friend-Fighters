@@ -6,7 +6,13 @@ describe("animaciones sincronizadas con el combate", () => {
   it("distingue anticipación, impacto y recuperación sin adelantar el contacto", () => {
     const c = new Combat();
     const f = c.fighters[0];
-    f.attack = { kind: "punch", frame: 1, hit: false, crouched: false };
+    f.attack = {
+      kind: "punch",
+      frame: 1,
+      hit: false,
+      crouched: false,
+      move: moves.punch,
+    };
     f.pose = "attack";
     expect(attackPhase(f)).toBe("startup");
     expect(animationFor(f, 0)).toBe("punch-wind");
@@ -30,6 +36,7 @@ describe("animaciones sincronizadas con el combate", () => {
         frame: moves[kind].startup + 1,
         hit: false,
         crouched: true,
+        move: moves[kind],
       };
       f.y = 0;
       expect(animationFor(f, 0)).toBe(low);
