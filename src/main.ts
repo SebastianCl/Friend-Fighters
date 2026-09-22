@@ -1,10 +1,19 @@
 import Phaser from "phaser";
 import { Combat, fighters, idle } from "./combat";
-import { makeArena } from "./arena-renderer";
+import { makeArena, presentation } from "./arena-renderer";
 import { visualFighter } from "./visual-assets";
 const portrait = () => visualFighter.portrait;
 import { Inputs, actions, labels, keyLabel } from "./input";
 import "./game.css";
+import { effects } from "./effects/visual-effects-manager";
+import type { VisualEffect } from "./effects/visual-effect";
+import {
+  LANDING_DUST_ANIMATION,
+  LANDING_DUST_CONFIG,
+  LANDING_DUST_TYPE,
+  landedThisStep,
+  landingDustDuration,
+} from "./effects/landing-dust";
 
 const app = document.querySelector<HTMLDivElement>("#app")!;
 app.innerHTML = `<div class="game-viewport"><section class="arena arcade-stage"><div id="game"></div><header class="arena-header"><a class="arcade-brand brand" href="#" aria-label="Menú principal"><span class="brand-icon">FF</span> FRIEND <b>FIGHTERS</b></a><p class="edition"><span></span> DISTRITO NEÓN <i>/</i> VOL. 02</p><div class="header-actions"><button id="sound" aria-label="Silenciar sonido">SONIDO ON</button><button id="fullscreen" aria-label="Pantalla completa" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 2H2v5M13 2h5v5M18 13v5h-5M7 18H2v-5"/></svg></button></div></header><div id="hud" hidden></div><div id="overlay"></div><footer class="arena-toolbar game-toolbar"><span id="mode-label">VERSUS LOCAL / EDICIÓN NEÓN</span><div id="fight-tools" hidden><button id="pause-button">Ⅱ PAUSA</button><button id="reset-practice" hidden>↺ REINICIAR PRÁCTICA</button></div><nav><button id="controls-top">GUÍA DE CONTROLES</button><a class="visual-preview-link" href="/visual-preview.html">NUEVO ESTILO VISUAL ↗</a></nav></footer></section></div><p id="asset-status" class="asset-status" role="status">Cargando la arena y las animaciones…</p><p id="fullscreen-status" class="sr-only" role="status"></p><dialog id="controls-dialog" aria-labelledby="controls-title"></dialog>`;
@@ -73,20 +82,44 @@ const Arena = makeArena({
     if (screen !== "fight" || paused) return;
     accumulator += delta;
     while (accumulator >= 1000 / 60) {
+      const airborneBeforeStep = combat.fighters.map((fighter) => fighter.y > 0);
       combat.step([inputs.frame(0), practice ? idle() : inputs.frame(1)]);
+      combat.fighters.forEach((fighter, index) => {
+        if (landedThisStep(airborneBeforeStep[index], fighter.y)) {
+          effects.spawn(LANDING_DUST_TYPE, {
+            x: fighter.x * presentation.unit,
+            y: presentation.groundY,
+          });
+        }
+      });
       for (const hit of combat.hits) {
         tone(hit.blocked, hit.special);
+        if (!hit.blocked) {
+          const effectType =
+            hit.attackKind === "special"
+              ? "heavyHit"
+              : hit.attackKind === "kick"
+                ? "mediumHit"
+                : "lightHit";
+          effects.spawn(effectType, {
+            x: hit.x * presentation.unit,
+            y: presentation.groundY - hit.y * presentation.unit,
+          });
+        }
+        effects.flashForHit(hit);
         (game.scene.getScenes(true)[0] as InstanceType<typeof Arena>).impact(
           hit,
         );
       }
+      effects.update(1000 / 60);
       accumulator -= 1000 / 60;
       if (combat.phase === "over") break;
     }
     updateHud();
     if (combat.phase === "over") showResult();
   },
-  ready: () => {
+  ready: (scene) => {
+    effects.init(scene);
     assetsReady = true;
     document.getElementById("asset-status")!.hidden = true;
     app.dataset.ready = "true";
@@ -115,6 +148,86 @@ const game: Phaser.Game = new Phaser.Game({
   audio: { noAudio: true },
   banner: false,
 });
+
+// --- Registro de tipos de HitSpark (solo configuración, sin assets gráficos) ---
+function animateHitSpark(effect: VisualEffect) {
+  const progress = Math.min(effect.elapsed / effect.ttl, 1);
+  effect.graphics?.setScale(1 + progress * 0.8).setAlpha(1 - progress);
+}
+
+effects.registerType("lightHit", {
+  ttl: 80,
+  create: (effect, scene) => {
+    const g = scene.add.graphics();
+    g.lineStyle(1, 0xffd700, 1);
+    g.beginPath();
+    g.moveTo(0, 0);
+    g.lineTo(4, 0);
+    g.lineTo(2, 2);
+    g.lineTo(-2, 2);
+    g.lineTo(0, 0);
+    g.closePath();
+    g.strokePath();
+    effect.graphics = g;
+  },
+  update: animateHitSpark,
+});
+
+effects.registerType("mediumHit", {
+  ttl: 120,
+  create: (effect, scene) => {
+    const g = scene.add.graphics();
+    g.lineStyle(1, 0xffd700, 1);
+    g.beginPath();
+    g.moveTo(0, 0);
+    g.lineTo(6, 0);
+    g.lineTo(3, 3);
+    g.lineTo(-3, 3);
+    g.lineTo(0, 0);
+    g.closePath();
+    g.strokePath();
+    effect.graphics = g;
+  },
+  update: animateHitSpark,
+});
+
+effects.registerType("heavyHit", {
+  ttl: 200,
+  create: (effect, scene) => {
+    const g = scene.add.graphics();
+    g.lineStyle(2, 0xffd700, 1);
+    g.beginPath();
+    g.moveTo(0, 0);
+    g.lineTo(8, 0);
+    g.lineTo(4, 4);
+    g.lineTo(-4, 4);
+    g.lineTo(0, 0);
+    g.closePath();
+    g.strokePath();
+    effect.graphics = g;
+  },
+  update: animateHitSpark,
+});
+
+effects.registerType(LANDING_DUST_TYPE, {
+  ttl: landingDustDuration(),
+  scale: LANDING_DUST_CONFIG.scale,
+  depth: LANDING_DUST_CONFIG.depth,
+  offsetX: LANDING_DUST_CONFIG.offsetX,
+  offsetY: LANDING_DUST_CONFIG.offsetY,
+  create: (effect, scene) => {
+    const sprite =
+      effect.sprite ?? scene.add.sprite(0, 0, "landing-dust", 0).setOrigin(0.5, 1);
+    effect.sprite = sprite;
+    sprite
+      .setTexture("landing-dust", 0)
+      .setOrigin(0.5, 1)
+      .setActive(true)
+      .setVisible(true)
+      .play(LANDING_DUST_ANIMATION);
+  },
+});
+
 const fullscreenButton = document.getElementById("fullscreen")!;
 fullscreenButton.addEventListener("click", async () => {
   try {
