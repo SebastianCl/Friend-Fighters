@@ -3,10 +3,12 @@ import { animationRegions } from "../src/animation";
 import { visualCharacter, visualCharacters } from "../src/visual-assets";
 
 describe("catálogo visual de personajes", () => {
-  it("registra a Laura y Sebastian con IDs, nombres y retratos únicos", () => {
+  it("registra a Laura, Sebastian, Rata y Mariana con IDs, nombres y retratos únicos", () => {
     expect(visualCharacters.map(({ id, name }) => ({ id, name }))).toEqual([
       { id: "laura", name: "LAURA" },
       { id: "sebastian", name: "SEBASTIAN" },
+      { id: "rata", name: "RATA" },
+      { id: "mariana", name: "MARIANA" },
     ]);
     expect(
       new Set(visualCharacters.map((character) => character.id)).size,
@@ -40,9 +42,19 @@ describe("catálogo visual de personajes", () => {
           character.id === "laura" &&
           (region.sheet === "guard" || region.sheet === "breathe");
         const width =
-          character.id === "sebastian" || isLauraGuard ? 1024 : 1254;
+          character.id === "sebastian" ||
+          character.id === "rata" ||
+          character.id === "mariana" ||
+          isLauraGuard
+            ? 1024
+            : 1254;
         const height =
-          character.id === "sebastian" || isLauraGuard ? 1536 : 1254;
+          character.id === "sebastian" ||
+          character.id === "rata" ||
+          character.id === "mariana" ||
+          isLauraGuard
+            ? 1536
+            : 1254;
         expect(region.x).toBeGreaterThanOrEqual(0);
         expect(region.y).toBeGreaterThanOrEqual(0);
         expect(region.x + region.width).toBeLessThanOrEqual(width);
@@ -53,5 +65,7 @@ describe("catálogo visual de personajes", () => {
       }
     }
     expect(visualCharacter("sebastian").regions).toHaveLength(21);
+    expect(visualCharacter("rata").regions).toHaveLength(21);
+    expect(visualCharacter("mariana").regions).toHaveLength(21);
   });
 });

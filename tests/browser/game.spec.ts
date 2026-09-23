@@ -20,7 +20,9 @@ test("el control de sonido se guarda y restaura", async ({ page }) => {
     .toBe("false");
 });
 
-test("música y efectos conservan preferencias independientes", async ({ page }) => {
+test("música y efectos conservan preferencias independientes", async ({
+  page,
+}) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
@@ -48,7 +50,9 @@ test("música y efectos conservan preferencias independientes", async ({ page })
   await page.getByRole("button", { name: "VOLVER AL COMBATE" }).click();
   await page.keyboard.press("Escape");
   await page.getByRole("button", { name: "SALIR AL MENÚ" }).click();
-  await expect(page.getByRole("button", { name: "JUGAR VERSUS" })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "JUGAR VERSUS" }),
+  ).toBeVisible();
   expect(errors).toEqual([]);
 });
 
@@ -146,7 +150,7 @@ test("partida real con teclado, resultado y revancha", async ({ page }) => {
   );
   await expect(page.locator(".timer")).toContainText("ROUND 1");
 });
-test("Laura y Sebastian se eligen por esquina y permiten combate espejo", async ({
+test("Laura, Sebastian, Rata y Mariana se eligen por esquina y permiten combate espejo", async ({
   page,
 }) => {
   await page.goto("/");
@@ -158,23 +162,37 @@ test("Laura y Sebastian se eligen por esquina y permiten combate espejo", async 
   await expect(
     page.getByRole("button", { name: "Elegir SEBASTIAN para jugador 2" }),
   ).toHaveAttribute("aria-pressed", "true");
+  await expect(
+    page.getByRole("button", { name: "Elegir RATA para jugador 1" }),
+  ).toHaveAttribute("aria-pressed", "false");
 
   await page
-    .getByRole("button", { name: "Elegir SEBASTIAN para jugador 1" })
+    .getByRole("button", { name: "Elegir RATA para jugador 1" })
     .click();
   await expect(
-    page.getByRole("button", { name: "Elegir SEBASTIAN para jugador 1" }),
+    page.getByRole("button", { name: "Elegir RATA para jugador 1" }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await page
+    .getByRole("button", { name: "Elegir MARIANA para jugador 2" })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "Elegir MARIANA para jugador 2" }),
   ).toHaveAttribute("aria-pressed", "true");
   await page.getByRole("button", { name: "¡A PELEAR!" }).click();
 
   const canvas = page.locator("canvas");
-  await expect(canvas).toHaveAttribute("data-p1-character", "sebastian");
-  await expect(canvas).toHaveAttribute("data-p2-character", "sebastian");
-  await expect(page.locator(".player-0")).toContainText("SEBASTIAN");
-  await expect(page.locator(".player-1")).toContainText("SEBASTIAN");
+  await expect(canvas).toHaveAttribute("data-p1-character", "rata");
+  await expect(canvas).toHaveAttribute("data-p2-character", "mariana");
+  await expect(page.locator(".player-0")).toContainText("RATA");
+  await expect(page.locator(".player-1")).toContainText("MARIANA");
   await page.keyboard.press("KeyF");
   await expect(canvas).toHaveAttribute(
     "data-p1-animation",
+    /punch-wind|punch-hit/,
+  );
+  await page.keyboard.press("KeyJ");
+  await expect(canvas).toHaveAttribute(
+    "data-p2-animation",
     /punch-wind|punch-hit/,
   );
 });
