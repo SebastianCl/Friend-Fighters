@@ -7,6 +7,7 @@ export const actions: Action[] = [
   "punch",
   "kick",
   "special",
+  "grab",
   "block",
 ];
 export const labels: Record<Action, string> = {
@@ -17,6 +18,7 @@ export const labels: Record<Action, string> = {
   punch: "Puño",
   kick: "Patada",
   special: "Especial",
+  grab: "Agarre",
   block: "Bloqueo",
 };
 export type Bindings = Record<Action, string>;
@@ -29,6 +31,7 @@ const defaults: Bindings[] = [
     punch: "KeyF",
     kick: "KeyG",
     special: "KeyH",
+    grab: "KeyC",
     block: "KeyE",
   },
   {
@@ -39,11 +42,15 @@ const defaults: Bindings[] = [
     punch: "KeyJ",
     kick: "KeyK",
     special: "KeyL",
+    grab: "KeyM",
     block: "KeyI",
   },
 ];
-const legacyActions = actions.filter((action) => action !== "block");
+const legacyActions = actions.filter(
+  (action) => action !== "block" && action !== "grab",
+);
 const fallbackBlockKeys = ["KeyQ", "KeyU", "KeyO", "KeyP"];
+const fallbackGrabKeys = ["KeyC", "KeyM", "KeyV", "KeyN", "KeyB", "KeyT"];
 
 export function migrateBindings(stored: unknown): Bindings[] | null {
   if (
@@ -79,6 +86,15 @@ export function migrateBindings(stored: unknown): Bindings[] | null {
     migrated[player].block = block;
     used.add(block);
   }
+  for (let player = 0; player < migrated.length; player++) {
+    if (typeof migrated[player].grab === "string") continue;
+    const grab = [defaults[player].grab, ...fallbackGrabKeys].find(
+      (key) => !used.has(key),
+    );
+    if (!grab) return null;
+    migrated[player].grab = grab;
+    used.add(grab);
+  }
   return migrated;
 }
 export class Inputs {
@@ -93,7 +109,11 @@ export class Inputs {
       const migrated = migrateBindings(stored);
       if (migrated) {
         this.bindings = migrated;
-        if (stored.some((binding: Partial<Bindings>) => !binding.block))
+        if (
+          stored.some(
+            (binding: Partial<Bindings>) => !binding.block || !binding.grab,
+          )
+        )
           this.save();
       }
     } catch {}
@@ -140,6 +160,7 @@ export class Inputs {
     input.kick = !!pad.buttons[1]?.pressed;
     input.special = !!pad.buttons[2]?.pressed;
     input.block = !!pad.buttons[3]?.pressed;
+    input.grab = !!pad.buttons[5]?.pressed;
     return input;
   }
 }

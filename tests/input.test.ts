@@ -86,6 +86,41 @@ describe("entradas independientes de render", () => {
     input.suspended = false;
     expect(input.frame(0).punch).toBe(false);
   });
+  it("lee el botón superior derecho del mando para agarrar", () => {
+    vi.stubGlobal("navigator", { getGamepads: () => [pad([0, 0], [5])] });
+    const input = new Inputs();
+    input.devices = ["0", "keyboard"];
+    input.suspended = false;
+    expect(input.frame(0).grab).toBe(true);
+  });
+  it("migra el agarre sin reemplazar asignaciones personalizadas", () => {
+    const stored = [
+      {
+        left: "KeyA",
+        right: "KeyD",
+        up: "KeyW",
+        down: "KeyS",
+        punch: "KeyF",
+        kick: "KeyG",
+        special: "KeyH",
+        block: "KeyC",
+      },
+      {
+        left: "ArrowLeft",
+        right: "ArrowRight",
+        up: "ArrowUp",
+        down: "ArrowDown",
+        punch: "KeyJ",
+        kick: "KeyK",
+        special: "KeyL",
+        block: "KeyI",
+      },
+    ];
+    expect(migrateBindings(stored)).toMatchObject([
+      { block: "KeyC", grab: "KeyM" },
+      { block: "KeyI", grab: "KeyV" },
+    ]);
+  });
   it("migra bindings antiguos conservando teclas personalizadas", () => {
     const old = [
       {

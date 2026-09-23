@@ -18,14 +18,18 @@ describe("catálogo visual de personajes", () => {
     ).toBe(visualCharacters.length);
   });
 
-  it("ofrece las 21 poses y las tres fuentes visuales para cada personaje", () => {
-    const expectedKeys = animationRegions
-      .map((region) => region.key)
-      .sort((a, b) => a.localeCompare(b));
+  it("ofrece 24 poses y la hoja de agarre para cada personaje", () => {
+    const expectedKeys = [
+      ...animationRegions.map((region) => region.key),
+      "grab-reach",
+      "grab-hold",
+      "grab-throw",
+    ].sort((a, b) => a.localeCompare(b));
     for (const character of visualCharacters) {
       expect(Object.keys(character.sheets).sort()).toEqual([
         "air",
         "breathe",
+        "grab",
         "guard",
         "motion",
       ]);
@@ -38,27 +42,26 @@ describe("catálogo visual de personajes", () => {
   it("mantiene todas las regiones dentro de sus hojas y con anclajes válidos", () => {
     for (const character of visualCharacters) {
       for (const region of character.regions) {
-        const isLauraGuard =
-          character.id === "laura" &&
-          (region.sheet === "guard" || region.sheet === "breathe");
         const width =
-          character.id === "mariana"
-            ? 1280
-            : character.id === "sebastian" ||
-                character.id === "rata" ||
-                character.id === "mariana" ||
-                isLauraGuard
-              ? 1024
-              : 1254;
+          region.sheet === "grab"
+            ? character.id === "laura"
+              ? 1942
+              : 2400
+            : character.id === "laura"
+              ? 1800
+              : character.id === "mariana"
+                ? 1280
+                : 1024;
         const height =
-          character.id === "mariana"
-            ? 1920
-            : character.id === "sebastian" ||
-                character.id === "rata" ||
-                character.id === "mariana" ||
-                isLauraGuard
-              ? 1536
-              : 1254;
+          region.sheet === "grab"
+            ? character.id === "laura"
+              ? 809
+              : 800
+            : character.id === "laura"
+              ? 1280
+              : character.id === "mariana"
+                ? 1920
+                : 1536;
         expect(region.x).toBeGreaterThanOrEqual(0);
         expect(region.y).toBeGreaterThanOrEqual(0);
         expect(region.x + region.width).toBeLessThanOrEqual(width);
@@ -68,8 +71,8 @@ describe("catálogo visual de personajes", () => {
         expect(region.referenceHeight).toBeGreaterThan(0);
       }
     }
-    expect(visualCharacter("sebastian").regions).toHaveLength(21);
-    expect(visualCharacter("rata").regions).toHaveLength(21);
-    expect(visualCharacter("mariana").regions).toHaveLength(21);
+    expect(visualCharacter("sebastian").regions).toHaveLength(24);
+    expect(visualCharacter("rata").regions).toHaveLength(24);
+    expect(visualCharacter("mariana").regions).toHaveLength(24);
   });
 });

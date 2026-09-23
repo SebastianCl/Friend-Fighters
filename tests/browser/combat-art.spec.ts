@@ -1,8 +1,7 @@
 import { test, expect } from "@playwright/test";
-import { animationRegions } from "../../src/animation";
 import { visualCharacter } from "../../src/visual-assets";
 
-test("Sebastian tiene alfa real y 21 regiones completas sin recortes", async ({
+test("Sebastian tiene alfa real y 24 regiones completas sin recortes", async ({
   page,
 }) => {
   await page.goto("/");
@@ -83,137 +82,82 @@ test("Sebastian tiene alfa real y 21 regiones completas sin recortes", async ({
   expect(result.transparent).toBeGreaterThan(
     result.width * result.height * 0.5,
   );
-  expect(result.regions).toHaveLength(21);
+  expect(result.regions).toHaveLength(24);
   for (const region of result.regions) {
     expect(region.solid, region.key).toBeGreaterThan(10000);
     expect(region.edge, `${region.key} toca el borde`).toBe(0);
   }
 });
 
-test("nuevas ilustraciones listas, sin poses vacías ni recortes en sus límites", async ({
+test("Laura usa el nuevo atlas y tres poses de agarre completas", async ({
   page,
 }) => {
   await page.goto("/");
-  await expect(page.locator("#app")).toHaveAttribute("data-ready", "true");
-  const metrics = await page.evaluate(async (regions) => {
+  await expect(page.locator("#app")).toHaveAttribute("data-ready", "true", {
+    timeout: 15000,
+  });
+  const character = visualCharacter("laura");
+  expect(character.sprite).toBe("/art/characters/laura/guard.png");
+  expect(character.portrait).toBe("/art/characters/laura/portrait.png");
+  const metrics = await page.evaluate(async (asset) => {
     const sheets: Record<string, { pixels: Uint8ClampedArray; width: number }> =
       {};
-    for (const [sheet, url] of [
-      ["guard", "/art/visual-v1/fighter-guard.png"],
-      ["breathe", "/art/combat-v2/laura-idle-breathe.png"],
-      ["motion", "/art/combat-v2/movement-sheet.png"],
-      ["air", "/art/combat-v2/air-sheet-v2.png"],
-    ]) {
+    for (const [sheet, url] of Object.entries(asset.sheets)) {
       const img = new Image();
       img.src = url;
       await img.decode();
-      const c = document.createElement("canvas");
-      c.width = img.width;
-      c.height = img.height;
-      const ctx = c.getContext("2d")!;
-      ctx.drawImage(img, 0, 0);
+      const canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const context = canvas.getContext("2d")!;
+      context.drawImage(img, 0, 0);
       sheets[sheet] = {
-        pixels: ctx.getImageData(0, 0, c.width, c.height).data,
-        width: c.width,
+        pixels: context.getImageData(0, 0, canvas.width, canvas.height).data,
+        width: canvas.width,
       };
     }
-    return regions.map((r) => {
-      const s = sheets[r.sheet];
+    return asset.regions.map((region) => {
+      const sheet = sheets[region.sheet];
       let count = 0,
-        edge = 0;
-      for (let y = 0; y < r.height; y++)
-        for (let x = 0; x < r.width; x++) {
-          if (s.pixels[((r.y + y) * s.width + r.x + x) * 4 + 3] > 128) {
+        edge = 0,
+        top = region.height,
+        bottom = 0;
+      for (let y = 0; y < region.height; y++)
+        for (let x = 0; x < region.width; x++) {
+          if (
+            sheet.pixels[
+              ((region.y + y) * sheet.width + region.x + x) * 4 + 3
+            ] > 128
+          ) {
             count++;
-            if (x === 0 || y === 0 || x === r.width - 1 || y === r.height - 1)
+            top = Math.min(top, y);
+            bottom = Math.max(bottom, y + 1);
+            if (
+              x === 0 ||
+              y === 0 ||
+              x === region.width - 1 ||
+              y === region.height - 1
+            )
               edge++;
           }
         }
-      return { key: r.key, count, edge };
+      return { key: region.key, count, edge, top, bottom };
     });
-  }, animationRegions);
+  }, character);
+  expect(metrics).toHaveLength(24);
   for (const frame of metrics) {
     expect(frame.count, frame.key).toBeGreaterThan(1500);
     expect(frame.edge, `${frame.key} toca el borde`).toBe(0);
   }
+  const guard = metrics.find((frame) => frame.key === "guard")!;
+  const breathe = metrics.find((frame) => frame.key === "breathe")!;
+  expect(Math.abs(guard.bottom - breathe.bottom)).toBeLessThanOrEqual(8);
+  expect(Math.abs(guard.top - breathe.top)).toBeLessThanOrEqual(8);
 });
 
-test("Laura respira en guardia sin saltar de tamaño ni mover los pies", async ({
-  page,
-}) => {
+test("Laura respira en guardia con altura constante", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator("#app")).toHaveAttribute("data-ready", "true");
-  const frames = await page.evaluate(async () => {
-    const sources = [
-      "/art/visual-v1/fighter-guard.png",
-      "/art/combat-v2/laura-idle-breathe.png",
-    ];
-    return Promise.all(
-      sources.map(async (source) => {
-        const image = new Image();
-        image.src = source;
-        await image.decode();
-        const canvas = document.createElement("canvas");
-        canvas.width = image.naturalWidth;
-        canvas.height = image.naturalHeight;
-        const context = canvas.getContext("2d")!;
-        context.drawImage(image, 0, 0);
-        const pixels = context.getImageData(
-          0,
-          0,
-          canvas.width,
-          canvas.height,
-        ).data;
-        let left = canvas.width,
-          top = canvas.height,
-          right = 0,
-          bottom = 0,
-          transparent = 0,
-          edge = 0;
-        for (let y = 0; y < canvas.height; y++)
-          for (let x = 0; x < canvas.width; x++) {
-            const alpha = pixels[(y * canvas.width + x) * 4 + 3];
-            if (alpha === 0) transparent++;
-            if (alpha > 128) {
-              left = Math.min(left, x);
-              top = Math.min(top, y);
-              right = Math.max(right, x + 1);
-              bottom = Math.max(bottom, y + 1);
-              if (
-                x === 0 ||
-                y === 0 ||
-                x === canvas.width - 1 ||
-                y === canvas.height - 1
-              )
-                edge++;
-            }
-          }
-        return {
-          width: canvas.width,
-          height: canvas.height,
-          bounds: { left, top, right, bottom },
-          transparent,
-          edge,
-        };
-      }),
-    );
-  });
-
-  expect(frames[0].width).toBe(1024);
-  expect(frames[1].width).toBe(1024);
-  expect(frames[0].height).toBe(1536);
-  expect(frames[1].height).toBe(1536);
-  for (const frame of frames) {
-    expect(frame.transparent).toBeGreaterThan(1024 * 1536 * 0.5);
-    expect(frame.edge).toBe(0);
-  }
-  expect(
-    Math.abs(frames[0].bounds.bottom - frames[1].bounds.bottom),
-  ).toBeLessThanOrEqual(8);
-  expect(
-    Math.abs(frames[0].bounds.top - frames[1].bounds.top),
-  ).toBeLessThanOrEqual(8);
-
   await page.getByRole("button", { name: "ENTRAR A PRÁCTICA" }).click();
   await page.getByRole("button", { name: "PRACTICAR", exact: false }).click();
   const canvas = page.locator("canvas");
@@ -372,7 +316,9 @@ test("poses reales de combate, cámara fija, pausa y pantalla completa", async (
     .click();
 });
 
-test("golpe agachado no muestra una pose de pie al terminar", async ({ page }) => {
+test("golpe agachado no muestra una pose de pie al terminar", async ({
+  page,
+}) => {
   await page.goto("/");
   await expect(page.locator("#app")).toHaveAttribute("data-ready", "true");
   await page.getByRole("button", { name: "ENTRAR A PRÁCTICA" }).click();

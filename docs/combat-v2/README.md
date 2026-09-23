@@ -4,15 +4,7 @@ La dirección visual aprobada ya está integrada en `/`, con versus local y prá
 
 ## Arte y animaciones
 
-Se conservaron el escenario, el sprite de guardia y el retrato de `public/art/visual-v1/`. Se generaron dos hojas adicionales con la herramienta integrada **image_gen**:
-
-- `public/art/combat-v2/movement-sheet.png`: caminar (dos pasos), ascenso y descenso del salto, agacharse, bloqueo, reacción al daño, caída, anticipación e impacto de puño/patada/especial, puño y patada agachados.
-- `public/art/combat-v2/air-sheet-v2.png`: guardia alternativa de respiración, puño aéreo, patada aérea y especial agachado.
-- `public/art/combat-v2/laura-idle-breathe.png`: segunda guardia de Laura, derivada de su sprite principal con una relajación leve de hombros y brazos. Sustituye la pose de respiración de la hoja aérea durante el reposo para conservar escala, trazo y apoyo de pies.
-
-Ambas hojas tienen 1254 × 1254 píxeles y transparencia real. Los prompts originales están en `animation-prompt.md` y `supplement-prompt.md`. Las imágenes se copiaron del resultado de image_gen sin reemplazar el dibujo por figuras programáticas.
-
-Hay 21 poses/regiones en total, incluida la guardia aprobada. Las regiones se declaran en `src/animation.ts`; se usan recortes de textura durante el renderizado, no se supone una cuadrícula perfecta del generador. Cada región tiene anclaje horizontal y altura anatómica de referencia. El borde inferior de su alfa define el apoyo de los pies, evitando que el personaje flote cuando cambia de pose.
+Se conserva el escenario de `public/art/visual-v1/`. Laura usa exclusivamente el nuevo diseño de `public/art/characters/laura/`; la fuente, el atlas, el retrato y los agarres se documentan en `docs/characters/laura/README.md`. Las regiones y anclajes de Laura se declaran en `src/visual-assets.ts`. El borde inferior del alfa define el apoyo de los pies al cambiar de pose.
 
 `animationFor` usa el estado real del motor y el fotograma del ataque: anticipación, contacto y recuperación. Los ataques bajos y aéreos tienen poses diferenciadas. El golpe mortal muestra reacción y caída; la caída aterriza incluso cuando el golpe ocurrió durante un salto. La pausa congela simulación y animación.
 

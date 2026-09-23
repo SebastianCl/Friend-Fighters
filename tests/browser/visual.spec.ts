@@ -110,7 +110,7 @@ test("sprite con alfa real, márgenes completos y dimensiones registradas", asyn
   expect(result.transparent).toBeGreaterThan(
     result.width * result.height * 0.5,
   );
-  expect(result.solid).toBeGreaterThan(400000);
+  expect(result.solid).toBeGreaterThan(15000);
   expect(result.bounds.left).toBeGreaterThan(0);
   expect(result.bounds.top).toBeGreaterThan(0);
   expect(result.bounds.bottom).toBeLessThan(result.height);

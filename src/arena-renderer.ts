@@ -83,8 +83,7 @@ export function makeArena(hooks: ArenaHooks) {
         this.textures.addSpriteSheet("landing-dust", dustImage, {
           frameWidth: dustFrameWidth,
           frameHeight: dustFrameHeight,
-          endFrame:
-            LANDING_DUST_CONFIG.columns * LANDING_DUST_CONFIG.rows - 1,
+          endFrame: LANDING_DUST_CONFIG.columns * LANDING_DUST_CONFIG.rows - 1,
         });
         this.anims.create({
           key: LANDING_DUST_ANIMATION,
@@ -100,7 +99,13 @@ export function makeArena(hooks: ArenaHooks) {
             VisualSheetKey,
             { data: Uint8ClampedArray; width: number }
           >();
-          for (const sheet of ["guard", "breathe", "motion", "air"] as const) {
+          for (const sheet of [
+            "guard",
+            "breathe",
+            "motion",
+            "air",
+            "grab",
+          ] as const) {
             const img = this.textures
               .get(`${character.id}-${sheet}`)
               .getSourceImage() as HTMLImageElement;

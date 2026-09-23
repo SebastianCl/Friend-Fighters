@@ -1,5 +1,13 @@
 export type Action =
-  "left" | "right" | "up" | "down" | "punch" | "kick" | "special" | "block";
+  | "left"
+  | "right"
+  | "up"
+  | "down"
+  | "punch"
+  | "kick"
+  | "special"
+  | "grab"
+  | "block";
 export type InputFrame = Record<Action, boolean>;
 export const idle = (): InputFrame => ({
   left: false,
@@ -9,6 +17,7 @@ export const idle = (): InputFrame => ({
   punch: false,
   kick: false,
   special: false,
+  grab: false,
   block: false,
 });
 export type Pose =
@@ -86,7 +95,7 @@ export interface MoveDefinition extends Move {
   variants: Record<AttackContext, Partial<Move>>;
 }
 export type MoveSetDefinition = Record<
-  "punch" | "kick" | "special",
+  "punch" | "kick" | "special" | "grab",
   MoveDefinition
 >;
 export function resolveMove(
@@ -157,6 +166,22 @@ export const moves: MoveSetDefinition = {
     push: 22,
     cooldown: 180,
   },
+  grab: {
+    attackType: "unblockable",
+    contactHeight: 135,
+    chipDamage: 0,
+    guardStunFrames: 0,
+    chipCanKO: true,
+    variants: { standing: {}, crouching: {}, airborne: {} },
+    damage: 16,
+    startup: 6,
+    active: 3,
+    recovery: 20,
+    reach: 110,
+    hitStun: 80,
+    push: 0,
+    cooldown: 0,
+  },
 };
 export const combatSpace = {
   minX: 90,
@@ -193,6 +218,9 @@ export interface Fighter {
     move: Move;
   };
   previous: InputFrame;
+  grabbedBy: number | null;
+  throwFlight: null | { attacker: number; attackId: number; vx: number };
+  landingRecovery: number;
 }
 export interface ComboState {
   id: number;
@@ -268,6 +296,9 @@ const makeFighter = (x: number, facing: 1 | -1): Fighter => ({
   stance: "standing",
   attack: null,
   previous: idle(),
+  grabbedBy: null,
+  throwFlight: null,
+  landingRecovery: 0,
 });
 export class Combat {
   fighters: [Fighter, Fighter] = [
@@ -285,6 +316,12 @@ export class Combat {
   combos: [ComboState, ComboState] = [makeCombo(1), makeCombo(0)];
   private nextAttackId = 1;
   private nextComboId = 1;
+  private grab: null | {
+    attacker: number;
+    defender: number;
+    attackId: number;
+    remaining: number;
+  } = null;
 
   clearCombos() {
     this.combos = [makeCombo(1), makeCombo(0)];
@@ -320,6 +357,7 @@ export class Combat {
     public moveSet: MoveSetDefinition = moves,
   ) {}
   resetPositions() {
+    this.grab = null;
     this.clearCombos();
     this.fighters = [
       makeFighter(combatSpace.startX[0], 1),
@@ -342,6 +380,29 @@ export class Combat {
         if (this.roundWinner >= 0) this.round++;
       }
       return;
+    }
+    if (this.grab) {
+      const hold = this.grab;
+      const attacker = this.fighters[hold.attacker];
+      const defender = this.fighters[hold.defender];
+      defender.x = Math.max(
+        combatSpace.minX,
+        Math.min(
+          combatSpace.maxX,
+          attacker.x + attacker.facing * combatSpace.separation,
+        ),
+      );
+      if (--hold.remaining === 0) {
+        defender.grabbedBy = null;
+        defender.throwFlight = {
+          attacker: hold.attacker,
+          attackId: hold.attackId,
+          vx: attacker.facing * 3,
+        };
+        defender.vy = 8.5;
+        defender.pose = "fall";
+        this.grab = null;
+      }
     }
     const wasStunned = this.fighters.map((f) => f.hitStun > 0);
     // Eligibility belongs to the start of the tick, just like guard eligibility.
@@ -371,6 +432,52 @@ export class Combat {
         f.previous = { ...input };
         continue;
       }
+      if (f.grabbedBy !== null) {
+        f.pose = "hurt";
+        f.previous = { ...input };
+        continue;
+      }
+      if (f.throwFlight) {
+        f.x = Math.max(
+          combatSpace.minX,
+          Math.min(combatSpace.maxX, f.x + f.throwFlight.vx),
+        );
+        f.y = Math.max(0, f.y + f.vy);
+        f.vy -= 0.38;
+        f.pose = "fall";
+        if (f.y === 0) {
+          const flight = f.throwFlight;
+          f.throwFlight = null;
+          f.vy = 0;
+          f.hp = Math.max(0, f.hp - this.moveSet.grab.damage);
+          f.hitStun = f.hp === 0 ? 0 : 12;
+          f.landingRecovery = f.hp === 0 ? 0 : 12;
+          this.endCombo(flight.attacker);
+          this.hits.push({
+            attacker: flight.attacker,
+            defender: i,
+            attackId: flight.attackId,
+            attackKind: "grab",
+            x: f.x,
+            y: 0,
+            blocked: false,
+            special: false,
+          });
+        }
+        f.previous = { ...input };
+        continue;
+      }
+      if (f.landingRecovery > 0) {
+        f.landingRecovery--;
+        f.hitStun = f.landingRecovery;
+        f.pose = f.landingRecovery > 0 ? "fall" : "idle";
+        f.previous = { ...input };
+        continue;
+      }
+      if (this.grab?.attacker === i) {
+        f.previous = { ...input };
+        continue;
+      }
       if (f.hitStun > 0) {
         f.hitStun--;
       } else if (f.guardStun > 0) {
@@ -397,8 +504,13 @@ export class Combat {
           f.x += d * (f.y > 0 ? 4 : 2.25);
           if (d && f.y === 0 && !input.block) f.pose = "walk";
         }
-        for (const kind of ["special", "kick", "punch"] as const) {
+        for (const kind of ["grab", "special", "kick", "punch"] as const) {
           if (!input[kind] || f.previous[kind]) continue;
+          if (
+            kind === "grab" &&
+            (f.y > 0 || f.vy > 0 || f.stance !== "standing")
+          )
+            continue;
           const context: AttackContext =
             f.y > 0 || f.vy > 0 ? "airborne" : f.stance;
           const move = resolveMove(this.moveSet[kind], context);
@@ -448,6 +560,7 @@ export class Combat {
     const guards = this.fighters.map((f, i) =>
       guardFor(f, inputs[i], wasStunned[i]),
     );
+    const grabCandidates: number[] = [];
     const contacts: {
       i: number;
       result: ReturnType<typeof resolveContact>;
@@ -474,18 +587,33 @@ export class Combat {
         (target.x - f.x) * f.facing > 0 &&
         Math.abs(target.x - f.x) <= move.reach + combatSpace.bodyHalfWidth &&
         attackY >= target.y - 5 &&
-        attackY <= target.y + targetHeight
+        attackY <= target.y + targetHeight &&
+        target.grabbedBy === null &&
+        !target.throwFlight &&
+        target.landingRecovery === 0
       ) {
-        contacts.push({
-          i,
-          result: resolveContact(move, target.hp, guards[1 - i]),
-          special: attack.kind === "special",
-          hitY: attackY,
-          attackId: attack.id,
-          attackKind: attack.kind,
-          move,
-        });
-        attack.hit = true;
+        if (attack.kind === "grab") {
+          if (
+            f.y === 0 &&
+            f.vy === 0 &&
+            target.y === 0 &&
+            target.vy === 0 &&
+            !target.throwFlight &&
+            target.grabbedBy === null &&
+            Math.abs(target.x - f.x) <= move.reach
+          )
+            grabCandidates.push(i);
+        } else
+          contacts.push({
+            i,
+            result: resolveContact(move, target.hp, guards[1 - i]),
+            special: attack.kind === "special",
+            hitY: attackY,
+            attackId: attack.id,
+            attackKind: attack.kind,
+            move,
+          });
+        if (attack.kind !== "grab") attack.hit = true;
       }
       attack.frame++;
       if (attack.frame >= move.startup + move.active + move.recovery) {
@@ -534,6 +662,48 @@ export class Combat {
         blocked,
         special,
       });
+    }
+    if (
+      this.grab &&
+      (this.fighters[this.grab.attacker].hitStun > 0 ||
+        this.fighters[this.grab.attacker].hp === 0)
+    ) {
+      const defender = this.fighters[this.grab.defender];
+      defender.grabbedBy = null;
+      defender.hitStun = 0;
+      defender.pose = "idle";
+      this.endCombo(this.grab.attacker);
+      this.grab = null;
+    }
+    if (grabCandidates.length === 2) {
+      for (const i of grabCandidates) this.fighters[i].attack!.hit = true;
+    } else if (grabCandidates.length === 1) {
+      const i = grabCandidates[0];
+      const attacker = this.fighters[i];
+      const defender = this.fighters[1 - i];
+      if (
+        attacker.hp > 0 &&
+        attacker.hitStun === 0 &&
+        !contacts.some(
+          (contact) => contact.i === 1 - i && !contact.result.blocked,
+        )
+      ) {
+        attacker.attack!.hit = true;
+        this.registerComboHit(i, attacker.attack!.move, continues[i]);
+        defender.attack = null;
+        defender.guardStun = 0;
+        defender.hitStun = 80;
+        defender.grabbedBy = i;
+        defender.throwFlight = null;
+        defender.landingRecovery = 0;
+        defender.pose = "hurt";
+        this.grab = {
+          attacker: i,
+          defender: 1 - i,
+          attackId: attacker.attack!.id,
+          remaining: 10,
+        };
+      }
     }
     // Resolve interruptions only after both contacts have been credited.
     this.combos.forEach((combo, i) => {

@@ -11,7 +11,7 @@ app.innerHTML = `
       <img class="backdrop" src="${scene.background}" alt="Calle nocturna de pixel art iluminada por letreros cian, magenta y amarillos" fetchpriority="high" />
       <div class="atmosphere" aria-hidden="true"></div>
       <header class="arena-header">
-        <a class="arcade-brand" href="/" aria-label="Volver al juego"><span class="brand-icon">FF</span>AMIGOS Y <b>RIVALES</b></a>
+        <a class="arcade-brand" href="/" aria-label="Volver al juego"><span class="brand-icon">AR</span>AMIGOS Y <b>RIVALES</b></a>
         <p class="edition"><span></span> NUEVA DIRECCIÓN VISUAL <i>/</i> VOL. 02</p>
         <button class="menu-toggle" data-dialog="menu">☰ <span>MENÚ</span></button>
       </header>
@@ -31,7 +31,7 @@ app.innerHTML = `
       <div class="stage-label"><span>ESCENARIO 01</span><strong>DISTRITO NEÓN</strong><i>00:24 AM / AFTER HOURS</i></div>
       <div class="ground-shadow shadow-one" aria-hidden="true"></div>
       <div class="ground-shadow shadow-two" aria-hidden="true"></div>
-      <img class="fighter fighter-one" src="${fighter.sprite}" alt="Laura: cabello oscuro largo, camiseta oscura, falda beige, guantes rojos y negros, y botas" fetchpriority="high" />
+      <img class="fighter fighter-one" src="${fighter.sprite}" alt="Laura: cabello oscuro largo, camiseta oscura, falda blanca, pulseras blancas y tenis blancos" fetchpriority="high" />
       <img class="fighter fighter-two" src="${fighter.sprite}" alt="La misma luchadora reflejada, mirando hacia su rival" />
       <div class="corner-label corner-one"><b>01</b><span>LAURA<small>PERSONAJE DE REFERENCIA</small></span></div>
       <div class="corner-label corner-two"><span>LAURA<small>PRUEBA ESTÁTICA · OTRA ESQUINA</small></span><b>02</b></div>
@@ -49,7 +49,7 @@ app.innerHTML = `
   <p id="fullscreen-status" class="sr-only" role="status"></p>
   <dialog id="portrait-dialog" class="art-dialog" aria-labelledby="portrait-title">
     <header class="dialog-heading"><div><p>FIGHTER FILE / 001</p><h2 id="portrait-title">LA IDENTIDAD<br>ESTÁ EN LOS DETALLES.</h2></div><button class="close-dialog" aria-label="Cerrar retrato">×</button></header>
-    <div class="portrait-layout"><img class="portrait-art" src="${fighter.portrait}" alt="Retrato detallado de Laura: rostro, ojos y cabello" /><div class="portrait-copy"><span class="tiny-label">LAURA</span><h3>MISMA MIRADA.<br>NUEVA ARENA.</h3><p>Rostro, peinado y proporciones basados en la ilustración que compartiste.</p><dl><div><dt>ESTILO</dt><dd>Pixel art detallado</dd></div><div><dt>APARIENCIA</dt><dd>Conservada de la referencia</dd></div><div><dt>ESTADO</dt><dd>Guardia · prueba estática</dd></div></dl><a class="asset-link" href="${fighter.portrait}" target="_blank" rel="noopener">ABRIR RETRATO ORIGINAL ↗</a></div></div>
+    <div class="portrait-layout"><img class="portrait-art" src="${fighter.portrait}" alt="Retrato detallado de Laura: rostro, ojos y cabello" /><div class="portrait-copy"><span class="tiny-label">LAURA</span><h3>MISMA MIRADA.<br>NUEVA ARENA.</h3><p>Rostro, peinado y proporciones basados en la ilustración que compartiste.</p><dl><div><dt>ESTILO</dt><dd>Ilustración de combate detallada</dd></div><div><dt>APARIENCIA</dt><dd>Conservada de la referencia</dd></div><div><dt>ESTADO</dt><dd>Guardia · prueba estática</dd></div></dl><a class="asset-link" href="${fighter.portrait}" target="_blank" rel="noopener">ABRIR RETRATO ORIGINAL ↗</a></div></div>
     <p class="dialog-note">El parecido se compara con la ilustración aportada. Las animaciones y las fotos originales de tus amigos corresponden a la siguiente etapa.</p>
   </dialog>
   <dialog id="compare-dialog" class="art-dialog comparison-dialog" aria-labelledby="compare-title">

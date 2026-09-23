@@ -23,22 +23,63 @@ export interface VisualCharacterAsset {
   displayHeight: number;
   facing: "right" | "left";
 }
+const grabRegions = (
+  width: number,
+  height: number,
+  referenceHeight: number,
+): AnimationRegion[] =>
+  (["grab-reach", "grab-hold", "grab-throw"] as const).map((key, i) => {
+    const x = Math.round((width * i) / 3);
+    const nextX = Math.round((width * (i + 1)) / 3);
+    return {
+      key,
+      sheet: "grab",
+      x,
+      y: 0,
+      width: nextX - x,
+      height,
+      anchorX: Math.round((nextX - x) / 2),
+      referenceHeight,
+    };
+  });
+
+const lauraAtlas = "/art/characters/laura/atlas.png";
+export const lauraRegions: readonly AnimationRegion[] = [
+  ...animationRegions,
+  ...(["grab-reach", "grab-hold", "grab-throw"] as const).map(
+    (key, i): AnimationRegion => {
+      const boundaries = [0, 700, 1300, 1942];
+      return {
+        key,
+        sheet: "grab",
+        x: boundaries[i],
+        y: 0,
+        width: boundaries[i + 1] - boundaries[i],
+        height: 809,
+        anchorX: Math.round((boundaries[i + 1] - boundaries[i]) / 2),
+        referenceHeight: 650,
+      };
+    },
+  ),
+];
+
 export const visualFighter: VisualCharacterAsset = {
   id: "laura",
   name: "LAURA",
   title: "La primera contendiente",
-  sprite: "/art/visual-v1/fighter-guard.png",
-  portrait: "/art/visual-v1/fighter-portrait.png",
+  sprite: "/art/characters/laura/guard.png",
+  portrait: "/art/characters/laura/portrait.png",
   sheets: {
-    guard: "/art/visual-v1/fighter-guard.png",
-    breathe: "/art/combat-v2/laura-idle-breathe.png",
-    motion: "/art/combat-v2/movement-sheet.png",
-    air: "/art/combat-v2/air-sheet-v2.png",
+    guard: lauraAtlas,
+    breathe: lauraAtlas,
+    motion: lauraAtlas,
+    air: lauraAtlas,
+    grab: "/art/characters/laura/grab-sheet.png",
   },
-  regions: animationRegions,
-  sourceSize: { width: 1024, height: 1536 },
-  visibleBounds: { left: 133, top: 84, right: 912, bottom: 1472 },
-  groundAnchor: { x: 512, y: 1472 },
+  regions: lauraRegions,
+  sourceSize: { width: 300, height: 320 },
+  visibleBounds: { left: 63, top: 31, right: 238, bottom: 310 },
+  groundAnchor: { x: 150, y: 310 },
   displayHeight: 420,
   facing: "right",
 };
@@ -190,8 +231,9 @@ export const visualCharacters: readonly VisualCharacterAsset[] = [
       breathe: sebastianAtlas,
       motion: sebastianAtlas,
       air: sebastianAtlas,
+      grab: "/art/throws/sebastian.png",
     },
-    regions: sebastianRegions,
+    regions: [...sebastianRegions, ...grabRegions(2400, 800, 700)],
     sourceSize: { width: 1024, height: 1536 },
     visibleBounds: { left: 57, top: 25, right: 223, bottom: 288 },
     groundAnchor: { x: 140, y: 288 },
@@ -209,8 +251,9 @@ export const visualCharacters: readonly VisualCharacterAsset[] = [
       breathe: rataAtlas,
       motion: rataAtlas,
       air: rataAtlas,
+      grab: "/art/throws/rata.png",
     },
-    regions: rataRegions,
+    regions: [...rataRegions, ...grabRegions(2400, 800, 700)],
     sourceSize: { width: 1024, height: 1536 },
     visibleBounds: { left: 41, top: 21, right: 211, bottom: 284 },
     groundAnchor: { x: 126, y: 284 },
@@ -228,8 +271,9 @@ export const visualCharacters: readonly VisualCharacterAsset[] = [
       breathe: marianaAtlas,
       motion: marianaAtlas,
       air: marianaAtlas,
+      grab: "/art/throws/mariana.png",
     },
-    regions: marianaRegions,
+    regions: [...marianaRegions, ...grabRegions(2400, 800, 700)],
     sourceSize: { width: 1280, height: 1920 },
     visibleBounds: { left: 54, top: 21, right: 266, bottom: 310 },
     groundAnchor: { x: 160, y: 310 },
@@ -245,7 +289,7 @@ export const visualStage = {
   id: "neon-street-01",
   name: "Distrito Neón",
   background: "/art/visual-v1/neon-street.png",
-  reference: "/art/visual-v1/reference.jpg",
+  reference: "/art/characters/laura/source-sheet.jpg",
   width: 1280,
   height: 720,
   groundY: 612,

@@ -67,6 +67,24 @@ describe("CpuController", () => {
     expect(new CpuController(() => 0).frame(combat, 1).up).toBe(true);
   });
 
+  it("puede agarrar cerca y responde a un agarre rival", () => {
+    const combat = positioned(100);
+    expect(
+      new CpuController(sequence(0.5, 0.5, 0.1)).frame(combat, 1).grab,
+    ).toBe(true);
+    combat.fighters[0].attack = {
+      id: 1,
+      kind: "grab",
+      frame: 0,
+      hit: false,
+      crouched: false,
+      move: combat.moveSet.grab,
+    };
+    const evasion = new CpuController(() => 0.1).frame(combat, 1);
+    expect(evasion.right).toBe(true);
+    expect(evasion.up).toBe(true);
+  });
+
   it("devuelve reposo fuera de combate y reinicia la decisión en el siguiente round", () => {
     const combat = positioned(220);
     const cpu = new CpuController(() => 0.5);

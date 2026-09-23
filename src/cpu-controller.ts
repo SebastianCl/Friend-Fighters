@@ -38,7 +38,15 @@ export class CpuController {
     const away = direction > 0 ? "left" : "right";
     this.held = idle();
     this.pulse = {};
-    if (self.hp <= 0 || self.hitStun > 0 || self.attack) return;
+    if (
+      self.hp <= 0 ||
+      self.hitStun > 0 ||
+      self.attack ||
+      self.grabbedBy !== null ||
+      self.throwFlight ||
+      self.landingRecovery > 0
+    )
+      return;
 
     const threat = opponent.attack;
     if (
@@ -49,7 +57,7 @@ export class CpuController {
     ) {
       if (threat.move.attackType === "unblockable") {
         this.held[away] = true;
-        if (self.y === 0 && this.random() < 0.5) this.pulse.up = true;
+        if (self.y === 0 && this.random() < 0.6) this.pulse.up = true;
       } else if (threat.move.attackType === "high" && this.random() < 0.35) {
         this.held.down = true;
       } else {
@@ -74,7 +82,15 @@ export class CpuController {
       return;
     }
     if (this.random() < 0.12) this.held.down = true;
-    if (self.cooldown === 0 && distance <= 145 && this.random() < 0.16) {
+    if (
+      self.y === 0 &&
+      self.stance === "standing" &&
+      distance <= 110 &&
+      opponent.y === 0 &&
+      this.random() < 0.16
+    ) {
+      this.pulse.grab = true;
+    } else if (self.cooldown === 0 && distance <= 145 && this.random() < 0.16) {
       this.pulse.special = true;
     } else if (distance <= 135 && this.random() < 0.6) {
       this.pulse.kick = true;

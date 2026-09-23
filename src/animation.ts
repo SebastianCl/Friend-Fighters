@@ -20,10 +20,13 @@ export type AnimationKey =
   | "special-hit"
   | "air-punch"
   | "air-kick"
-  | "low-special";
+  | "low-special"
+  | "grab-reach"
+  | "grab-hold"
+  | "grab-throw";
 export interface AnimationRegion {
   key: AnimationKey;
-  sheet: "motion" | "air" | "guard" | "breathe";
+  sheet: "motion" | "air" | "guard" | "breathe" | "grab";
   x: number;
   y: number;
   width: number;
@@ -31,219 +34,28 @@ export interface AnimationRegion {
   anchorX: number;
   referenceHeight: number;
 }
-/** Nonuniform source regions measured from the generated sheets; no clipping to an assumed grid. */
-export const animationRegions: AnimationRegion[] = [
-  {
-    key: "guard",
-    sheet: "guard",
-    x: 0,
-    y: 0,
-    width: 1024,
-    height: 1536,
-    anchorX: 512,
-    referenceHeight: 1388,
-  },
-  {
-    key: "walk-a",
-    sheet: "motion",
-    x: 0,
-    y: 0,
-    width: 314,
-    height: 350,
-    anchorX: 160,
-    referenceHeight: 309,
-  },
-  {
-    key: "walk-b",
-    sheet: "motion",
-    x: 314,
-    y: 0,
-    width: 321,
-    height: 350,
-    anchorX: 163,
-    referenceHeight: 309,
-  },
-  {
-    key: "rise",
-    sheet: "motion",
-    x: 635,
-    y: 0,
-    width: 290,
-    height: 350,
-    anchorX: 155,
-    referenceHeight: 309,
-  },
-  {
-    key: "land",
-    sheet: "motion",
-    x: 925,
-    y: 0,
-    width: 329,
-    height: 350,
-    anchorX: 185,
-    referenceHeight: 309,
-  },
-  {
-    key: "crouch",
-    sheet: "motion",
-    x: 0,
-    y: 350,
-    width: 314,
-    height: 320,
-    anchorX: 155,
-    referenceHeight: 309,
-  },
-  {
-    key: "block",
-    sheet: "motion",
-    x: 314,
-    y: 350,
-    width: 321,
-    height: 320,
-    anchorX: 163,
-    referenceHeight: 309,
-  },
-  {
-    key: "hurt",
-    sheet: "motion",
-    x: 635,
-    y: 350,
-    width: 279,
-    height: 320,
-    anchorX: 150,
-    referenceHeight: 309,
-  },
-  {
-    key: "fall",
-    sheet: "motion",
-    x: 914,
-    y: 350,
-    width: 340,
-    height: 320,
-    anchorX: 170,
-    referenceHeight: 309,
-  },
-  {
-    key: "punch-wind",
-    sheet: "motion",
-    x: 0,
-    y: 670,
-    width: 318,
-    height: 308,
-    anchorX: 154,
-    referenceHeight: 309,
-  },
-  {
-    key: "punch-hit",
-    sheet: "motion",
-    x: 318,
-    y: 670,
-    width: 322,
-    height: 308,
-    anchorX: 160,
-    referenceHeight: 309,
-  },
-  {
-    key: "kick-wind",
-    sheet: "motion",
-    x: 640,
-    y: 670,
-    width: 274,
-    height: 308,
-    anchorX: 134,
-    referenceHeight: 309,
-  },
-  {
-    key: "kick-hit",
-    sheet: "motion",
-    x: 914,
-    y: 670,
-    width: 340,
-    height: 308,
-    anchorX: 151,
-    referenceHeight: 309,
-  },
-  {
-    key: "low-punch",
-    sheet: "motion",
-    x: 0,
-    y: 978,
-    width: 318,
-    height: 276,
-    anchorX: 152,
-    referenceHeight: 309,
-  },
-  {
-    key: "low-kick",
-    sheet: "motion",
-    x: 318,
-    y: 978,
-    width: 322,
-    height: 276,
-    anchorX: 133,
-    referenceHeight: 309,
-  },
-  {
-    key: "special-wind",
-    sheet: "motion",
-    x: 640,
-    y: 978,
-    width: 287,
-    height: 276,
-    anchorX: 148,
-    referenceHeight: 309,
-  },
-  {
-    key: "special-hit",
-    sheet: "motion",
-    x: 927,
-    y: 978,
-    width: 327,
-    height: 276,
-    anchorX: 150,
-    referenceHeight: 309,
-  },
-  {
-    key: "breathe",
-    sheet: "breathe",
-    x: 0,
-    y: 0,
-    width: 1024,
-    height: 1536,
-    anchorX: 512,
-    referenceHeight: 1388,
-  },
-  {
-    key: "air-punch",
-    sheet: "air",
-    x: 627,
-    y: 0,
-    width: 627,
-    height: 627,
-    anchorX: 315,
-    referenceHeight: 434,
-  },
-  {
-    key: "air-kick",
-    sheet: "air",
-    x: 0,
-    y: 627,
-    width: 627,
-    height: 627,
-    anchorX: 270,
-    referenceHeight: 434,
-  },
-  {
-    key: "low-special",
-    sheet: "air",
-    x: 627,
-    y: 627,
-    width: 627,
-    height: 627,
-    anchorX: 270,
-    referenceHeight: 434,
-  },
+/** Laura's supplied 6 × 4 sheet, extracted into 300 × 320 transparent cells. */
+const lauraFrames: readonly [AnimationKey, number][] = [
+  ["guard", 1], ["breathe", 2], ["walk-a", 4], ["walk-b", 5],
+  ["rise", 7], ["land", 8], ["crouch", 10], ["block", 11],
+  ["hurt", 13], ["fall", 14], ["punch-wind", 15], ["punch-hit", 16],
+  ["kick-wind", 17], ["kick-hit", 18], ["low-punch", 19],
+  ["low-kick", 20], ["special-wind", 15], ["special-hit", 21],
+  ["air-punch", 22], ["air-kick", 23], ["low-special", 24],
 ];
+export const animationRegions: AnimationRegion[] = lauraFrames.map(
+  ([key, frame]): AnimationRegion => ({
+    key,
+    sheet: key === "guard" ? "guard" : key === "breathe" ? "breathe" :
+      key.startsWith("air-") || key === "low-special" ? "air" : "motion",
+    x: ((frame - 1) % 6) * 300,
+    y: Math.floor((frame - 1) / 6) * 320,
+    width: 300,
+    height: 320,
+    anchorX: 150,
+    referenceHeight: 280,
+  }),
+);
 
 export function attackPhase(
   f: Fighter,
@@ -265,7 +77,16 @@ export function animationFor(
 ): AnimationKey {
   if (f.hp === 0) return poseAge < 7 ? "hurt" : "fall";
   if (f.pose === "block") return f.stance === "crouching" ? "crouch" : "block";
+  if (f.grabbedBy !== null) return "hurt";
+  if (f.throwFlight) return "fall";
+  if (f.pose === "fall") return "fall";
   if (f.pose === "hurt") return "hurt";
+  if (f.attack?.kind === "grab")
+    return f.attack.hit
+      ? f.attack.frame < f.attack.move.startup + 10
+        ? "grab-hold"
+        : "grab-throw"
+      : "grab-reach";
   if (f.attack) {
     const phase = attackPhase(f),
       kind = f.attack.kind;

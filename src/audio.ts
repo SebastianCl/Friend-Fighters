@@ -5,9 +5,11 @@ export const soundCues = [
   "attack-punch",
   "attack-kick",
   "attack-special",
+  "attack-grab",
   "hit-light",
   "hit-medium",
   "hit-heavy",
+  "hit-throw",
   "block",
   "jump",
   "land",
@@ -88,6 +90,9 @@ export const soundDefinitions: Readonly<Record<SoundCue, SoundDefinition>> = {
   "attack-special": {
     voices: [tone(430, 72, 0.075, 0.2, 0, "sawtooth"), noise(720, 0.06, 0.18)],
   },
+  "attack-grab": {
+    voices: [noise(800, 0.045, 0.12), tone(175, 95, 0.04, 0.12)],
+  },
   "hit-light": {
     voices: [tone(165, 54, 0.1, 0.1), noise(1_350, 0.05, 0.08)],
   },
@@ -96,6 +101,9 @@ export const soundDefinitions: Readonly<Record<SoundCue, SoundDefinition>> = {
   },
   "hit-heavy": {
     voices: [tone(84, 28, 0.16, 0.23, 0, "sawtooth"), noise(610, 0.09, 0.2)],
+  },
+  "hit-throw": {
+    voices: [tone(74, 24, 0.15, 0.25, 0, "sawtooth"), noise(480, 0.11, 0.2)],
   },
   block: {
     voices: [
@@ -135,6 +143,7 @@ export function attackCue(kind: AttackKind): SoundCue {
 
 export function hitCue(hit: Pick<Hit, "attackKind" | "blocked">): SoundCue {
   if (hit.blocked) return "block";
+  if (hit.attackKind === "grab") return "hit-throw";
   if (hit.attackKind === "special") return "hit-heavy";
   return hit.attackKind === "kick" ? "hit-medium" : "hit-light";
 }

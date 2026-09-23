@@ -7,7 +7,7 @@ export function impactLevelForHit(
 ): ImpactLevel | null {
   if (hit.blocked) return null;
 
-  return hit.attackKind === "special"
+  return hit.attackKind === "special" || hit.attackKind === "grab"
     ? "heavy"
     : hit.attackKind === "kick"
       ? "medium"
