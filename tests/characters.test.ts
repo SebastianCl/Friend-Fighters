@@ -42,19 +42,23 @@ describe("catálogo visual de personajes", () => {
           character.id === "laura" &&
           (region.sheet === "guard" || region.sheet === "breathe");
         const width =
-          character.id === "sebastian" ||
-          character.id === "rata" ||
-          character.id === "mariana" ||
-          isLauraGuard
-            ? 1024
-            : 1254;
+          character.id === "mariana"
+            ? 1280
+            : character.id === "sebastian" ||
+                character.id === "rata" ||
+                character.id === "mariana" ||
+                isLauraGuard
+              ? 1024
+              : 1254;
         const height =
-          character.id === "sebastian" ||
-          character.id === "rata" ||
-          character.id === "mariana" ||
-          isLauraGuard
-            ? 1536
-            : 1254;
+          character.id === "mariana"
+            ? 1920
+            : character.id === "sebastian" ||
+                character.id === "rata" ||
+                character.id === "mariana" ||
+                isLauraGuard
+              ? 1536
+              : 1254;
         expect(region.x).toBeGreaterThanOrEqual(0);
         expect(region.y).toBeGreaterThanOrEqual(0);
         expect(region.x + region.width).toBeLessThanOrEqual(width);

@@ -33,6 +33,8 @@ import { renderTournamentBracket } from "./tournament-view";
 const app = document.querySelector<HTMLDivElement>("#app")!;
 app.innerHTML = `<div class="game-viewport"><section class="arena arcade-stage"><div id="game"></div><header class="arena-header"><a class="arcade-brand brand" href="#" aria-label="Menú principal"><span class="brand-icon">FF</span> AMIGOS Y <b>RIVALES</b></a><div class="header-actions"><button id="sound" aria-label="Silenciar sonido">SONIDO ON</button><button id="music" aria-label="Silenciar música" aria-pressed="true">MÚSICA ON</button><button id="fullscreen" aria-label="Pantalla completa" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 2H2v5M13 2h5v5M18 13v5h-5M7 18H2v-5"/></svg></button></div></header><div id="hud" hidden></div><div id="overlay"></div><footer class="arena-toolbar game-toolbar"><span id="mode-label">VERSUS LOCAL / EDICIÓN NEÓN</span><div id="fight-tools" hidden><button id="pause-button">Ⅱ PAUSA</button><button id="reset-practice" hidden>↺ REINICIAR PRÁCTICA</button></div><nav><button id="controls-top">GUÍA DE CONTROLES</button><a class="visual-preview-link" href="/visual-preview.html">NUEVO ESTILO VISUAL ↗</a></nav></footer></section></div><p id="asset-status" class="asset-status" role="status">Cargando la arena y las animaciones…</p><p id="fullscreen-status" class="sr-only" role="status"></p><dialog id="controls-dialog" aria-labelledby="controls-title"></dialog>`;
 let assetsReady = false;
+let menuCharacterIndex = 0;
+let menuCharacterTimer: number | undefined;
 const stage = document.querySelector<HTMLElement>(".arcade-stage")!;
 const viewport = document.querySelector<HTMLElement>(".game-viewport")!;
 function resizeStage() {
@@ -136,7 +138,10 @@ const Arena = makeArena({
         ? "menu"
         : screen,
     paused,
-    characters: chosen,
+    characters:
+      screen === "menu"
+        ? [chosen[0], visualCharacters[menuCharacterIndex].id]
+        : chosen,
   }),
   advance: (delta) => {
     if (screen !== "fight" || paused) return;
@@ -334,6 +339,7 @@ function setOverlay(html: string) {
   overlay.classList.toggle("empty", !html);
 }
 function menu() {
+  window.clearInterval(menuCharacterTimer);
   combat.clearCombos();
   screen = "menu";
   paused = false;
@@ -355,6 +361,14 @@ function menu() {
   btn("versus", () => select(false));
   btn("practice", () => select(true));
   btn("tournament", openTournamentSelection);
+  menuCharacterTimer = window.setInterval(() => {
+    if (screen !== "menu") {
+      window.clearInterval(menuCharacterTimer);
+      menuCharacterTimer = undefined;
+      return;
+    }
+    menuCharacterIndex = (menuCharacterIndex + 1) % visualCharacters.length;
+  }, 5000);
 }
 function openTournamentSelection() {
   screen = "tournament-select";

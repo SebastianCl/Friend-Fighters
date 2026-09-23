@@ -195,6 +195,18 @@ test("Laura, Sebastian, Rata y Mariana se eligen por esquina y permiten combate 
     "data-p2-animation",
     /punch-wind|punch-hit/,
   );
+  await page.waitForTimeout(900);
+  await page.keyboard.press("KeyK");
+  await expect(canvas).toHaveAttribute(
+    "data-p2-animation",
+    /kick-wind|kick-hit/,
+  );
+  await page.waitForTimeout(900);
+  await page.keyboard.press("KeyL");
+  await expect(canvas).toHaveAttribute(
+    "data-p2-animation",
+    /special-wind|special-hit/,
+  );
 });
 test("selección impide asignar el mismo mando a dos jugadores", async ({
   page,
