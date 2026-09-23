@@ -294,3 +294,68 @@ test("mando asignado: pausa con Start y desconexión segura", async ({
   await page.getByRole("button", { name: "VOLVER AL COMBATE" }).click();
   await expect(page.locator("#pause-hint")).toContainText("Reconecta");
 });
+
+test("el mando navega menús con cruceta, confirma con B y vuelve con X", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    const pad = {
+      index: 0,
+      id: "Nintendo Switch Pro Controller",
+      mapping: "standard",
+      buttons: Array.from({ length: 17 }, () => ({
+        pressed: false,
+        value: 0,
+        touched: false,
+      })),
+      axes: [0, 0],
+    };
+    Object.assign(window, { menuTestPad: pad });
+    Object.defineProperty(navigator, "getGamepads", { value: () => [pad] });
+  });
+  await page.goto("/");
+  await expect(page.locator("#versus")).toBeEnabled();
+  await expect(page.locator("#versus")).toHaveClass(/menu-selected/);
+
+  async function press(button: number) {
+    await page.evaluate((index) => {
+      (window as any).menuTestPad.buttons[index].pressed = true;
+    }, button);
+    await page.waitForTimeout(80);
+    await page.evaluate((index) => {
+      (window as any).menuTestPad.buttons[index].pressed = false;
+    }, button);
+    await page.waitForTimeout(80);
+  }
+
+  await page.evaluate(() => {
+    (window as any).menuTestPad.buttons[13].pressed = true;
+  });
+  await expect(page.locator("#practice")).toHaveClass(/menu-selected/);
+  await page.waitForTimeout(350);
+  await expect(page.locator("#practice")).toHaveClass(/menu-selected/);
+  await page.evaluate(() => {
+    (window as any).menuTestPad.buttons[13].pressed = false;
+  });
+  await page.waitForTimeout(80);
+
+  await press(0);
+  await expect(page.locator(".selection-panel")).toBeVisible();
+  await expect(page.locator("[data-character]").first()).toHaveClass(
+    /menu-selected/,
+  );
+  await press(3);
+  await expect(page.locator("#versus")).toBeVisible();
+
+  await press(13);
+  await press(13);
+  await press(0);
+  await expect(page.locator(".tournament-selection-panel")).toBeVisible();
+  await press(13);
+  await press(13);
+  await press(15);
+  await press(0);
+  await expect(page.locator(".tournament-panel")).toBeVisible();
+  await press(3);
+  await expect(page.locator("#versus")).toBeVisible();
+});

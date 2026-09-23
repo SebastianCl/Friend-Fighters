@@ -8,6 +8,7 @@ import {
   type CharacterId,
 } from "./visual-assets";
 import { Inputs, actions, labels, keyLabel } from "./input";
+import { MenuNavigation } from "./menu-navigation";
 import "./game.css";
 import { effects } from "./effects/visual-effects-manager";
 import type { VisualEffect } from "./effects/visual-effect";
@@ -46,6 +47,8 @@ const overlay = document.querySelector<HTMLDivElement>("#overlay")!;
 const hud = document.querySelector<HTMLDivElement>("#hud")!;
 const fightTools = document.querySelector<HTMLDivElement>("#fight-tools")!;
 const inputs = new Inputs();
+const menuNavigation = new MenuNavigation(() => inputs.menuFrame());
+let overlayCancel: (() => void) | null = null;
 let combat = new Combat(),
   chosen: [CharacterId, CharacterId] = ["laura", "sebastian"],
   screen:
@@ -203,6 +206,8 @@ const Arena = makeArena({
     document
       .querySelectorAll<HTMLButtonElement>("[data-requires-assets]")
       .forEach((b) => (b.disabled = false));
+    if (!overlay.classList.contains("empty"))
+      menuNavigation.setRoot(overlay, overlayCancel);
   },
   error: () => {
     const status = document.getElementById("asset-status")!;
@@ -332,11 +337,13 @@ document.addEventListener("fullscreenchange", () => {
   );
   resizeStage();
 });
-function setOverlay(html: string) {
+function setOverlay(html: string, cancel: (() => void) | null = null) {
   app.dataset.screen = screen;
   app.dataset.paused = String(paused);
   overlay.innerHTML = html;
   overlay.classList.toggle("empty", !html);
+  overlayCancel = cancel;
+  menuNavigation.setRoot(html ? overlay : null, cancel);
 }
 function menu() {
   window.clearInterval(menuCharacterTimer);
@@ -382,6 +389,7 @@ function openTournamentSelection() {
   document.getElementById("mode-label")!.textContent = "SELECCIÓN DE TORNEO";
   setOverlay(
     `<div class="selection-panel tournament-selection-panel"><p class="eyebrow">CUATRO PLAZAS · ELIMINACIÓN DIRECTA</p><h2>ELIGE TU PERSONAJE</h2><p class="selection-hint">Tu elección será PLAYER. Los CPUs completarán el cuadro.</p><div class="tournament-character-options">${visualCharacters.map((character) => `<button class="character-card" data-tournament-character="${character.id}" aria-label="Elegir ${character.name} para PLAYER" aria-pressed="${tournamentPlayerCharacter === character.id}"><img src="${character.portrait}" alt=""/><span><strong>${character.name}</strong><small>${character.title}</small></span></button>`).join("")}</div><div class="selection-actions"><button class="secondary" id="tournament-selection-back">VOLVER</button><button class="primary" id="tournament-confirm">CREAR TORNEO →</button></div></div>`,
+    menu,
   );
   document
     .querySelectorAll<HTMLButtonElement>("[data-tournament-character]")
@@ -416,7 +424,7 @@ function showTournament() {
   fightTools.hidden = true;
   document.getElementById("mode-label")!.textContent =
     `TORNEO / ${activeTournament.rounds[0].length * 2} PARTICIPANTES`;
-  setOverlay(renderTournamentBracket(activeTournament));
+  setOverlay(renderTournamentBracket(activeTournament), menu);
   btn("tournament-back", menu);
   if (activeTournament.getCurrentMatch()) {
     const startButton = document.getElementById(
@@ -451,6 +459,7 @@ function select(mode: boolean) {
 function renderSelection() {
   setOverlay(
     `<div class="selection-panel"><p class="eyebrow">${practice ? "LABORATORIO DE COMBATE" : "ANTES DEL PRIMER GOLPE"}</p><h2>ELIGE TU ESQUINA</h2><div class="selections">${[0, 1].map((i) => `<div class="player-selection"><h3>${i === 1 && practice ? "RIVAL DE PRÁCTICA" : i === 1 && opponentControl === "CPU" ? "CPU" : `JUGADOR ${i + 1}`}</h3><div class="character-options">${visualCharacters.map((character) => `<button class="character-card" data-player="${i}" data-character="${character.id}" aria-label="Elegir ${character.name} para ${i === 1 && practice ? "rival de práctica" : `jugador ${i + 1}`}" aria-pressed="${chosen[i] === character.id}"><img src="${character.portrait}" alt=""/><span><strong>${character.name}</strong><small>${character.title}</small></span></button>`).join("")}</div>${i === 1 && !practice ? `<label>CONTROL<select id="opponent-control"><option value="PLAYER" ${opponentControl === "PLAYER" ? "selected" : ""}>PLAYER</option><option value="CPU" ${opponentControl === "CPU" ? "selected" : ""}>CPU</option></select></label>` : ""}<label>DISPOSITIVO<select id="device-${i}" ${(practice || opponentControl === "CPU") && i === 1 ? "disabled" : ""}></select></label></div>`).join("")}</div><p id="device-hint" class="selection-hint" role="status"></p><div class="selection-actions"><button class="secondary" id="back">VOLVER</button><button class="secondary" id="configure">CONTROLES</button><button class="primary" id="start">${practice ? "PRACTICAR" : "¡A PELEAR!"} ↗</button></div></div>`,
+    menu,
   );
   refreshPads();
   const controlSelect = document.getElementById(
@@ -563,6 +572,7 @@ function pause(reason = "RESPIRA. LA RIVALIDAD ESPERA.") {
   accumulator = 0;
   setOverlay(
     `<div class="pause-panel"><p class="eyebrow">${reason}</p><h2>PAUSA</h2><button class="primary" id="resume">VOLVER AL COMBATE →</button><button class="secondary" id="pause-controls">CONTROLES</button><button class="text-button" id="exit">SALIR AL MENÚ</button><p id="pause-hint"></p></div>`,
+    () => document.getElementById("resume")?.click(),
   );
   btn(
     "resume",
@@ -616,12 +626,14 @@ function showResult() {
     }
     setOverlay(
       `<div class="pause-panel result-panel"><p class="eyebrow">COMBATE DE TORNEO TERMINADO</p><h2>${visualCharacter(chosen[winner]).name} GANA</h2><p>${match.participants[winner].id} <span class="score">${combat.wins[0]} — ${combat.wins[1]}</span></p><button class="primary" id="tournament-result-bracket">VER CUADRO ACTUALIZADO →</button></div>`,
+      menu,
     );
     btn("tournament-result-bracket", showTournament);
     return;
   }
   setOverlay(
     `<div class="pause-panel result-panel"><p class="eyebrow">LA AMISTAD SIGUE. EL MARCADOR TAMBIÉN.</p><h2>${visualCharacter(chosen[winner]).name} GANA</h2><p>${winner === 1 && cpuController ? "CPU" : `JUGADOR ${winner + 1}`} <span class="score">${combat.wins[0]} — ${combat.wins[1]}</span></p><button class="primary" id="rematch">OTRA RONDA ENTRE AMIGOS ↗</button><button class="secondary" id="reselect">CAMBIAR LUCHADORES</button><button class="text-button" id="result-menu">VOLVER AL MENÚ</button></div>`,
+    menu,
   );
   btn("rematch", start, null);
   btn("reselect", () => select(false));
@@ -632,8 +644,9 @@ function showControls() {
   if (screen === "fight" && !paused) pause();
   else sounds.play("ui-confirm");
   inputs.clear();
-  dialog.innerHTML = `<div class="dialog-top"><p class="eyebrow">APRENDE. PRACTICA. REPITE.</p><button id="close-controls" aria-label="Cerrar controles">×</button></div><h2 id="controls-title">TUS REGLAS.<br>TUS CONTROLES.</h2><p class="control-help">Haz clic en una tecla para cambiarla. Mantén Bloqueo para defender de pie o Agacharse + Bloqueo para defender bajo. Altos: de pie o evadir agachado; medios: ambas guardias; bajos: agachado; aéreos (overhead): de pie. Los especiales bloqueados causan 2 de daño, sin KO. Durante guard stun no puedes moverte, saltar ni atacar: mantén Bloqueo y ajusta la postura ante cada golpe. Pulsa Agarre cerca del rival: vence el bloqueo y lo lanza por los aires. Puedes evitarlo saltando o alejándote antes del contacto.</p><div class="bindings">${[0, 1].map((i) => `<div><h3>JUGADOR ${i + 1}</h3>${actions.map((a) => `<div class="binding"><span>${labels[a]}</span><button data-bind="${a}" data-player="${i}">${keyLabel(inputs.bindings[i][a])}</button></div>`).join("")}</div>`).join("")}</div><p id="binding-status" role="status">Los cambios se guardan en este navegador.</p><div class="pad-help"><strong>MANDOS ESTÁNDAR</strong><p>Cruceta / stick: moverse · A / ✕: puño · B / ○: patada · X / □: especial · Y / △: bloqueo · RB / R1: agarre<br>Start: pausa · Esc: pausa · R: reiniciar práctica</p><p>Pulsa un botón del mando para que el navegador lo detecte. Algunos teclados limitan pulsaciones simultáneas.</p></div>`;
+  dialog.innerHTML = `<div class="dialog-top"><p class="eyebrow">APRENDE. PRACTICA. REPITE.</p><button id="close-controls" aria-label="Cerrar controles">×</button></div><h2 id="controls-title">TUS REGLAS.<br>TUS CONTROLES.</h2><p class="control-help">Haz clic en una tecla para cambiarla. Mantén Bloqueo para defender de pie o Agacharse + Bloqueo para defender bajo. Altos: de pie o evadir agachado; medios: ambas guardias; bajos: agachado; aéreos (overhead): de pie. Los especiales bloqueados causan 2 de daño, sin KO. Durante guard stun no puedes moverte, saltar ni atacar: mantén Bloqueo y ajusta la postura ante cada golpe. Pulsa Agarre cerca del rival: vence el bloqueo y lo lanza por los aires. Puedes evitarlo saltando o alejándote antes del contacto.</p><div class="bindings">${[0, 1].map((i) => `<div><h3>JUGADOR ${i + 1}</h3>${actions.map((a) => `<div class="binding"><span>${labels[a]}</span><button data-bind="${a}" data-player="${i}">${keyLabel(inputs.bindings[i][a])}</button></div>`).join("")}</div>`).join("")}</div><p id="binding-status" role="status">Los cambios se guardan en este navegador.</p><div class="pad-help"><strong>MANDOS ESTÁNDAR</strong><p>Cruceta / stick: moverse · A / ✕: puño · B / ○: patada · X / □: especial · Y / △: bloqueo · RB / R1: agarre<br>Start: pausa · Esc: pausa · R: reiniciar práctica</p><p>MENÚS EN SWITCH PRO: B confirma · X vuelve o cancela.</p><p>Pulsa un botón del mando para que el navegador lo detecte. Algunos teclados limitan pulsaciones simultáneas.</p></div>`;
   dialog.showModal();
+  menuNavigation.setRoot(dialog, () => dialog.close());
   btn("close-controls", () => dialog.close());
   document.querySelectorAll<HTMLButtonElement>("[data-bind]").forEach(
     (b) =>
@@ -655,7 +668,13 @@ function showControls() {
   );
 }
 let pendingBinding: HTMLButtonElement | null = null;
-dialog.addEventListener("close", () => (pendingBinding = null));
+dialog.addEventListener("close", () => {
+  pendingBinding = null;
+  menuNavigation.setRoot(
+    overlay.classList.contains("empty") ? null : overlay,
+    overlayCancel,
+  );
+});
 window.addEventListener("keydown", (e) => {
   if (pendingBinding) {
     e.preventDefault();
@@ -726,6 +745,7 @@ window.addEventListener("gamepaddisconnected", (e) => {
 });
 let previousStart = false;
 function pollStart() {
+  menuNavigation.update();
   const startPressed = Array.from(navigator.getGamepads?.() ?? []).some(
     (p) =>
       p &&

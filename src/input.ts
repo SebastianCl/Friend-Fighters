@@ -22,6 +22,13 @@ export const labels: Record<Action, string> = {
   block: "Bloqueo",
 };
 export type Bindings = Record<Action, string>;
+export type MenuInputFrame = Pick<
+  InputFrame,
+  "left" | "right" | "up" | "down"
+> & {
+  confirm: boolean;
+  cancel: boolean;
+};
 const defaults: Bindings[] = [
   {
     left: "KeyA",
@@ -97,6 +104,26 @@ export function migrateBindings(stored: unknown): Bindings[] | null {
   }
   return migrated;
 }
+
+function gamepadFrame(pad: Gamepad | null | undefined): InputFrame {
+  const input = idle();
+  if (!pad) return input;
+  input.left = !!pad.buttons[14]?.pressed || pad.axes[0] < -0.35;
+  input.right = !!pad.buttons[15]?.pressed || pad.axes[0] > 0.35;
+  input.up = !!pad.buttons[12]?.pressed || pad.axes[1] < -0.55;
+  input.down = !!pad.buttons[13]?.pressed || pad.axes[1] > 0.55;
+  input.punch = !!pad.buttons[0]?.pressed;
+  input.kick = !!pad.buttons[1]?.pressed;
+  input.special = !!pad.buttons[2]?.pressed;
+  input.block = !!pad.buttons[3]?.pressed;
+  input.grab = !!pad.buttons[5]?.pressed;
+  return input;
+}
+
+function mergeFrames(target: InputFrame, source: InputFrame) {
+  for (const action of actions) target[action] ||= source[action];
+}
+
 export class Inputs {
   keys = new Set<string>();
   pressed = new Set<string>();
@@ -150,18 +177,24 @@ export class Inputs {
       }
       return input;
     }
-    const pad = navigator.getGamepads?.()[Number(this.devices[i])];
-    if (!pad) return input;
-    input.left = !!pad.buttons[14]?.pressed || pad.axes[0] < -0.35;
-    input.right = !!pad.buttons[15]?.pressed || pad.axes[0] > 0.35;
-    input.up = !!pad.buttons[12]?.pressed || pad.axes[1] < -0.55;
-    input.down = !!pad.buttons[13]?.pressed || pad.axes[1] > 0.55;
-    input.punch = !!pad.buttons[0]?.pressed;
-    input.kick = !!pad.buttons[1]?.pressed;
-    input.special = !!pad.buttons[2]?.pressed;
-    input.block = !!pad.buttons[3]?.pressed;
-    input.grab = !!pad.buttons[5]?.pressed;
-    return input;
+    return gamepadFrame(navigator.getGamepads?.()[Number(this.devices[i])]);
+  }
+  menuFrame(): MenuInputFrame {
+    const input = idle();
+    for (const pad of navigator.getGamepads?.() ?? []) {
+      mergeFrames(input, gamepadFrame(pad));
+    }
+    return {
+      left: input.left,
+      right: input.right,
+      up: input.up,
+      down: input.down,
+      // Menu actions intentionally use the existing combat mapping. On a
+      // Switch Pro's standard browser mapping, button 0 is physical B and
+      // button 3 is physical X.
+      confirm: input.punch,
+      cancel: input.block,
+    };
   }
 }
 export const keyLabel = (code: string) =>

@@ -93,6 +93,20 @@ describe("entradas independientes de render", () => {
     input.suspended = false;
     expect(input.frame(0).grab).toBe(true);
   });
+  it("reutiliza el mapeo de combate para confirmar y cancelar en menús", () => {
+    vi.stubGlobal("navigator", {
+      getGamepads: () => [pad([0, 0], [0, 3, 13])],
+    });
+    const input = new Inputs();
+    expect(input.menuFrame()).toEqual({
+      left: false,
+      right: false,
+      up: false,
+      down: true,
+      confirm: true,
+      cancel: true,
+    });
+  });
   it("migra el agarre sin reemplazar asignaciones personalizadas", () => {
     const stored = [
       {
