@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "pipelineVersion": "1.0.0-draft.1",
+  "sourceInventory": {
+    "path": "docs/characters/source-inventory.json",
+    "schemaVersion": 1,
+    "sha256": "a69cf17b8c321bb6eb9f3ddb438be65c56f5104e5d3ea6fa91447caa0928a2c9"
+  },
+  "poseSemantics": {
+    "path": "docs/characters/pose-semantics.json",
+    "schemaVersion": 1,
+    "sha256": "e050421ebafb05f1c983f9445895a4bb522b804e9a967df82992595af91b6359"
+  },
+  "geometryProfile": {
+    "path": "docs/characters/geometry-profile.json",
+    "schemaVersion": 1,
+    "id": "canonical-320x352-v1",
+    "sha256": "407afe4a28ebc20c11d6e584ffdc93cc2f3a265d301d196b50a23002e81a4f95"
+  },
+  "grabResourceIds": ["grab_01", "grab_02", "grab_03"]
+}

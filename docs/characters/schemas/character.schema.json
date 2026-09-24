@@ -1,0 +1,106 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://fighter-friends.local/character-pipeline/character-1.schema.json",
+  "title": "P05 Character Spec",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "pipelineVersion",
+    "geometryProfileId",
+    "status",
+    "identity",
+    "review",
+    "sources",
+    "visual",
+    "resources"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "pipelineVersion": { "type": "string", "minLength": 1 },
+    "geometryProfileId": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["draft", "production-ready"] },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "displayName", "revision"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+        "displayName": { "type": ["string", "null"], "minLength": 1 },
+        "revision": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "review": { "$ref": "#/$defs/review" },
+    "sources": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "role"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1 },
+          "role": { "enum": ["legacy", "design", "master", "candidate"] }
+        }
+      }
+    },
+    "visual": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "designReferencePath",
+        "masterReferencePath",
+        "statureGameUnits",
+        "proportions",
+        "appearanceNotes"
+      ],
+      "properties": {
+        "designReferencePath": { "type": ["string", "null"], "minLength": 1 },
+        "masterReferencePath": { "type": ["string", "null"], "minLength": 1 },
+        "statureGameUnits": {
+          "type": ["number", "null"],
+          "exclusiveMinimum": 0
+        },
+        "proportions": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "minProperties": 1,
+              "propertyNames": { "pattern": "^[a-z][a-zA-Z0-9]*$" },
+              "additionalProperties": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              }
+            }
+          ]
+        },
+        "appearanceNotes": { "type": ["string", "null"], "minLength": 1 }
+      }
+    },
+    "resources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "status", "framePath"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^(base|grab)_[0-9]{2}$" },
+          "status": { "enum": ["pending", "approved"] },
+          "framePath": { "type": ["string", "null"], "minLength": 1 }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "reviewedBy"],
+      "properties": {
+        "status": { "enum": ["pending", "approved"] },
+        "reviewedBy": { "type": ["string", "null"], "minLength": 1 }
+      }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://fighter-friends.local/character-pipeline/integration-1.schema.json",
+  "title": "P05 independent engine integration reference",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "pipelineVersion",
+    "characterId",
+    "status",
+    "engineMapPath",
+    "engineMapSchemaVersion"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "pipelineVersion": { "type": "string", "minLength": 1 },
+    "characterId": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+    "status": { "enum": ["pending", "verified"] },
+    "engineMapPath": { "type": ["string", "null"], "minLength": 1 },
+    "engineMapSchemaVersion": { "const": 1 }
+  }
+}

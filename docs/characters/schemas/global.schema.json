@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://fighter-friends.local/character-pipeline/global-1.schema.json",
+  "title": "P05 global pipeline configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "pipelineVersion",
+    "sourceInventory",
+    "poseSemantics",
+    "geometryProfile",
+    "grabResourceIds"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "pipelineVersion": {
+      "type": "string",
+      "pattern": "^1\\.[0-9]+\\.[0-9]+(?:-draft\\.[1-9][0-9]*)?$"
+    },
+    "sourceInventory": {
+      "$ref": "#/$defs/documentRef"
+    },
+    "poseSemantics": {
+      "$ref": "#/$defs/documentRef"
+    },
+    "geometryProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "schemaVersion", "id", "sha256"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schemaVersion": {
+          "const": 1
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "grabResourceIds": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^grab_0[1-3]$"
+      }
+    }
+  },
+  "$defs": {
+    "documentRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "schemaVersion", "sha256"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schemaVersion": {
+          "const": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    }
+  }
+}

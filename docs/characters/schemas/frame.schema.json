@@ -1,0 +1,510 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://fighter-friends.local/character-pipeline/frame-1.schema.json",
+  "title": "P05 pose/frame authoring configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "pipelineVersion",
+    "geometryProfileId",
+    "characterId",
+    "resourceId",
+    "status",
+    "review",
+    "sourcePath",
+    "sourceTransform",
+    "poseDraft",
+    "canonical",
+    "output"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "pipelineVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "geometryProfileId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "characterId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "resourceId": {
+      "type": "string",
+      "pattern": "^(base|grab)_[0-9]{2}$"
+    },
+    "status": {
+      "enum": ["draft", "approved"]
+    },
+    "review": {
+      "$ref": "#/$defs/review"
+    },
+    "sourcePath": {
+      "type": ["string", "null"],
+      "minLength": 1
+    },
+    "sourceTransform": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/transform"
+        }
+      ]
+    },
+    "poseDraft": {
+      "$ref": "#/$defs/pose"
+    },
+    "canonical": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/canonical"
+        }
+      ]
+    },
+    "output": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/output"
+        }
+      ]
+    }
+  },
+  "$defs": {
+    "point": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y"],
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        }
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "reviewedBy"],
+      "properties": {
+        "status": {
+          "enum": ["pending", "approved"]
+        },
+        "reviewedBy": {
+          "type": ["string", "null"],
+          "minLength": 1
+        }
+      }
+    },
+    "coordinateSpace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["imagePath", "width", "height", "units", "origin"],
+      "properties": {
+        "imagePath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "units": {
+          "const": "pixels"
+        },
+        "origin": {
+          "const": "top-left"
+        }
+      }
+    },
+    "landmark": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["position", "visibility"],
+      "properties": {
+        "position": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/point"
+            }
+          ]
+        },
+        "visibility": {
+          "enum": ["unreviewed", "visible", "occluded"]
+        }
+      }
+    },
+    "contact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["site", "position", "supportsWeight"],
+      "properties": {
+        "site": {
+          "enum": [
+            "left_foot",
+            "right_foot",
+            "left_knee",
+            "right_knee",
+            "left_palm",
+            "right_palm",
+            "back",
+            "pelvis",
+            "head"
+          ]
+        },
+        "position": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/point"
+            }
+          ]
+        },
+        "supportsWeight": {
+          "type": ["boolean", "null"]
+        }
+      }
+    },
+    "attributes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "facing",
+        "laterality",
+        "lateralityConfirmed",
+        "hands",
+        "supportLeg",
+        "airborne"
+      ],
+      "properties": {
+        "facing": {
+          "enum": ["left", "right", null]
+        },
+        "laterality": {
+          "const": "anatomical"
+        },
+        "lateralityConfirmed": {
+          "type": "boolean"
+        },
+        "hands": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["left", "right"],
+          "properties": {
+            "left": {
+              "enum": ["open", "fist", "relaxed", null]
+            },
+            "right": {
+              "enum": ["open", "fist", "relaxed", null]
+            }
+          }
+        },
+        "supportLeg": {
+          "enum": ["left", "right", "both", "none", null]
+        },
+        "airborne": {
+          "type": ["boolean", "null"]
+        }
+      }
+    },
+    "pose": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "resourceId",
+        "status",
+        "coordinateSpace",
+        "landmarks",
+        "attributes",
+        "groundContacts"
+      ],
+      "properties": {
+        "resourceId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "const": "draft"
+        },
+        "coordinateSpace": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/coordinateSpace"
+            }
+          ]
+        },
+        "landmarks": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "head_center",
+            "neck",
+            "sternum",
+            "pelvis_center",
+            "left_shoulder",
+            "right_shoulder",
+            "left_elbow",
+            "right_elbow",
+            "left_wrist",
+            "right_wrist",
+            "left_palm",
+            "right_palm",
+            "left_hip",
+            "right_hip",
+            "left_knee",
+            "right_knee",
+            "left_ankle",
+            "right_ankle",
+            "left_heel",
+            "right_heel",
+            "left_toe",
+            "right_toe"
+          ],
+          "properties": {
+            "head_center": {
+              "$ref": "#/$defs/landmark"
+            },
+            "neck": {
+              "$ref": "#/$defs/landmark"
+            },
+            "sternum": {
+              "$ref": "#/$defs/landmark"
+            },
+            "pelvis_center": {
+              "$ref": "#/$defs/landmark"
+            },
+            "left_shoulder": {
+              "$ref": "#/$defs/landmark"
+            },
+            "right_shoulder": {
+              "$ref": "#/$defs/landmark"
+            },
+            "left_elbow": {
+              "$ref": "#/$defs/landmark"
+            },
+            "right_elbow": {
+              "$ref": "#/$defs/landmark"
+            },
+            "left_wrist": {
+              "$ref": "#/$defs/landmark"
+            },
+            "right_wrist": {
+              "$ref": "#/$defs/landmark"
+            },
+            "left_palm": {
+              "$ref": "#/$defs/landmark"
+            },
+            "right_palm": {
+              "$ref": "#/$defs/landmark"
+            },
+            "left_hip": {
+              "$ref": "#/$defs/landmark"
+            },
+            "right_hip": {
+              "$ref": "#/$defs/landmark"
+            },
+            "left_knee": {
+              "$ref": "#/$defs/landmark"
+            },
+            "right_knee": {
+              "$ref": "#/$defs/landmark"
+            },
+            "left_ankle": {
+              "$ref": "#/$defs/landmark"
+            },
+            "right_ankle": {
+              "$ref": "#/$defs/landmark"
+            },
+            "left_heel": {
+              "$ref": "#/$defs/landmark"
+            },
+            "right_heel": {
+              "$ref": "#/$defs/landmark"
+            },
+            "left_toe": {
+              "$ref": "#/$defs/landmark"
+            },
+            "right_toe": {
+              "$ref": "#/$defs/landmark"
+            }
+          }
+        },
+        "attributes": {
+          "$ref": "#/$defs/attributes"
+        },
+        "groundContacts": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/contact"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "transform": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceOrigin", "uniformScale", "translation"],
+      "properties": {
+        "sourceOrigin": {
+          "$ref": "#/$defs/point"
+        },
+        "uniformScale": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "translation": {
+          "$ref": "#/$defs/point"
+        }
+      }
+    },
+    "bounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["left", "top", "right", "bottom"],
+      "properties": {
+        "left": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "top": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "right": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "bottom": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "extent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["count", "bounds"],
+      "properties": {
+        "count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "bounds": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/bounds"
+            }
+          ]
+        }
+      }
+    },
+    "alpha": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gt0", "gt128"],
+      "properties": {
+        "gt0": {
+          "$ref": "#/$defs/extent"
+        },
+        "gt128": {
+          "$ref": "#/$defs/extent"
+        }
+      }
+    },
+    "canonical": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["width", "height", "pivot", "alpha", "interactionPoints"],
+      "properties": {
+        "width": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "pivot": {
+          "$ref": "#/$defs/point"
+        },
+        "alpha": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/alpha"
+            }
+          ]
+        },
+        "interactionPoints": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/$defs/point"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    }
+  }
+}

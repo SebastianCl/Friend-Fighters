@@ -199,6 +199,8 @@ Revisar animaciones en bucle y transiciones entre grupos. Una pose correcta de m
 
 ## 9. Character Spec en YAML
 
+**P05 vigente:** [configuración global y esquemas validados](characters/configuration.md). Las estructuras JSON versionadas distinguen estándar, Character Spec, pose/frame e integración del motor; la puerta `production-ready` rechaza campos pendientes. El ejemplo YAML siguiente es ilustrativo e incompleto, no un Character Spec aprobado.
+
 Campos mínimos: versión de esquema, ID, versiones de estándar/plantilla, estado de aprobación, referencias, apariencia, proporciones, estilo, restricciones y conjuntos de poses. Usar IDs sin tildes para rutas y nombres de presentación con su ortografía normal.
 
 Ejemplo basado en Mariana, **pendiente de validar detalles, lateralidad, medidas y colores**:

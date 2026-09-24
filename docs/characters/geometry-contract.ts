@@ -144,11 +144,11 @@ function mapAnnotations(
 export function projectPoseAnnotations(
   draft: PoseMasterDraft,
   transform: SourceTransform,
+  resourceIds: readonly string[] = catalogue.poses.map(
+    (pose) => pose.resourceId,
+  ),
 ): CanonicalAnnotations {
-  const errors = validatePoseMasterDraft(
-    draft,
-    catalogue.poses.map((pose) => pose.resourceId),
-  );
+  const errors = validatePoseMasterDraft(draft, resourceIds);
   if (errors.length || draft.coordinateSpace === null)
     throw new Error(
       "invalid source annotations: " +
@@ -232,7 +232,7 @@ export function validateCanonicalGeometry(frame: {
   width: number;
   height: number;
   pivot: Point;
-  alpha: AlphaDiagnostics;
+  alpha: AlphaDiagnostics | null;
   annotations?: CanonicalAnnotations;
 }): GeometryReview {
   const errors: string[] = [],
@@ -244,7 +244,9 @@ export function validateCanonicalGeometry(frame: {
     errors.push("wrong canonical dimensions");
   if (frame.pivot.x !== profile.pivot.x || frame.pivot.y !== profile.pivot.y)
     errors.push("wrong canonical pivot");
+  if (frame.alpha === null) pending.push("alpha not measured");
   for (const key of ["gt0", "gt128"] as const) {
+    if (frame.alpha === null) break;
     const { count, bounds: b } = frame.alpha[key];
     if (
       !Number.isInteger(count) ||
@@ -263,20 +265,22 @@ export function validateCanonicalGeometry(frame: {
     )
       errors.push("invalid alpha extent: " + key);
   }
-  const all = frame.alpha.gt0,
-    core = frame.alpha.gt128;
+  const all = frame.alpha?.gt0,
+    core = frame.alpha?.gt128;
   if (
-    core.count > all.count ||
-    (core.bounds &&
-      all.bounds &&
-      (core.bounds.left < all.bounds.left ||
-        core.bounds.top < all.bounds.top ||
-        core.bounds.right > all.bounds.right ||
-        core.bounds.bottom > all.bounds.bottom))
+    all &&
+    core &&
+    (core.count > all.count ||
+      (core.bounds &&
+        all.bounds &&
+        (core.bounds.left < all.bounds.left ||
+          core.bounds.top < all.bounds.top ||
+          core.bounds.right > all.bounds.right ||
+          core.bounds.bottom > all.bounds.bottom)))
   )
     errors.push("inconsistent alpha thresholds");
-  if (!all.bounds) errors.push("empty content");
-  else {
+  if (all && !all.bounds) errors.push("empty content");
+  else if (all?.bounds) {
     const b = all.bounds,
       margin = profile.tolerances.contentMarginCanonicalPixels;
     if (
@@ -309,7 +313,8 @@ export function validateCanonicalGeometry(frame: {
         errors.push("point outside canonical frame: " + label);
     };
     for (const [name, landmark] of Object.entries(annotations.landmarks))
-      checkPoint(landmark.position, name);
+      if (landmark.position !== null || landmark.visibility !== "occluded")
+        checkPoint(landmark.position, name);
     for (const [name, point] of Object.entries(annotations.interactionPoints))
       checkPoint(point, name);
     const contacts = annotations.groundContacts,
