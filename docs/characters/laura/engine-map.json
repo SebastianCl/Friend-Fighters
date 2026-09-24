@@ -3,7 +3,7 @@
   "character": "laura",
   "sourceInventory": "docs/characters/source-inventory.json",
   "meaning": "engine-usage-only",
-  "artisticInterpretation": "pending-P03",
+  "artisticInterpretation": "external-catalog",
   "resources": [
     {
       "id": "base_01",
@@ -221,5 +221,6 @@
       "used": true,
       "reused": false
     }
-  ]
+  ],
+  "artisticCatalog": "docs/characters/pose-semantics.json"
 }

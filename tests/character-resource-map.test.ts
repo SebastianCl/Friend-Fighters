@@ -102,7 +102,10 @@ describe("P02: mapa de los 27 recursos de Laura", () => {
     expect(engineMap.schemaVersion).toBe(1);
     expect(engineMap.character).toBe("laura");
     expect(engineMap.meaning).toBe("engine-usage-only");
-    expect(engineMap.artisticInterpretation).toBe("pending-P03");
+    expect(engineMap.artisticInterpretation).toBe("external-catalog");
+    expect(engineMap.artisticCatalog).toBe(
+      "docs/characters/pose-semantics.json",
+    );
     expect(engineMap.resources.map((resource) => resource.id)).toEqual(
       expectedIds,
     );

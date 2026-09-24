@@ -57,36 +57,38 @@ La plantilla se deriva de Laura, pero elimina su ropa, cabello y rasgos personal
 
 ## 4. Catálogo de 24 poses base
 
-Identificadores internos estables: `base_01` a `base_24`. La numeración corresponde a Laura. Los nombres siguientes son **descripciones provisionales**, no claves confirmadas del motor. La tabla define recursos, no tiempos ni transiciones.
+Semántica artística aprobada en P03. Los IDs son estables y la numeración procede de Laura. Estas etiquetas describen el arte; no son claves del motor ni fijan tiempos o transiciones.
 
-| N.º | ID | Nombre provisional | Intención / validación necesaria |
-|---:|---|---|---|
-| 1 | `base_01` | `idle_a` | Guardia de reposo, primera variante. |
-| 2 | `base_02` | `idle_b` | Segunda variante de reposo. |
-| 3 | `base_03` | `idle_c` | Tercera variante; comprobar continuidad del ciclo. |
-| 4 | `base_04` | `walk_a` | Primera pose de paso. |
-| 5 | `base_05` | `walk_b` | Segunda pose de paso. |
-| 6 | `base_06` | `walk_c` | Tercera pose; validar orden, dirección y loop. |
-| 7 | `base_07` | `jump_or_knee` | Pierna recogida; distinguir salto, transición o ataque según el código. |
-| 8 | `base_08` | `crouch_a` | Agachado, variante de entrada o postura. |
-| 9 | `base_09` | `crouch_b` | Agachado bajo con mano próxima al suelo. |
-| 10 | `base_10` | `crouch_c` | Agachado con guardia; confirmar uso. |
-| 11 | `base_11` | `guard_a` | Defensa con brazo cruzado frente al torso/rostro. |
-| 12 | `base_12` | `guard_b` | Defensa alta. |
-| 13 | `base_13` | `hit_reaction` | Retroceso al recibir impacto. |
-| 14 | `base_14` | `knockdown` | Personaje tumbado; apoyo corporal distinto al de pie. |
-| 15 | `base_15` | `fighting_idle` | Guardia de combate; confirmar diferencia respecto a 1–3. |
-| 16 | `base_16` | `standing_punch` | Puñetazo de pie. |
-| 17 | `base_17` | `knee` | Rodilla elevada; comprobar apoyo y fase del ataque. |
-| 18 | `base_18` | `high_kick` | Patada alta con una pierna de apoyo. |
-| 19 | `base_19` | `crouching_punch` | Puñetazo agachado. |
-| 20 | `base_20` | `crouching_kick` | Patada baja con apoyo corporal reducido. |
-| 21 | `base_21` | `standing_block_or_push` | Palmas al frente; distinguir bloqueo y empuje. |
-| 22 | `base_22` | `jump_knee_attack` | Rodilla recogida; confirmar fase aérea y función. |
-| 23 | `base_23` | `air_kick` | Patada en postura aérea. |
-| 24 | `base_24` | `crouching_block` | Defensa agachada con brazos al frente. |
+El catálogo canónico está en [pose-semantics.json](characters/pose-semantics.json). El [contrato de landmarks](characters/pose-master-contract.md) define futuras anotaciones sin inventar mediciones. El uso del motor permanece separado en [engine-map.json](characters/laura/engine-map.json).
 
-Crear un `engine-map.yaml` separado con ID interno, clave del motor, índice/rectángulo de exportación, secuencia y versión compatible del juego. Una clave puede utilizar varios recursos y un recurso puede reutilizarse en varias secuencias. No renombrar ni reordenar recursos por deducción visual.
+| ID | Semántica artística aprobada |
+|---|---|
+| `base_01` | Guardia neutral A |
+| `base_02` | Guardia neutral B |
+| `base_03` | Guardia neutral C — reserva |
+| `base_04` | Marcha A |
+| `base_05` | Marcha B |
+| `base_06` | Marcha C — reserva |
+| `base_07` | Salto recogido |
+| `base_08` | Agachado abierto |
+| `base_09` | Alcance bajo — reserva |
+| `base_10` | Guardia agachada |
+| `base_11` | Defensa de antebrazo |
+| `base_12` | Guardia alta unilateral — reserva |
+| `base_13` | Reacción de impacto |
+| `base_14` | Derribo tumbado boca arriba |
+| `base_15` | Guardia neutral D |
+| `base_16` | Puñetazo recto de pie |
+| `base_17` | Preparación de patada con rodilla elevada |
+| `base_18` | Patada alta de pie |
+| `base_19` | Puñetazo agachado |
+| `base_20` | Patada baja con apoyo de mano |
+| `base_21` | Empuje de palmas de pie |
+| `base_22` | Rodillazo aéreo |
+| `base_23` | Patada aérea extendida |
+| `base_24` | Empuje de palmas agachado |
+
+Las cuatro reservas permanecen sin asignación al motor. La aprobación de este catálogo no modifica ninguna correspondencia de P02, aunque difiera del significado artístico. Los recursos grab_01–grab_03 no se redefinen en P03.
 
 ## 5. Extensión de agarre: tres poses adicionales
 
@@ -269,9 +271,9 @@ Partición inicial que cubre todos los recursos exactamente una vez:
 | Caminar | `base_04`, `base_05`, `base_06` |
 | Salto/transición | `base_07` |
 | Agachado | `base_08`, `base_09`, `base_10` |
-| Defensa | `base_11`, `base_12`, `base_21`, `base_24` |
+| Defensa | `base_11`, `base_12` |
 | Daño | `base_13`, `base_14` |
-| Ataques | `base_16`–`base_20`, `base_22`, `base_23` |
+| Ataques y preparación | `base_16`–`base_24` |
 | Agarre | `grab_01`, `grab_02`, `grab_03` |
 
 Subdividir ataques o generar poses individuales cuando la consistencia lo requiera. Los grupos sirven para organizar generación, no para imponer secuencias al motor.

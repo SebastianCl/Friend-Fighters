@@ -1,0 +1,128 @@
+{
+  "schemaVersion": 1,
+  "status": "approved",
+  "meaning": "artistic-semantics-only",
+  "referenceCharacter": "laura",
+  "poses": [
+    {
+      "resourceId": "base_01",
+      "label": "Guardia neutral A",
+      "reserve": false
+    },
+    {
+      "resourceId": "base_02",
+      "label": "Guardia neutral B",
+      "reserve": false
+    },
+    {
+      "resourceId": "base_03",
+      "label": "Guardia neutral C — reserva",
+      "reserve": true
+    },
+    {
+      "resourceId": "base_04",
+      "label": "Marcha A",
+      "reserve": false
+    },
+    {
+      "resourceId": "base_05",
+      "label": "Marcha B",
+      "reserve": false
+    },
+    {
+      "resourceId": "base_06",
+      "label": "Marcha C — reserva",
+      "reserve": true
+    },
+    {
+      "resourceId": "base_07",
+      "label": "Salto recogido",
+      "reserve": false
+    },
+    {
+      "resourceId": "base_08",
+      "label": "Agachado abierto",
+      "reserve": false
+    },
+    {
+      "resourceId": "base_09",
+      "label": "Alcance bajo — reserva",
+      "reserve": true
+    },
+    {
+      "resourceId": "base_10",
+      "label": "Guardia agachada",
+      "reserve": false
+    },
+    {
+      "resourceId": "base_11",
+      "label": "Defensa de antebrazo",
+      "reserve": false
+    },
+    {
+      "resourceId": "base_12",
+      "label": "Guardia alta unilateral — reserva",
+      "reserve": true
+    },
+    {
+      "resourceId": "base_13",
+      "label": "Reacción de impacto",
+      "reserve": false
+    },
+    {
+      "resourceId": "base_14",
+      "label": "Derribo tumbado boca arriba",
+      "reserve": false
+    },
+    {
+      "resourceId": "base_15",
+      "label": "Guardia neutral D",
+      "reserve": false
+    },
+    {
+      "resourceId": "base_16",
+      "label": "Puñetazo recto de pie",
+      "reserve": false
+    },
+    {
+      "resourceId": "base_17",
+      "label": "Preparación de patada con rodilla elevada",
+      "reserve": false
+    },
+    {
+      "resourceId": "base_18",
+      "label": "Patada alta de pie",
+      "reserve": false
+    },
+    {
+      "resourceId": "base_19",
+      "label": "Puñetazo agachado",
+      "reserve": false
+    },
+    {
+      "resourceId": "base_20",
+      "label": "Patada baja con apoyo de mano",
+      "reserve": false
+    },
+    {
+      "resourceId": "base_21",
+      "label": "Empuje de palmas de pie",
+      "reserve": false
+    },
+    {
+      "resourceId": "base_22",
+      "label": "Rodillazo aéreo",
+      "reserve": false
+    },
+    {
+      "resourceId": "base_23",
+      "label": "Patada aérea extendida",
+      "reserve": false
+    },
+    {
+      "resourceId": "base_24",
+      "label": "Empuje de palmas agachado",
+      "reserve": false
+    }
+  ]
+}

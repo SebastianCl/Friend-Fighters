@@ -16,4 +16,8 @@ Prompt usado con ImageGen integrado para `grab-sheet.png` (referencia: la hoja a
 
 El mapeo base se comprueba contra las celdas de `src/animation.ts`; el orden de agarre se comprueba contra las regiones de `src/visual-assets.ts`. `base_03`, `base_06`, `base_09` y `base_12` no tienen uso actual. `base_15` se reutiliza para `punch-wind` y `special-wind`. `tests/character-resource-map.test.ts` detecta cambios en esas asignaciones, IDs faltantes o duplicados y reutilizaciones no declaradas.
 
-Los nombres e interpretaciones visuales provisionales de la propuesta no forman parte de este contrato. Hay divergencias nominales, por ejemplo `base_08` figura allí como agachado pero el motor lo usa para `land`; `base_15`, `base_21` y `base_24` también tienen nombres provisionales distintos de sus usos actuales. Resolver el significado artístico y cualquier correspondencia visual queda para P03.
+## P03 · semántica aprobada
+
+[pose-semantics.json](../pose-semantics.json) formaliza las 24 etiquetas artísticas aprobadas, unidas al mapa del motor únicamente por ID. La semántica no cambia las asignaciones de P02; las cuatro reservas siguen sin uso. Por ejemplo, base_08 es Agachado abierto aunque el motor use land, y base_22 es Rodillazo aéreo aunque use air-punch.
+
+El [contrato de poses maestras](../pose-master-contract.md) define landmarks, lateralidad, manos, apoyos y estado aéreo. Las coordenadas y los atributos no confirmados permanecen pendientes. P03 no modifica los recursos grab ni los assets de producción.
