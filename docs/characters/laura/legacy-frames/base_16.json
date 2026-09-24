@@ -1,0 +1,129 @@
+{
+  "schemaVersion": 1,
+  "pipelineVersion": "1.0.0-draft.1",
+  "geometryProfileId": "canonical-320x352-v1",
+  "characterId": "laura",
+  "resourceId": "base_16",
+  "status": "draft",
+  "review": {
+    "status": "pending",
+    "reviewedBy": null
+  },
+  "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+  "sourceTransform": null,
+  "poseDraft": {
+    "resourceId": "base_16",
+    "status": "draft",
+    "coordinateSpace": {
+      "imagePath": "public/art/characters/laura/source-sheet.jpg",
+      "width": 1169,
+      "height": 1280,
+      "units": "pixels",
+      "origin": "top-left"
+    },
+    "landmarks": {
+      "head_center": {
+        "position": null,
+        "visibility": "unreviewed"
+      },
+      "neck": {
+        "position": null,
+        "visibility": "unreviewed"
+      },
+      "sternum": {
+        "position": null,
+        "visibility": "unreviewed"
+      },
+      "pelvis_center": {
+        "position": null,
+        "visibility": "unreviewed"
+      },
+      "left_shoulder": {
+        "position": null,
+        "visibility": "unreviewed"
+      },
+      "right_shoulder": {
+        "position": null,
+        "visibility": "unreviewed"
+      },
+      "left_elbow": {
+        "position": null,
+        "visibility": "unreviewed"
+      },
+      "right_elbow": {
+        "position": null,
+        "visibility": "unreviewed"
+      },
+      "left_wrist": {
+        "position": null,
+        "visibility": "unreviewed"
+      },
+      "right_wrist": {
+        "position": null,
+        "visibility": "unreviewed"
+      },
+      "left_palm": {
+        "position": null,
+        "visibility": "unreviewed"
+      },
+      "right_palm": {
+        "position": null,
+        "visibility": "unreviewed"
+      },
+      "left_hip": {
+        "position": null,
+        "visibility": "unreviewed"
+      },
+      "right_hip": {
+        "position": null,
+        "visibility": "unreviewed"
+      },
+      "left_knee": {
+        "position": null,
+        "visibility": "unreviewed"
+      },
+      "right_knee": {
+        "position": null,
+        "visibility": "unreviewed"
+      },
+      "left_ankle": {
+        "position": null,
+        "visibility": "unreviewed"
+      },
+      "right_ankle": {
+        "position": null,
+        "visibility": "unreviewed"
+      },
+      "left_heel": {
+        "position": null,
+        "visibility": "unreviewed"
+      },
+      "right_heel": {
+        "position": null,
+        "visibility": "unreviewed"
+      },
+      "left_toe": {
+        "position": null,
+        "visibility": "unreviewed"
+      },
+      "right_toe": {
+        "position": null,
+        "visibility": "unreviewed"
+      }
+    },
+    "attributes": {
+      "facing": null,
+      "laterality": "anatomical",
+      "lateralityConfirmed": false,
+      "hands": {
+        "left": null,
+        "right": null
+      },
+      "supportLeg": null,
+      "airborne": null
+    },
+    "groundContacts": null
+  },
+  "canonical": null,
+  "output": null
+}

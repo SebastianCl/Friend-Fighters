@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "pipelineVersion": "1.0.0-draft.1",
+  "geometryProfileId": "canonical-320x352-v1",
+  "status": "draft",
+  "identity": {
+    "id": "laura",
+    "displayName": "Laura",
+    "revision": 1
+  },
+  "review": {
+    "status": "pending",
+    "reviewedBy": null
+  },
+  "sources": [
+    {
+      "path": "public/art/characters/laura/source-sheet.jpg",
+      "role": "legacy"
+    }
+  ],
+  "visual": {
+    "designReferencePath": null,
+    "masterReferencePath": null,
+    "statureGameUnits": null,
+    "proportions": null,
+    "appearanceNotes": null
+  },
+  "resources": [
+    {
+      "id": "base_01",
+      "status": "pending",
+      "framePath": "docs/characters/laura/legacy-frames/base_01.json"
+    },
+    {
+      "id": "base_02",
+      "status": "pending",
+      "framePath": "docs/characters/laura/legacy-frames/base_02.json"
+    },
+    {
+      "id": "base_03",
+      "status": "pending",
+      "framePath": "docs/characters/laura/legacy-frames/base_03.json"
+    },
+    {
+      "id": "base_04",
+      "status": "pending",
+      "framePath": "docs/characters/laura/legacy-frames/base_04.json"
+    },
+    {
+      "id": "base_05",
+      "status": "pending",
+      "framePath": "docs/characters/laura/legacy-frames/base_05.json"
+    },
+    {
+      "id": "base_06",
+      "status": "pending",
+      "framePath": "docs/characters/laura/legacy-frames/base_06.json"
+    },
+    {
+      "id": "base_07",
+      "status": "pending",
+      "framePath": "docs/characters/laura/legacy-frames/base_07.json"
+    },
+    {
+      "id": "base_08",
+      "status": "pending",
+      "framePath": "docs/characters/laura/legacy-frames/base_08.json"
+    },
+    {
+      "id": "base_09",
+      "status": "pending",
+      "framePath": "docs/characters/laura/legacy-frames/base_09.json"
+    },
+    {
+      "id": "base_10",
+      "status": "pending",
+      "framePath": "docs/characters/laura/legacy-frames/base_10.json"
+    },
+    {
+      "id": "base_11",
+      "status": "pending",
+      "framePath": "docs/characters/laura/legacy-frames/base_11.json"
+    },
+    {
+      "id": "base_12",
+      "status": "pending",
+      "framePath": "docs/characters/laura/legacy-frames/base_12.json"
+    },
+    {
+      "id": "base_13",
+      "status": "pending",
+      "framePath": "docs/characters/laura/legacy-frames/base_13.json"
+    },
+    {
+      "id": "base_14",
+      "status": "pending",
+      "framePath": "docs/characters/laura/legacy-frames/base_14.json"
+    },
+    {
+      "id": "base_15",
+      "status": "pending",
+      "framePath": "docs/characters/laura/legacy-frames/base_15.json"
+    },
+    {
+      "id": "base_16",
+      "status": "pending",
+      "framePath": "docs/characters/laura/legacy-frames/base_16.json"
+    },
+    {
+      "id": "base_17",
+      "status": "pending",
+      "framePath": "docs/characters/laura/legacy-frames/base_17.json"
+    },
+    {
+      "id": "base_18",
+      "status": "pending",
+      "framePath": "docs/characters/laura/legacy-frames/base_18.json"
+    },
+    {
+      "id": "base_19",
+      "status": "pending",
+      "framePath": "docs/characters/laura/legacy-frames/base_19.json"
+    },
+    {
+      "id": "base_20",
+      "status": "pending",
+      "framePath": "docs/characters/laura/legacy-frames/base_20.json"
+    },
+    {
+      "id": "base_21",
+      "status": "pending",
+      "framePath": "docs/characters/laura/legacy-frames/base_21.json"
+    },
+    {
+      "id": "base_22",
+      "status": "pending",
+      "framePath": "docs/characters/laura/legacy-frames/base_22.json"
+    },
+    {
+      "id": "base_23",
+      "status": "pending",
+      "framePath": "docs/characters/laura/legacy-frames/base_23.json"
+    },
+    {
+      "id": "base_24",
+      "status": "pending",
+      "framePath": "docs/characters/laura/legacy-frames/base_24.json"
+    }
+  ]
+}

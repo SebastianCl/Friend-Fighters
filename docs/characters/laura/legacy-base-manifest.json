@@ -1,0 +1,2367 @@
+{
+  "schemaVersion": 1,
+  "pipelineVersion": "1.0.0-draft.1",
+  "geometryProfileId": "canonical-320x352-v1",
+  "characterId": "laura",
+  "source": {
+    "path": "public/art/characters/laura/source-sheet.jpg",
+    "sha256": "f89f959a8c7c1409dce4469b08414e7d37dda61ddf80f8f1c32b02ed72509dea",
+    "width": 1169,
+    "height": 1280
+  },
+  "productionAtlas": {
+    "path": "public/art/characters/laura/atlas.png",
+    "sha256": "5e3315b2a83747cfddbf28bc3ec381499eaed52328845e535b204156d99f50d7",
+    "width": 1800,
+    "height": 1280
+  },
+  "legacyFrame": {
+    "width": 300,
+    "height": 320,
+    "columns": 6,
+    "rows": 4,
+    "historicalAnchor": {
+      "x": 150,
+      "y": 310
+    }
+  },
+  "extractionAlgorithm": {
+    "decodedWith": "Chromium HTML canvas",
+    "inkCriterion": "min(R,G,B) < 232",
+    "foregroundSelection": "largest 8-connected ink component; minimum 800 pixels",
+    "exteriorRemoval": "4-connected flood from crop border excluding selected component",
+    "retainedAlpha": "255 for non-exterior pixels; 0 elsewhere",
+    "placement": "center selected alpha bounds horizontally with Math.round; bottom at y=310",
+    "resampling": "drawImage 1:1; no scale"
+  },
+  "resources": [
+    {
+      "resourceId": "base_01",
+      "status": "draft",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      },
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "sourceSha256": "f89f959a8c7c1409dce4469b08414e7d37dda61ddf80f8f1c32b02ed72509dea",
+      "sourceDimensions": {
+        "width": 1169,
+        "height": 1280
+      },
+      "sourceRect": {
+        "left": 18,
+        "top": 57,
+        "right": 199,
+        "bottom": 345
+      },
+      "originalCropDimensions": {
+        "width": 181,
+        "height": 288
+      },
+      "extraction": {
+        "winningInkPixels": 22441
+      },
+      "sourceAlphaBounds": {
+        "left": 20,
+        "top": 59,
+        "right": 195,
+        "bottom": 338
+      },
+      "cutoutToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 61,
+          "y": 29
+        }
+      },
+      "sourceToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 43,
+          "y": -28
+        }
+      },
+      "legacyFrame": {
+        "width": 300,
+        "height": 320,
+        "anchor": {
+          "x": 150,
+          "y": 310
+        }
+      },
+      "legacyAtlasRect": {
+        "x": 0,
+        "y": 0,
+        "width": 300,
+        "height": 320
+      },
+      "legacyPlacement": {
+        "x": 63,
+        "y": 31,
+        "width": 175,
+        "height": 279
+      },
+      "alpha": {
+        "gt0": {
+          "count": 22518,
+          "bounds": {
+            "left": 63,
+            "top": 31,
+            "right": 238,
+            "bottom": 310
+          }
+        },
+        "gt128": {
+          "count": 22518,
+          "bounds": {
+            "left": 63,
+            "top": 31,
+            "right": 238,
+            "bottom": 310
+          }
+        }
+      },
+      "canonical": {
+        "status": "pending",
+        "profileId": "canonical-320x352-v1",
+        "sourceTransform": null
+      },
+      "generatedFrame": {
+        "path": "pipeline/generated/legacy/laura/base_01.png",
+        "sha256": "3e2280245cf33fc34388cca29534035efb57e5eb566aa8a7feec1cad819ca2be",
+        "bytes": 72971
+      }
+    },
+    {
+      "resourceId": "base_02",
+      "status": "draft",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      },
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "sourceSha256": "f89f959a8c7c1409dce4469b08414e7d37dda61ddf80f8f1c32b02ed72509dea",
+      "sourceDimensions": {
+        "width": 1169,
+        "height": 1280
+      },
+      "sourceRect": {
+        "left": 222,
+        "top": 57,
+        "right": 394,
+        "bottom": 345
+      },
+      "originalCropDimensions": {
+        "width": 172,
+        "height": 288
+      },
+      "extraction": {
+        "winningInkPixels": 22416
+      },
+      "sourceAlphaBounds": {
+        "left": 225,
+        "top": 60,
+        "right": 388,
+        "bottom": 339
+      },
+      "cutoutToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 66,
+          "y": 28
+        }
+      },
+      "sourceToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": -156,
+          "y": -29
+        }
+      },
+      "legacyFrame": {
+        "width": 300,
+        "height": 320,
+        "anchor": {
+          "x": 150,
+          "y": 310
+        }
+      },
+      "legacyAtlasRect": {
+        "x": 300,
+        "y": 0,
+        "width": 300,
+        "height": 320
+      },
+      "legacyPlacement": {
+        "x": 69,
+        "y": 31,
+        "width": 163,
+        "height": 279
+      },
+      "alpha": {
+        "gt0": {
+          "count": 22547,
+          "bounds": {
+            "left": 69,
+            "top": 31,
+            "right": 232,
+            "bottom": 310
+          }
+        },
+        "gt128": {
+          "count": 22547,
+          "bounds": {
+            "left": 69,
+            "top": 31,
+            "right": 232,
+            "bottom": 310
+          }
+        }
+      },
+      "canonical": {
+        "status": "pending",
+        "profileId": "canonical-320x352-v1",
+        "sourceTransform": null
+      },
+      "generatedFrame": {
+        "path": "pipeline/generated/legacy/laura/base_02.png",
+        "sha256": "37779e34c785aa0e2f43fbfbf41d32126c49c876b3c8c3697a416bc9625a5c43",
+        "bytes": 73408
+      }
+    },
+    {
+      "resourceId": "base_03",
+      "status": "draft",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      },
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "sourceSha256": "f89f959a8c7c1409dce4469b08414e7d37dda61ddf80f8f1c32b02ed72509dea",
+      "sourceDimensions": {
+        "width": 1169,
+        "height": 1280
+      },
+      "sourceRect": {
+        "left": 417,
+        "top": 57,
+        "right": 588,
+        "bottom": 345
+      },
+      "originalCropDimensions": {
+        "width": 171,
+        "height": 288
+      },
+      "extraction": {
+        "winningInkPixels": 22627
+      },
+      "sourceAlphaBounds": {
+        "left": 421,
+        "top": 59,
+        "right": 585,
+        "bottom": 343
+      },
+      "cutoutToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 64,
+          "y": 24
+        }
+      },
+      "sourceToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": -353,
+          "y": -33
+        }
+      },
+      "legacyFrame": {
+        "width": 300,
+        "height": 320,
+        "anchor": {
+          "x": 150,
+          "y": 310
+        }
+      },
+      "legacyAtlasRect": {
+        "x": 600,
+        "y": 0,
+        "width": 300,
+        "height": 320
+      },
+      "legacyPlacement": {
+        "x": 68,
+        "y": 26,
+        "width": 164,
+        "height": 284
+      },
+      "alpha": {
+        "gt0": {
+          "count": 22763,
+          "bounds": {
+            "left": 68,
+            "top": 26,
+            "right": 232,
+            "bottom": 310
+          }
+        },
+        "gt128": {
+          "count": 22763,
+          "bounds": {
+            "left": 68,
+            "top": 26,
+            "right": 232,
+            "bottom": 310
+          }
+        }
+      },
+      "canonical": {
+        "status": "pending",
+        "profileId": "canonical-320x352-v1",
+        "sourceTransform": null
+      },
+      "generatedFrame": {
+        "path": "pipeline/generated/legacy/laura/base_03.png",
+        "sha256": "8c4026ce40f2dc41a584cd15934c7fc968bdc9cebee74d7ad0e7a5658f2fb0ba",
+        "bytes": 73209
+      }
+    },
+    {
+      "resourceId": "base_04",
+      "status": "draft",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      },
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "sourceSha256": "f89f959a8c7c1409dce4469b08414e7d37dda61ddf80f8f1c32b02ed72509dea",
+      "sourceDimensions": {
+        "width": 1169,
+        "height": 1280
+      },
+      "sourceRect": {
+        "left": 609,
+        "top": 57,
+        "right": 780,
+        "bottom": 345
+      },
+      "originalCropDimensions": {
+        "width": 171,
+        "height": 288
+      },
+      "extraction": {
+        "winningInkPixels": 22016
+      },
+      "sourceAlphaBounds": {
+        "left": 613,
+        "top": 59,
+        "right": 774,
+        "bottom": 339
+      },
+      "cutoutToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 66,
+          "y": 28
+        }
+      },
+      "sourceToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": -543,
+          "y": -29
+        }
+      },
+      "legacyFrame": {
+        "width": 300,
+        "height": 320,
+        "anchor": {
+          "x": 150,
+          "y": 310
+        }
+      },
+      "legacyAtlasRect": {
+        "x": 900,
+        "y": 0,
+        "width": 300,
+        "height": 320
+      },
+      "legacyPlacement": {
+        "x": 70,
+        "y": 30,
+        "width": 161,
+        "height": 280
+      },
+      "alpha": {
+        "gt0": {
+          "count": 22089,
+          "bounds": {
+            "left": 70,
+            "top": 30,
+            "right": 231,
+            "bottom": 310
+          }
+        },
+        "gt128": {
+          "count": 22089,
+          "bounds": {
+            "left": 70,
+            "top": 30,
+            "right": 231,
+            "bottom": 310
+          }
+        }
+      },
+      "canonical": {
+        "status": "pending",
+        "profileId": "canonical-320x352-v1",
+        "sourceTransform": null
+      },
+      "generatedFrame": {
+        "path": "pipeline/generated/legacy/laura/base_04.png",
+        "sha256": "7f71a18c641cae6011ed548c57bc71b19c94fd741d8bd640e26e5643b8d55e06",
+        "bytes": 70261
+      }
+    },
+    {
+      "resourceId": "base_05",
+      "status": "draft",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      },
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "sourceSha256": "f89f959a8c7c1409dce4469b08414e7d37dda61ddf80f8f1c32b02ed72509dea",
+      "sourceDimensions": {
+        "width": 1169,
+        "height": 1280
+      },
+      "sourceRect": {
+        "left": 806,
+        "top": 57,
+        "right": 982,
+        "bottom": 345
+      },
+      "originalCropDimensions": {
+        "width": 176,
+        "height": 288
+      },
+      "extraction": {
+        "winningInkPixels": 22287
+      },
+      "sourceAlphaBounds": {
+        "left": 812,
+        "top": 59,
+        "right": 963,
+        "bottom": 336
+      },
+      "cutoutToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 69,
+          "y": 31
+        }
+      },
+      "sourceToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": -737,
+          "y": -26
+        }
+      },
+      "legacyFrame": {
+        "width": 300,
+        "height": 320,
+        "anchor": {
+          "x": 150,
+          "y": 310
+        }
+      },
+      "legacyAtlasRect": {
+        "x": 1200,
+        "y": 0,
+        "width": 300,
+        "height": 320
+      },
+      "legacyPlacement": {
+        "x": 75,
+        "y": 33,
+        "width": 151,
+        "height": 277
+      },
+      "alpha": {
+        "gt0": {
+          "count": 22375,
+          "bounds": {
+            "left": 75,
+            "top": 33,
+            "right": 226,
+            "bottom": 310
+          }
+        },
+        "gt128": {
+          "count": 22375,
+          "bounds": {
+            "left": 75,
+            "top": 33,
+            "right": 226,
+            "bottom": 310
+          }
+        }
+      },
+      "canonical": {
+        "status": "pending",
+        "profileId": "canonical-320x352-v1",
+        "sourceTransform": null
+      },
+      "generatedFrame": {
+        "path": "pipeline/generated/legacy/laura/base_05.png",
+        "sha256": "07f74a87a0d0066527247855c0873f04f367010daa0aa0b26700781ff7a4f23b",
+        "bytes": 71508
+      }
+    },
+    {
+      "resourceId": "base_06",
+      "status": "draft",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      },
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "sourceSha256": "f89f959a8c7c1409dce4469b08414e7d37dda61ddf80f8f1c32b02ed72509dea",
+      "sourceDimensions": {
+        "width": 1169,
+        "height": 1280
+      },
+      "sourceRect": {
+        "left": 998,
+        "top": 57,
+        "right": 1169,
+        "bottom": 345
+      },
+      "originalCropDimensions": {
+        "width": 171,
+        "height": 288
+      },
+      "extraction": {
+        "winningInkPixels": 19990
+      },
+      "sourceAlphaBounds": {
+        "left": 1004,
+        "top": 59,
+        "right": 1166,
+        "bottom": 339
+      },
+      "cutoutToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 63,
+          "y": 28
+        }
+      },
+      "sourceToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": -935,
+          "y": -29
+        }
+      },
+      "legacyFrame": {
+        "width": 300,
+        "height": 320,
+        "anchor": {
+          "x": 150,
+          "y": 310
+        }
+      },
+      "legacyAtlasRect": {
+        "x": 1500,
+        "y": 0,
+        "width": 300,
+        "height": 320
+      },
+      "legacyPlacement": {
+        "x": 69,
+        "y": 30,
+        "width": 162,
+        "height": 280
+      },
+      "alpha": {
+        "gt0": {
+          "count": 20045,
+          "bounds": {
+            "left": 69,
+            "top": 30,
+            "right": 231,
+            "bottom": 310
+          }
+        },
+        "gt128": {
+          "count": 20045,
+          "bounds": {
+            "left": 69,
+            "top": 30,
+            "right": 231,
+            "bottom": 310
+          }
+        }
+      },
+      "canonical": {
+        "status": "pending",
+        "profileId": "canonical-320x352-v1",
+        "sourceTransform": null
+      },
+      "generatedFrame": {
+        "path": "pipeline/generated/legacy/laura/base_06.png",
+        "sha256": "54c18f01e87438e84fe92c9387a2cf5fc486e1f643b46d55fdd16919bcfd8bbb",
+        "bytes": 64614
+      }
+    },
+    {
+      "resourceId": "base_07",
+      "status": "draft",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      },
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "sourceSha256": "f89f959a8c7c1409dce4469b08414e7d37dda61ddf80f8f1c32b02ed72509dea",
+      "sourceDimensions": {
+        "width": 1169,
+        "height": 1280
+      },
+      "sourceRect": {
+        "left": 18,
+        "top": 378,
+        "right": 200,
+        "bottom": 651
+      },
+      "originalCropDimensions": {
+        "width": 182,
+        "height": 273
+      },
+      "extraction": {
+        "winningInkPixels": 22526
+      },
+      "sourceAlphaBounds": {
+        "left": 31,
+        "top": 381,
+        "right": 183,
+        "bottom": 623
+      },
+      "cutoutToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 61,
+          "y": 65
+        }
+      },
+      "sourceToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 43,
+          "y": -313
+        }
+      },
+      "legacyFrame": {
+        "width": 300,
+        "height": 320,
+        "anchor": {
+          "x": 150,
+          "y": 310
+        }
+      },
+      "legacyAtlasRect": {
+        "x": 0,
+        "y": 320,
+        "width": 300,
+        "height": 320
+      },
+      "legacyPlacement": {
+        "x": 74,
+        "y": 68,
+        "width": 152,
+        "height": 242
+      },
+      "alpha": {
+        "gt0": {
+          "count": 22648,
+          "bounds": {
+            "left": 74,
+            "top": 68,
+            "right": 226,
+            "bottom": 310
+          }
+        },
+        "gt128": {
+          "count": 22648,
+          "bounds": {
+            "left": 74,
+            "top": 68,
+            "right": 226,
+            "bottom": 310
+          }
+        }
+      },
+      "canonical": {
+        "status": "pending",
+        "profileId": "canonical-320x352-v1",
+        "sourceTransform": null
+      },
+      "generatedFrame": {
+        "path": "pipeline/generated/legacy/laura/base_07.png",
+        "sha256": "ecf0afea180e2c4eb23e3da5a0189747a571ec9748d034379acca5e216861f2e",
+        "bytes": 72714
+      }
+    },
+    {
+      "resourceId": "base_08",
+      "status": "draft",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      },
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "sourceSha256": "f89f959a8c7c1409dce4469b08414e7d37dda61ddf80f8f1c32b02ed72509dea",
+      "sourceDimensions": {
+        "width": 1169,
+        "height": 1280
+      },
+      "sourceRect": {
+        "left": 218,
+        "top": 437,
+        "right": 400,
+        "bottom": 651
+      },
+      "originalCropDimensions": {
+        "width": 182,
+        "height": 214
+      },
+      "extraction": {
+        "winningInkPixels": 21071
+      },
+      "sourceAlphaBounds": {
+        "left": 224,
+        "top": 443,
+        "right": 394,
+        "bottom": 643
+      },
+      "cutoutToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 59,
+          "y": 104
+        }
+      },
+      "sourceToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": -159,
+          "y": -333
+        }
+      },
+      "legacyFrame": {
+        "width": 300,
+        "height": 320,
+        "anchor": {
+          "x": 150,
+          "y": 310
+        }
+      },
+      "legacyAtlasRect": {
+        "x": 300,
+        "y": 320,
+        "width": 300,
+        "height": 320
+      },
+      "legacyPlacement": {
+        "x": 65,
+        "y": 110,
+        "width": 170,
+        "height": 200
+      },
+      "alpha": {
+        "gt0": {
+          "count": 21235,
+          "bounds": {
+            "left": 65,
+            "top": 110,
+            "right": 235,
+            "bottom": 310
+          }
+        },
+        "gt128": {
+          "count": 21235,
+          "bounds": {
+            "left": 65,
+            "top": 110,
+            "right": 235,
+            "bottom": 310
+          }
+        }
+      },
+      "canonical": {
+        "status": "pending",
+        "profileId": "canonical-320x352-v1",
+        "sourceTransform": null
+      },
+      "generatedFrame": {
+        "path": "pipeline/generated/legacy/laura/base_08.png",
+        "sha256": "e433a478c79e1ab149807fcfa8354f2bd64815bf74ba2307f6e578c3ad477655",
+        "bytes": 68088
+      }
+    },
+    {
+      "resourceId": "base_09",
+      "status": "draft",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      },
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "sourceSha256": "f89f959a8c7c1409dce4469b08414e7d37dda61ddf80f8f1c32b02ed72509dea",
+      "sourceDimensions": {
+        "width": 1169,
+        "height": 1280
+      },
+      "sourceRect": {
+        "left": 414,
+        "top": 445,
+        "right": 606,
+        "bottom": 651
+      },
+      "originalCropDimensions": {
+        "width": 192,
+        "height": 206
+      },
+      "extraction": {
+        "winningInkPixels": 20295
+      },
+      "sourceAlphaBounds": {
+        "left": 429,
+        "top": 453,
+        "right": 606,
+        "bottom": 645
+      },
+      "cutoutToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 47,
+          "y": 110
+        }
+      },
+      "sourceToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": -367,
+          "y": -335
+        }
+      },
+      "legacyFrame": {
+        "width": 300,
+        "height": 320,
+        "anchor": {
+          "x": 150,
+          "y": 310
+        }
+      },
+      "legacyAtlasRect": {
+        "x": 600,
+        "y": 320,
+        "width": 300,
+        "height": 320
+      },
+      "legacyPlacement": {
+        "x": 62,
+        "y": 118,
+        "width": 177,
+        "height": 192
+      },
+      "alpha": {
+        "gt0": {
+          "count": 20372,
+          "bounds": {
+            "left": 62,
+            "top": 118,
+            "right": 239,
+            "bottom": 310
+          }
+        },
+        "gt128": {
+          "count": 20372,
+          "bounds": {
+            "left": 62,
+            "top": 118,
+            "right": 239,
+            "bottom": 310
+          }
+        }
+      },
+      "canonical": {
+        "status": "pending",
+        "profileId": "canonical-320x352-v1",
+        "sourceTransform": null
+      },
+      "generatedFrame": {
+        "path": "pipeline/generated/legacy/laura/base_09.png",
+        "sha256": "c20b5cd5abc738718293dff4b29353576ba1ae1d0beff82a84b5efbd7dd18b01",
+        "bytes": 65454
+      }
+    },
+    {
+      "resourceId": "base_10",
+      "status": "draft",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      },
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "sourceSha256": "f89f959a8c7c1409dce4469b08414e7d37dda61ddf80f8f1c32b02ed72509dea",
+      "sourceDimensions": {
+        "width": 1169,
+        "height": 1280
+      },
+      "sourceRect": {
+        "left": 620,
+        "top": 450,
+        "right": 791,
+        "bottom": 651
+      },
+      "originalCropDimensions": {
+        "width": 171,
+        "height": 201
+      },
+      "extraction": {
+        "winningInkPixels": 20547
+      },
+      "sourceAlphaBounds": {
+        "left": 629,
+        "top": 458,
+        "right": 784,
+        "bottom": 649
+      },
+      "cutoutToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 64,
+          "y": 111
+        }
+      },
+      "sourceToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": -556,
+          "y": -339
+        }
+      },
+      "legacyFrame": {
+        "width": 300,
+        "height": 320,
+        "anchor": {
+          "x": 150,
+          "y": 310
+        }
+      },
+      "legacyAtlasRect": {
+        "x": 900,
+        "y": 320,
+        "width": 300,
+        "height": 320
+      },
+      "legacyPlacement": {
+        "x": 73,
+        "y": 119,
+        "width": 155,
+        "height": 191
+      },
+      "alpha": {
+        "gt0": {
+          "count": 20834,
+          "bounds": {
+            "left": 73,
+            "top": 119,
+            "right": 228,
+            "bottom": 310
+          }
+        },
+        "gt128": {
+          "count": 20834,
+          "bounds": {
+            "left": 73,
+            "top": 119,
+            "right": 228,
+            "bottom": 310
+          }
+        }
+      },
+      "canonical": {
+        "status": "pending",
+        "profileId": "canonical-320x352-v1",
+        "sourceTransform": null
+      },
+      "generatedFrame": {
+        "path": "pipeline/generated/legacy/laura/base_10.png",
+        "sha256": "342445921db0a7a2d29e034e3f50eda3bbcf0b688cb6dc6c5a8f7190800edc1c",
+        "bytes": 67314
+      }
+    },
+    {
+      "resourceId": "base_11",
+      "status": "draft",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      },
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "sourceSha256": "f89f959a8c7c1409dce4469b08414e7d37dda61ddf80f8f1c32b02ed72509dea",
+      "sourceDimensions": {
+        "width": 1169,
+        "height": 1280
+      },
+      "sourceRect": {
+        "left": 808,
+        "top": 389,
+        "right": 980,
+        "bottom": 651
+      },
+      "originalCropDimensions": {
+        "width": 172,
+        "height": 262
+      },
+      "extraction": {
+        "winningInkPixels": 19373
+      },
+      "sourceAlphaBounds": {
+        "left": 823,
+        "top": 397,
+        "right": 974,
+        "bottom": 651
+      },
+      "cutoutToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 60,
+          "y": 48
+        }
+      },
+      "sourceToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": -748,
+          "y": -341
+        }
+      },
+      "legacyFrame": {
+        "width": 300,
+        "height": 320,
+        "anchor": {
+          "x": 150,
+          "y": 310
+        }
+      },
+      "legacyAtlasRect": {
+        "x": 1200,
+        "y": 320,
+        "width": 300,
+        "height": 320
+      },
+      "legacyPlacement": {
+        "x": 75,
+        "y": 56,
+        "width": 151,
+        "height": 254
+      },
+      "alpha": {
+        "gt0": {
+          "count": 19432,
+          "bounds": {
+            "left": 75,
+            "top": 56,
+            "right": 226,
+            "bottom": 310
+          }
+        },
+        "gt128": {
+          "count": 19432,
+          "bounds": {
+            "left": 75,
+            "top": 56,
+            "right": 226,
+            "bottom": 310
+          }
+        }
+      },
+      "canonical": {
+        "status": "pending",
+        "profileId": "canonical-320x352-v1",
+        "sourceTransform": null
+      },
+      "generatedFrame": {
+        "path": "pipeline/generated/legacy/laura/base_11.png",
+        "sha256": "98f7d47d56a78b5a3d5f01bd710168eb5b1a6a96b34769e099092a14b332e3b0",
+        "bytes": 62497
+      }
+    },
+    {
+      "resourceId": "base_12",
+      "status": "draft",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      },
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "sourceSha256": "f89f959a8c7c1409dce4469b08414e7d37dda61ddf80f8f1c32b02ed72509dea",
+      "sourceDimensions": {
+        "width": 1169,
+        "height": 1280
+      },
+      "sourceRect": {
+        "left": 996,
+        "top": 385,
+        "right": 1169,
+        "bottom": 651
+      },
+      "originalCropDimensions": {
+        "width": 173,
+        "height": 266
+      },
+      "extraction": {
+        "winningInkPixels": 20063
+      },
+      "sourceAlphaBounds": {
+        "left": 1004,
+        "top": 391,
+        "right": 1158,
+        "bottom": 651
+      },
+      "cutoutToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 65,
+          "y": 44
+        }
+      },
+      "sourceToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": -931,
+          "y": -341
+        }
+      },
+      "legacyFrame": {
+        "width": 300,
+        "height": 320,
+        "anchor": {
+          "x": 150,
+          "y": 310
+        }
+      },
+      "legacyAtlasRect": {
+        "x": 1500,
+        "y": 320,
+        "width": 300,
+        "height": 320
+      },
+      "legacyPlacement": {
+        "x": 73,
+        "y": 50,
+        "width": 154,
+        "height": 260
+      },
+      "alpha": {
+        "gt0": {
+          "count": 20136,
+          "bounds": {
+            "left": 73,
+            "top": 50,
+            "right": 227,
+            "bottom": 310
+          }
+        },
+        "gt128": {
+          "count": 20136,
+          "bounds": {
+            "left": 73,
+            "top": 50,
+            "right": 227,
+            "bottom": 310
+          }
+        }
+      },
+      "canonical": {
+        "status": "pending",
+        "profileId": "canonical-320x352-v1",
+        "sourceTransform": null
+      },
+      "generatedFrame": {
+        "path": "pipeline/generated/legacy/laura/base_12.png",
+        "sha256": "5af379688e1bd7839d7fcc734b852a4ef930cb6a0444d2e0438303f209482aa8",
+        "bytes": 64699
+      }
+    },
+    {
+      "resourceId": "base_13",
+      "status": "draft",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      },
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "sourceSha256": "f89f959a8c7c1409dce4469b08414e7d37dda61ddf80f8f1c32b02ed72509dea",
+      "sourceDimensions": {
+        "width": 1169,
+        "height": 1280
+      },
+      "sourceRect": {
+        "left": 17,
+        "top": 701,
+        "right": 189,
+        "bottom": 965
+      },
+      "originalCropDimensions": {
+        "width": 172,
+        "height": 264
+      },
+      "extraction": {
+        "winningInkPixels": 20960
+      },
+      "sourceAlphaBounds": {
+        "left": 19,
+        "top": 709,
+        "right": 186,
+        "bottom": 953
+      },
+      "cutoutToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 65,
+          "y": 58
+        }
+      },
+      "sourceToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 48,
+          "y": -643
+        }
+      },
+      "legacyFrame": {
+        "width": 300,
+        "height": 320,
+        "anchor": {
+          "x": 150,
+          "y": 310
+        }
+      },
+      "legacyAtlasRect": {
+        "x": 0,
+        "y": 640,
+        "width": 300,
+        "height": 320
+      },
+      "legacyPlacement": {
+        "x": 67,
+        "y": 66,
+        "width": 167,
+        "height": 244
+      },
+      "alpha": {
+        "gt0": {
+          "count": 21101,
+          "bounds": {
+            "left": 67,
+            "top": 66,
+            "right": 234,
+            "bottom": 310
+          }
+        },
+        "gt128": {
+          "count": 21101,
+          "bounds": {
+            "left": 67,
+            "top": 66,
+            "right": 234,
+            "bottom": 310
+          }
+        }
+      },
+      "canonical": {
+        "status": "pending",
+        "profileId": "canonical-320x352-v1",
+        "sourceTransform": null
+      },
+      "generatedFrame": {
+        "path": "pipeline/generated/legacy/laura/base_13.png",
+        "sha256": "b501eb13fb795d26c10c81d242f4dd0ea15163cb84e863b61bbde39431e833ba",
+        "bytes": 68880
+      }
+    },
+    {
+      "resourceId": "base_14",
+      "status": "draft",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      },
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "sourceSha256": "f89f959a8c7c1409dce4469b08414e7d37dda61ddf80f8f1c32b02ed72509dea",
+      "sourceDimensions": {
+        "width": 1169,
+        "height": 1280
+      },
+      "sourceRect": {
+        "left": 186,
+        "top": 855,
+        "right": 452,
+        "bottom": 968
+      },
+      "originalCropDimensions": {
+        "width": 266,
+        "height": 113
+      },
+      "extraction": {
+        "winningInkPixels": 13287
+      },
+      "sourceAlphaBounds": {
+        "left": 192,
+        "top": 871,
+        "right": 445,
+        "bottom": 946
+      },
+      "cutoutToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 18,
+          "y": 219
+        }
+      },
+      "sourceToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": -168,
+          "y": -636
+        }
+      },
+      "legacyFrame": {
+        "width": 300,
+        "height": 320,
+        "anchor": {
+          "x": 150,
+          "y": 310
+        }
+      },
+      "legacyAtlasRect": {
+        "x": 300,
+        "y": 640,
+        "width": 300,
+        "height": 320
+      },
+      "legacyPlacement": {
+        "x": 24,
+        "y": 235,
+        "width": 253,
+        "height": 75
+      },
+      "alpha": {
+        "gt0": {
+          "count": 13320,
+          "bounds": {
+            "left": 24,
+            "top": 235,
+            "right": 277,
+            "bottom": 310
+          }
+        },
+        "gt128": {
+          "count": 13320,
+          "bounds": {
+            "left": 24,
+            "top": 235,
+            "right": 277,
+            "bottom": 310
+          }
+        }
+      },
+      "canonical": {
+        "status": "pending",
+        "profileId": "canonical-320x352-v1",
+        "sourceTransform": null
+      },
+      "generatedFrame": {
+        "path": "pipeline/generated/legacy/laura/base_14.png",
+        "sha256": "b12d37af42c1caa8383cf18514e11aad1e450a6e5461861698292865acc36966",
+        "bytes": 45531
+      }
+    },
+    {
+      "resourceId": "base_15",
+      "status": "draft",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      },
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "sourceSha256": "f89f959a8c7c1409dce4469b08414e7d37dda61ddf80f8f1c32b02ed72509dea",
+      "sourceDimensions": {
+        "width": 1169,
+        "height": 1280
+      },
+      "sourceRect": {
+        "left": 438,
+        "top": 699,
+        "right": 607,
+        "bottom": 968
+      },
+      "originalCropDimensions": {
+        "width": 169,
+        "height": 269
+      },
+      "extraction": {
+        "winningInkPixels": 19582
+      },
+      "sourceAlphaBounds": {
+        "left": 442,
+        "top": 705,
+        "right": 604,
+        "bottom": 955
+      },
+      "cutoutToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 65,
+          "y": 54
+        }
+      },
+      "sourceToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": -373,
+          "y": -645
+        }
+      },
+      "legacyFrame": {
+        "width": 300,
+        "height": 320,
+        "anchor": {
+          "x": 150,
+          "y": 310
+        }
+      },
+      "legacyAtlasRect": {
+        "x": 600,
+        "y": 640,
+        "width": 300,
+        "height": 320
+      },
+      "legacyPlacement": {
+        "x": 69,
+        "y": 60,
+        "width": 162,
+        "height": 250
+      },
+      "alpha": {
+        "gt0": {
+          "count": 19656,
+          "bounds": {
+            "left": 69,
+            "top": 60,
+            "right": 231,
+            "bottom": 310
+          }
+        },
+        "gt128": {
+          "count": 19656,
+          "bounds": {
+            "left": 69,
+            "top": 60,
+            "right": 231,
+            "bottom": 310
+          }
+        }
+      },
+      "canonical": {
+        "status": "pending",
+        "profileId": "canonical-320x352-v1",
+        "sourceTransform": null
+      },
+      "generatedFrame": {
+        "path": "pipeline/generated/legacy/laura/base_15.png",
+        "sha256": "03ef0f6ed544607a5614a6f585ceecd86615c3a4a877a18c81f2fe6121c5ea13",
+        "bytes": 65138
+      }
+    },
+    {
+      "resourceId": "base_16",
+      "status": "draft",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      },
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "sourceSha256": "f89f959a8c7c1409dce4469b08414e7d37dda61ddf80f8f1c32b02ed72509dea",
+      "sourceDimensions": {
+        "width": 1169,
+        "height": 1280
+      },
+      "sourceRect": {
+        "left": 615,
+        "top": 699,
+        "right": 808,
+        "bottom": 968
+      },
+      "originalCropDimensions": {
+        "width": 193,
+        "height": 269
+      },
+      "extraction": {
+        "winningInkPixels": 21191
+      },
+      "sourceAlphaBounds": {
+        "left": 615,
+        "top": 708,
+        "right": 804,
+        "bottom": 961
+      },
+      "cutoutToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 56,
+          "y": 48
+        }
+      },
+      "sourceToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": -559,
+          "y": -651
+        }
+      },
+      "legacyFrame": {
+        "width": 300,
+        "height": 320,
+        "anchor": {
+          "x": 150,
+          "y": 310
+        }
+      },
+      "legacyAtlasRect": {
+        "x": 900,
+        "y": 640,
+        "width": 300,
+        "height": 320
+      },
+      "legacyPlacement": {
+        "x": 56,
+        "y": 57,
+        "width": 189,
+        "height": 253
+      },
+      "alpha": {
+        "gt0": {
+          "count": 21272,
+          "bounds": {
+            "left": 56,
+            "top": 57,
+            "right": 245,
+            "bottom": 310
+          }
+        },
+        "gt128": {
+          "count": 21272,
+          "bounds": {
+            "left": 56,
+            "top": 57,
+            "right": 245,
+            "bottom": 310
+          }
+        }
+      },
+      "canonical": {
+        "status": "pending",
+        "profileId": "canonical-320x352-v1",
+        "sourceTransform": null
+      },
+      "generatedFrame": {
+        "path": "pipeline/generated/legacy/laura/base_16.png",
+        "sha256": "8f40eb731fc65a242157e2a13d33690e2f61b67c07e67ed736eebcbc1bda30c9",
+        "bytes": 70142
+      }
+    },
+    {
+      "resourceId": "base_17",
+      "status": "draft",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      },
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "sourceSha256": "f89f959a8c7c1409dce4469b08414e7d37dda61ddf80f8f1c32b02ed72509dea",
+      "sourceDimensions": {
+        "width": 1169,
+        "height": 1280
+      },
+      "sourceRect": {
+        "left": 813,
+        "top": 699,
+        "right": 981,
+        "bottom": 968
+      },
+      "originalCropDimensions": {
+        "width": 168,
+        "height": 269
+      },
+      "extraction": {
+        "winningInkPixels": 17363
+      },
+      "sourceAlphaBounds": {
+        "left": 821,
+        "top": 705,
+        "right": 955,
+        "bottom": 963
+      },
+      "cutoutToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 75,
+          "y": 46
+        }
+      },
+      "sourceToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": -738,
+          "y": -653
+        }
+      },
+      "legacyFrame": {
+        "width": 300,
+        "height": 320,
+        "anchor": {
+          "x": 150,
+          "y": 310
+        }
+      },
+      "legacyAtlasRect": {
+        "x": 1200,
+        "y": 640,
+        "width": 300,
+        "height": 320
+      },
+      "legacyPlacement": {
+        "x": 83,
+        "y": 52,
+        "width": 134,
+        "height": 258
+      },
+      "alpha": {
+        "gt0": {
+          "count": 17430,
+          "bounds": {
+            "left": 83,
+            "top": 52,
+            "right": 217,
+            "bottom": 310
+          }
+        },
+        "gt128": {
+          "count": 17430,
+          "bounds": {
+            "left": 83,
+            "top": 52,
+            "right": 217,
+            "bottom": 310
+          }
+        }
+      },
+      "canonical": {
+        "status": "pending",
+        "profileId": "canonical-320x352-v1",
+        "sourceTransform": null
+      },
+      "generatedFrame": {
+        "path": "pipeline/generated/legacy/laura/base_17.png",
+        "sha256": "ad321c0623f69a4b0c4f4a44144165e4fa5cafca644748ccd1608630d292e805",
+        "bytes": 57664
+      }
+    },
+    {
+      "resourceId": "base_18",
+      "status": "draft",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      },
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "sourceSha256": "f89f959a8c7c1409dce4469b08414e7d37dda61ddf80f8f1c32b02ed72509dea",
+      "sourceDimensions": {
+        "width": 1169,
+        "height": 1280
+      },
+      "sourceRect": {
+        "left": 984,
+        "top": 699,
+        "right": 1169,
+        "bottom": 968
+      },
+      "originalCropDimensions": {
+        "width": 185,
+        "height": 269
+      },
+      "extraction": {
+        "winningInkPixels": 18047
+      },
+      "sourceAlphaBounds": {
+        "left": 985,
+        "top": 704,
+        "right": 1162,
+        "bottom": 965
+      },
+      "cutoutToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 61,
+          "y": 44
+        }
+      },
+      "sourceToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": -923,
+          "y": -655
+        }
+      },
+      "legacyFrame": {
+        "width": 300,
+        "height": 320,
+        "anchor": {
+          "x": 150,
+          "y": 310
+        }
+      },
+      "legacyAtlasRect": {
+        "x": 1500,
+        "y": 640,
+        "width": 300,
+        "height": 320
+      },
+      "legacyPlacement": {
+        "x": 62,
+        "y": 49,
+        "width": 177,
+        "height": 261
+      },
+      "alpha": {
+        "gt0": {
+          "count": 18111,
+          "bounds": {
+            "left": 62,
+            "top": 49,
+            "right": 239,
+            "bottom": 310
+          }
+        },
+        "gt128": {
+          "count": 18111,
+          "bounds": {
+            "left": 62,
+            "top": 49,
+            "right": 239,
+            "bottom": 310
+          }
+        }
+      },
+      "canonical": {
+        "status": "pending",
+        "profileId": "canonical-320x352-v1",
+        "sourceTransform": null
+      },
+      "generatedFrame": {
+        "path": "pipeline/generated/legacy/laura/base_18.png",
+        "sha256": "69e21481f1abedc983add9627c2bf76f68c52e855192d6a7bee12d6862ad8d24",
+        "bytes": 58494
+      }
+    },
+    {
+      "resourceId": "base_19",
+      "status": "draft",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      },
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "sourceSha256": "f89f959a8c7c1409dce4469b08414e7d37dda61ddf80f8f1c32b02ed72509dea",
+      "sourceDimensions": {
+        "width": 1169,
+        "height": 1280
+      },
+      "sourceRect": {
+        "left": 16,
+        "top": 1036,
+        "right": 218,
+        "bottom": 1280
+      },
+      "originalCropDimensions": {
+        "width": 202,
+        "height": 244
+      },
+      "extraction": {
+        "winningInkPixels": 19969
+      },
+      "sourceAlphaBounds": {
+        "left": 17,
+        "top": 1048,
+        "right": 208,
+        "bottom": 1237
+      },
+      "cutoutToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 54,
+          "y": 109
+        }
+      },
+      "sourceToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 38,
+          "y": -927
+        }
+      },
+      "legacyFrame": {
+        "width": 300,
+        "height": 320,
+        "anchor": {
+          "x": 150,
+          "y": 310
+        }
+      },
+      "legacyAtlasRect": {
+        "x": 0,
+        "y": 960,
+        "width": 300,
+        "height": 320
+      },
+      "legacyPlacement": {
+        "x": 55,
+        "y": 121,
+        "width": 191,
+        "height": 189
+      },
+      "alpha": {
+        "gt0": {
+          "count": 20040,
+          "bounds": {
+            "left": 55,
+            "top": 121,
+            "right": 246,
+            "bottom": 310
+          }
+        },
+        "gt128": {
+          "count": 20040,
+          "bounds": {
+            "left": 55,
+            "top": 121,
+            "right": 246,
+            "bottom": 310
+          }
+        }
+      },
+      "canonical": {
+        "status": "pending",
+        "profileId": "canonical-320x352-v1",
+        "sourceTransform": null
+      },
+      "generatedFrame": {
+        "path": "pipeline/generated/legacy/laura/base_19.png",
+        "sha256": "5e4f3f8b88d84809f9fc87b88ad931960c6acb0e68781586d04871648b72f2d8",
+        "bytes": 66032
+      }
+    },
+    {
+      "resourceId": "base_20",
+      "status": "draft",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      },
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "sourceSha256": "f89f959a8c7c1409dce4469b08414e7d37dda61ddf80f8f1c32b02ed72509dea",
+      "sourceDimensions": {
+        "width": 1169,
+        "height": 1280
+      },
+      "sourceRect": {
+        "left": 215,
+        "top": 1048,
+        "right": 457,
+        "bottom": 1280
+      },
+      "originalCropDimensions": {
+        "width": 242,
+        "height": 232
+      },
+      "extraction": {
+        "winningInkPixels": 18950
+      },
+      "sourceAlphaBounds": {
+        "left": 218,
+        "top": 1061,
+        "right": 455,
+        "bottom": 1238
+      },
+      "cutoutToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 29,
+          "y": 120
+        }
+      },
+      "sourceToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": -186,
+          "y": -928
+        }
+      },
+      "legacyFrame": {
+        "width": 300,
+        "height": 320,
+        "anchor": {
+          "x": 150,
+          "y": 310
+        }
+      },
+      "legacyAtlasRect": {
+        "x": 300,
+        "y": 960,
+        "width": 300,
+        "height": 320
+      },
+      "legacyPlacement": {
+        "x": 32,
+        "y": 133,
+        "width": 237,
+        "height": 177
+      },
+      "alpha": {
+        "gt0": {
+          "count": 19031,
+          "bounds": {
+            "left": 32,
+            "top": 133,
+            "right": 269,
+            "bottom": 310
+          }
+        },
+        "gt128": {
+          "count": 19031,
+          "bounds": {
+            "left": 32,
+            "top": 133,
+            "right": 269,
+            "bottom": 310
+          }
+        }
+      },
+      "canonical": {
+        "status": "pending",
+        "profileId": "canonical-320x352-v1",
+        "sourceTransform": null
+      },
+      "generatedFrame": {
+        "path": "pipeline/generated/legacy/laura/base_20.png",
+        "sha256": "0f5afd86f5fed1e075bc32da0ee7d06c9cf8c47335d12d0daed282b28a6f9c7e",
+        "bytes": 61197
+      }
+    },
+    {
+      "resourceId": "base_21",
+      "status": "draft",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      },
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "sourceSha256": "f89f959a8c7c1409dce4469b08414e7d37dda61ddf80f8f1c32b02ed72509dea",
+      "sourceDimensions": {
+        "width": 1169,
+        "height": 1280
+      },
+      "sourceRect": {
+        "left": 435,
+        "top": 991,
+        "right": 616,
+        "bottom": 1280
+      },
+      "originalCropDimensions": {
+        "width": 181,
+        "height": 289
+      },
+      "extraction": {
+        "winningInkPixels": 20525
+      },
+      "sourceAlphaBounds": {
+        "left": 438,
+        "top": 1000,
+        "right": 616,
+        "bottom": 1248
+      },
+      "cutoutToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 58,
+          "y": 53
+        }
+      },
+      "sourceToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": -377,
+          "y": -938
+        }
+      },
+      "legacyFrame": {
+        "width": 300,
+        "height": 320,
+        "anchor": {
+          "x": 150,
+          "y": 310
+        }
+      },
+      "legacyAtlasRect": {
+        "x": 600,
+        "y": 960,
+        "width": 300,
+        "height": 320
+      },
+      "legacyPlacement": {
+        "x": 61,
+        "y": 62,
+        "width": 178,
+        "height": 248
+      },
+      "alpha": {
+        "gt0": {
+          "count": 20597,
+          "bounds": {
+            "left": 61,
+            "top": 62,
+            "right": 239,
+            "bottom": 310
+          }
+        },
+        "gt128": {
+          "count": 20597,
+          "bounds": {
+            "left": 61,
+            "top": 62,
+            "right": 239,
+            "bottom": 310
+          }
+        }
+      },
+      "canonical": {
+        "status": "pending",
+        "profileId": "canonical-320x352-v1",
+        "sourceTransform": null
+      },
+      "generatedFrame": {
+        "path": "pipeline/generated/legacy/laura/base_21.png",
+        "sha256": "cf8a9255db9e78c1536fd37b3e3f00e2e608872b5317b79e31e3f3e5797c7d9b",
+        "bytes": 67848
+      }
+    },
+    {
+      "resourceId": "base_22",
+      "status": "draft",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      },
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "sourceSha256": "f89f959a8c7c1409dce4469b08414e7d37dda61ddf80f8f1c32b02ed72509dea",
+      "sourceDimensions": {
+        "width": 1169,
+        "height": 1280
+      },
+      "sourceRect": {
+        "left": 615,
+        "top": 973,
+        "right": 793,
+        "bottom": 1223
+      },
+      "originalCropDimensions": {
+        "width": 178,
+        "height": 250
+      },
+      "extraction": {
+        "winningInkPixels": 20209
+      },
+      "sourceAlphaBounds": {
+        "left": 634,
+        "top": 979,
+        "right": 781,
+        "bottom": 1223
+      },
+      "cutoutToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 58,
+          "y": 60
+        }
+      },
+      "sourceToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": -557,
+          "y": -913
+        }
+      },
+      "legacyFrame": {
+        "width": 300,
+        "height": 320,
+        "anchor": {
+          "x": 150,
+          "y": 310
+        }
+      },
+      "legacyAtlasRect": {
+        "x": 900,
+        "y": 960,
+        "width": 300,
+        "height": 320
+      },
+      "legacyPlacement": {
+        "x": 77,
+        "y": 66,
+        "width": 147,
+        "height": 244
+      },
+      "alpha": {
+        "gt0": {
+          "count": 20389,
+          "bounds": {
+            "left": 77,
+            "top": 66,
+            "right": 224,
+            "bottom": 310
+          }
+        },
+        "gt128": {
+          "count": 20389,
+          "bounds": {
+            "left": 77,
+            "top": 66,
+            "right": 224,
+            "bottom": 310
+          }
+        }
+      },
+      "canonical": {
+        "status": "pending",
+        "profileId": "canonical-320x352-v1",
+        "sourceTransform": null
+      },
+      "generatedFrame": {
+        "path": "pipeline/generated/legacy/laura/base_22.png",
+        "sha256": "eea43f97306c5a693fe6a1d81a7051094ede630a6c39f78ba3904a00f5b0eda4",
+        "bytes": 65556
+      }
+    },
+    {
+      "resourceId": "base_23",
+      "status": "draft",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      },
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "sourceSha256": "f89f959a8c7c1409dce4469b08414e7d37dda61ddf80f8f1c32b02ed72509dea",
+      "sourceDimensions": {
+        "width": 1169,
+        "height": 1280
+      },
+      "sourceRect": {
+        "left": 806,
+        "top": 994,
+        "right": 993,
+        "bottom": 1230
+      },
+      "originalCropDimensions": {
+        "width": 187,
+        "height": 236
+      },
+      "extraction": {
+        "winningInkPixels": 17558
+      },
+      "sourceAlphaBounds": {
+        "left": 811,
+        "top": 1008,
+        "right": 991,
+        "bottom": 1200
+      },
+      "cutoutToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 55,
+          "y": 104
+        }
+      },
+      "sourceToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": -751,
+          "y": -890
+        }
+      },
+      "legacyFrame": {
+        "width": 300,
+        "height": 320,
+        "anchor": {
+          "x": 150,
+          "y": 310
+        }
+      },
+      "legacyAtlasRect": {
+        "x": 1200,
+        "y": 960,
+        "width": 300,
+        "height": 320
+      },
+      "legacyPlacement": {
+        "x": 60,
+        "y": 118,
+        "width": 180,
+        "height": 192
+      },
+      "alpha": {
+        "gt0": {
+          "count": 17574,
+          "bounds": {
+            "left": 60,
+            "top": 118,
+            "right": 240,
+            "bottom": 310
+          }
+        },
+        "gt128": {
+          "count": 17574,
+          "bounds": {
+            "left": 60,
+            "top": 118,
+            "right": 240,
+            "bottom": 310
+          }
+        }
+      },
+      "canonical": {
+        "status": "pending",
+        "profileId": "canonical-320x352-v1",
+        "sourceTransform": null
+      },
+      "generatedFrame": {
+        "path": "pipeline/generated/legacy/laura/base_23.png",
+        "sha256": "4d76cc38e04889c40a085335cb4cb4c0a6d28a5f83af736123479c3440305fba",
+        "bytes": 57603
+      }
+    },
+    {
+      "resourceId": "base_24",
+      "status": "draft",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      },
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "sourceSha256": "f89f959a8c7c1409dce4469b08414e7d37dda61ddf80f8f1c32b02ed72509dea",
+      "sourceDimensions": {
+        "width": 1169,
+        "height": 1280
+      },
+      "sourceRect": {
+        "left": 981,
+        "top": 1047,
+        "right": 1169,
+        "bottom": 1280
+      },
+      "originalCropDimensions": {
+        "width": 188,
+        "height": 233
+      },
+      "extraction": {
+        "winningInkPixels": 18423
+      },
+      "sourceAlphaBounds": {
+        "left": 996,
+        "top": 1067,
+        "right": 1158,
+        "bottom": 1248
+      },
+      "cutoutToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 54,
+          "y": 109
+        }
+      },
+      "sourceToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": -927,
+          "y": -938
+        }
+      },
+      "legacyFrame": {
+        "width": 300,
+        "height": 320,
+        "anchor": {
+          "x": 150,
+          "y": 310
+        }
+      },
+      "legacyAtlasRect": {
+        "x": 1500,
+        "y": 960,
+        "width": 300,
+        "height": 320
+      },
+      "legacyPlacement": {
+        "x": 69,
+        "y": 129,
+        "width": 162,
+        "height": 181
+      },
+      "alpha": {
+        "gt0": {
+          "count": 18502,
+          "bounds": {
+            "left": 69,
+            "top": 129,
+            "right": 231,
+            "bottom": 310
+          }
+        },
+        "gt128": {
+          "count": 18502,
+          "bounds": {
+            "left": 69,
+            "top": 129,
+            "right": 231,
+            "bottom": 310
+          }
+        }
+      },
+      "canonical": {
+        "status": "pending",
+        "profileId": "canonical-320x352-v1",
+        "sourceTransform": null
+      },
+      "generatedFrame": {
+        "path": "pipeline/generated/legacy/laura/base_24.png",
+        "sha256": "b1dc582523a17a406a5a4e33bae77c609fa5bc06e9bcd075163ecf1fc0387907",
+        "bytes": 60788
+      }
+    }
+  ]
+}
