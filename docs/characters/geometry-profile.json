@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "id": "canonical-320x352-v1",
+  "status": "approved",
+  "scope": "character-pipeline-only",
+  "runtimeIntegrationTicket": "P15",
+  "frame": { "width": 320, "height": 352, "units": "pixels" },
+  "pivot": { "x": 160, "y": 328 },
+  "pivotMeaning": "actor-local-origin",
+  "nominalGroundY": 328,
+  "gameUnitsPerCanonicalPixel": 0.75,
+  "spaces": {
+    "chain": [
+      "source-image",
+      "canonical-frame",
+      "actor-local",
+      "simulation-world",
+      "scene",
+      "screen"
+    ],
+    "sourceAndFrame": { "origin": "top-left", "x": "right", "y": "down" },
+    "actorAndWorld": { "x": "right", "y": "up" },
+    "rasterConvention": "continuous-edge-coordinates-pixel-centers-at-half-integers",
+    "boundsConvention": "right-and-bottom-exclusive"
+  },
+  "policies": {
+    "pivotFromAlpha": false,
+    "autoScaleToFit": false,
+    "overflow": "report-for-review",
+    "density": "shared-by-all-characters",
+    "statureAndProportions": "deferred-to-character-spec",
+    "mechanicalDimensions": "independent",
+    "mirror": "reflect-around-pivot-preserve-anatomical-ids",
+    "standing": "declared-support-contacts-at-nominal-ground",
+    "crouching": "preserve-scale-and-root",
+    "airborne": "virtual-root-no-bottom-alignment",
+    "lying": "preserve-root-explicit-body-contacts",
+    "grab": "independent-actor-roots-separate-visual-interaction-points"
+  },
+  "alpha": {
+    "preserve": "all-alpha-greater-than-zero",
+    "automaticCleanup": false,
+    "diagnosticThresholdsExclusive": [0, 128]
+  },
+  "tolerances": {
+    "status": "provisional",
+    "contentMarginCanonicalPixels": 8,
+    "groundContactCanonicalPixels": 1,
+    "roundedPlacementScenePixels": 0.5,
+    "numericTransformScenePixels": 0.0001,
+    "mirror": "reversible-within-numeric-transform-tolerance",
+    "anatomicalProportionsPercent": null
+  }
+}

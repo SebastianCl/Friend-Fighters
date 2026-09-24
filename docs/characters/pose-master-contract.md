@@ -41,7 +41,7 @@ El constructor crea todos los landmarks con position=null y visibility=unreviewe
 - Los sitios de contacto no pueden duplicarse ni inventarse fuera del vocabulario del contrato.
 - airborne=true exige groundContacts=[] y supportLeg=none. airborne=false no admite una lista confirmada vacía; null permite conservar contactos pendientes.
 - La pierna de apoyo debe ser coherente con los contactos que soportan peso cuando estos ya están determinados. Los apoyos de mano y cuerpo se registran aparte.
-- Estos controles no certifican anatomía, mediciones, calidad visual ni preparación para producción. No hay importador, exportador, perfil geométrico o integración nueva con el motor.
+- Estos controles no certifican anatomía, mediciones, calidad visual ni preparación para producción. P03 no implementa importador, exportador o integración con el motor. El perfil geométrico aprobado posteriormente está separado en [P04](geometry-profile.md).
 
 ## Intención para futuras plantillas
 
@@ -62,9 +62,11 @@ El constructor crea todos los landmarks con position=null y visibility=unreviewe
 
 El motor mantiene land → base_08, punch-wind/special-wind → base_15, special-hit → base_21 (también en el aire), air-punch → base_22, low-special → base_24 y fall → base_14. Estos hechos de P02 no redefinen las etiquetas artísticas aprobadas. Cualquier revisión de esas asignaciones requiere un ticket posterior autorizado.
 
-## Pendientes para P04
+## Relación con P04 y mediciones pendientes
 
-Antes de producir plantillas medidas, decidir la imagen de referencia de cada plantilla, perfil geométrico, escala, coordenadas y tolerancias; definir lateralidad, apoyos y estados de manos que hoy no estén confirmados; y precisar diferencias entre variantes de guardia/marcha y entre 07/22. Medir y revisar landmarks será trabajo posterior; este contrato no proporciona sus valores.
+[P04](geometry-profile.md) fija frame 320 × 352, pivote (160, 328), suelo Y=328, densidad común 0.75 unidades/píxel y tolerancias provisionales. La imagen anotada de P03 sigue siendo la fuente: no se reinterpretan sus coordenadas como canónicas. Una transformación explícita permite derivarlas conservando los valores desconocidos y la lateralidad anatómica.
+
+Siguen pendientes la referencia de cada plantilla, su transformación concreta, la medición de landmarks/contactos, lateralidad, apoyos y manos aún desconocidos, y las diferencias entre variantes de guardia/marcha y entre 07/22. P04 no inventa estas mediciones ni migra el renderer (P15).
 
 La aprobación artística de P03 no aprueba pivotes, hitboxes, timings ni cambios del motor. El roadmap Txx del documento inicial es una propuesta histórica; P03 aquí corresponde exclusivamente a la decisión artística solicitada y aprobada por el usuario.
 

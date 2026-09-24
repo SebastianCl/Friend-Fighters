@@ -116,6 +116,8 @@ La víctima puede reutilizar una pose existente solo tras una revisión visual. 
 
 ## 6. Canvas, grid y celdas configurables
 
+**P04 aprobado:** el perfil canónico vigente está en [geometry-profile.json](characters/geometry-profile.json): frame 320 × 352 px, pivote (160, 328), suelo Y=328 y 0.75 unidades del juego por píxel. [Contrato y validaciones P04](characters/geometry-profile.md). La integración del renderer queda para P15. Los ejemplos y borradores incompletos siguientes son históricos y no sustituyen este perfil ni fijan estaturas.
+
 Medir primero el cargador de sprites, los recursos actuales, la escala de render y los límites del motor. Elegir después un perfil de exportación. Cada perfil declara tamaño de celda, filas/columnas, márgenes, separación, formato y orden explícito de IDs. Las entradas originales pueden tener recortes irregulares; las salidas normalizadas sí deben cumplir el perfil.
 
 Para celdas de ancho `W`, alto `H`, `C` columnas, `R` filas, márgenes `ML/MR/MT/MB` y separaciones `GX/GY`:
