@@ -1,0 +1,535 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://fighter-friends.local/character-pipeline/base-movement-template-1.schema.json",
+  "title": "P08 Base Movement Template v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "templateVersion",
+    "status",
+    "compatiblePipelineVersion",
+    "authoringConvention",
+    "rootPolicy",
+    "anatomyPolicy",
+    "mannequin",
+    "references",
+    "poses",
+    "walk"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "templateVersion": {
+      "const": "1.0.0"
+    },
+    "status": {
+      "const": "structure-approved"
+    },
+    "compatiblePipelineVersion": {
+      "const": "1.0.0-draft.1"
+    },
+    "authoringConvention": {
+      "const": {
+        "laterality": "anatomical",
+        "lead": "left",
+        "executor": "right",
+        "lateralVariants": "explicit-character-instance",
+        "facingMirror": "preserve-anatomical-ids"
+      }
+    },
+    "rootPolicy": {
+      "const": {
+        "actorOrigin": "geometry-profile-pivot-only",
+        "additionalActorTransform": false,
+        "neutralPelvisReference": "per-character-anatomical-reference",
+        "aerialPelvis": "shared-neutral-pelvis-reference",
+        "aerialResources": ["base_07", "base_22", "base_23"],
+        "worldTrajectory": "simulation-only",
+        "groundContacts": "surface-points-at-nominal-ground",
+        "lyingPlacement": "relative-to-character-pelvis-reference-no-bounds-centering",
+        "surfaceContactsAreLandmarkCenters": false
+      }
+    },
+    "anatomyPolicy": {
+      "const": {
+        "owner": "character-spec",
+        "perPoseScale": false,
+        "fitCellByScaling": false,
+        "overflow": "report-for-review",
+        "landmarkCoordinates": "character-instance-only",
+        "anatomicalTolerancePercent": null
+      }
+    },
+    "mannequin": {
+      "const": {
+        "derivation": ["character-proportions", "base-movement-template"],
+        "generationInputs": [
+          "character-spec",
+          "master-character-reference",
+          "pose-definition",
+          "parametric-mannequin",
+          "skeleton-landmarks"
+        ],
+        "universalMorphology": false,
+        "expectedControlOutputs": [
+          {
+            "kind": "neutral-volume-reference",
+            "coordinateSpace": "canonical-frame",
+            "requiredAnnotations": [
+              "character-and-template-version",
+              "shared-camera-reference",
+              "no-character-identity-or-clothing"
+            ]
+          },
+          {
+            "kind": "anatomical-skeleton-landmarks",
+            "coordinateSpace": "canonical-frame",
+            "requiredAnnotations": [
+              "22-anatomical-landmark-ids",
+              "authored-not-measured",
+              "character-proportions-reference",
+              "lateral-variant"
+            ]
+          },
+          {
+            "kind": "root-ground-surface-contact-overlay",
+            "coordinateSpace": "canonical-frame",
+            "requiredAnnotations": [
+              "P04-pivot",
+              "nominal-ground",
+              "neutral-pelvis-reference",
+              "surface-contacts-separate-from-joint-centers"
+            ]
+          },
+          {
+            "kind": "visibility-and-depth-order",
+            "coordinateSpace": "shared-camera",
+            "requiredAnnotations": [
+              "front-back-limb-order",
+              "palms-orientation",
+              "visible-occluded-unknown",
+              "projection-reference"
+            ]
+          },
+          {
+            "kind": "constraint-validation-report",
+            "coordinateSpace": "not-applicable",
+            "requiredAnnotations": [
+              "structural-rules",
+              "allowed-variations",
+              "pending-measurements",
+              "P04-margins-and-overflow"
+            ]
+          }
+        ],
+        "camera": {
+          "sharedAcrossPoses": true,
+          "status": "pending-visual-validation",
+          "projection": null,
+          "parameters": null
+        },
+        "assetsGenerated": false,
+        "characterInputs": {
+          "anatomy": "characterSpec.visual.proportions",
+          "stature": "characterSpec.visual.statureGameUnits",
+          "appearanceReference": "characterSpec.visual.masterReferencePath",
+          "neutralPelvisReference": "movement-template-instance.neutralPelvisReference"
+        },
+        "segmentLengths": "constant-across-poses-derived-from-character-proportions",
+        "occludedLandmarks": "authored-control-geometry-is-not-observed-image-evidence"
+      }
+    },
+    "references": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["global", "semantics", "geometry"],
+      "properties": {
+        "global": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "schemaVersion", "sha256"],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "schemaVersion": {
+              "const": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        },
+        "semantics": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "schemaVersion", "sha256"],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "schemaVersion": {
+              "const": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        },
+        "geometry": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "schemaVersion", "sha256"],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "schemaVersion": {
+              "const": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        }
+      }
+    },
+    "poses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "resourceId",
+          "intent",
+          "family",
+          "structure",
+          "structuralDescription",
+          "criticalLandmarks",
+          "variableLandmarks",
+          "allowedVariations",
+          "coordinateStatus"
+        ],
+        "properties": {
+          "resourceId": {
+            "type": "string",
+            "pattern": "^base_(0[1-9]|1[0-9]|2[0-4])$"
+          },
+          "intent": {
+            "enum": [
+              "balanced-guard",
+              "compact-guard",
+              "exploratory-guard",
+              "left-contact",
+              "left-passing",
+              "right-contact",
+              "bilateral-tuck",
+              "open-crouch",
+              "low-reach",
+              "crouched-guard",
+              "forearm-defense",
+              "unilateral-high-guard",
+              "impact-recoil",
+              "supine",
+              "rear-loaded-guard",
+              "standing-straight-punch",
+              "right-kick-chamber",
+              "right-high-kick",
+              "crouched-straight-punch",
+              "hand-supported-low-kick",
+              "standing-palm-push",
+              "right-aerial-knee",
+              "right-aerial-kick",
+              "crouched-palm-push"
+            ]
+          },
+          "family": {
+            "enum": [
+              "guard",
+              "walk",
+              "jump",
+              "crouch",
+              "defense",
+              "reaction",
+              "lying",
+              "standing-attack",
+              "crouched-attack",
+              "aerial-attack"
+            ]
+          },
+          "structure": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "torso",
+              "headPelvis",
+              "arms",
+              "legs",
+              "load",
+              "executor",
+              "direction",
+              "hands",
+              "supportLeg",
+              "airborne",
+              "contacts",
+              "pelvisRelation"
+            ],
+            "properties": {
+              "torso": {
+                "enum": [
+                  "upright-three-quarter",
+                  "upright",
+                  "crouch-upright",
+                  "forward-inclined",
+                  "recoiling",
+                  "supine-horizontal",
+                  "rear-turned",
+                  "punch-rotation",
+                  "kick-counterbalance",
+                  "crouched-punch-rotation",
+                  "toward-support-hand",
+                  "palm-push-inclined",
+                  "crouched-palm-push"
+                ]
+              },
+              "headPelvis": {
+                "enum": [
+                  "above-pelvis-forward",
+                  "above-lowered-pelvis",
+                  "behind-left-forearm",
+                  "beside-left-forearm",
+                  "recoils-with-torso",
+                  "behind-pelvis-face-up"
+                ]
+              },
+              "arms": {
+                "enum": [
+                  "guard",
+                  "compact-guard",
+                  "exploratory-guard",
+                  "contralateral-swing-right-forward",
+                  "passing-swing",
+                  "contralateral-swing-left-forward",
+                  "open-low",
+                  "right-low-reach",
+                  "left-barrier",
+                  "left-high-guard",
+                  "disrupted-guard",
+                  "resting",
+                  "right-straight-punch",
+                  "right-hand-support",
+                  "bilateral-palm-push"
+                ]
+              },
+              "legs": {
+                "enum": [
+                  "flexed-stance",
+                  "left-contact",
+                  "left-passing",
+                  "right-contact",
+                  "bilateral-tuck",
+                  "crouched-stance",
+                  "absorbing-stance",
+                  "resting-extended",
+                  "right-chamber",
+                  "right-high-extension",
+                  "right-low-extension",
+                  "right-knee-drive",
+                  "right-air-extension"
+                ]
+              },
+              "load": {
+                "enum": [
+                  "balanced",
+                  "transfer-to-left",
+                  "left",
+                  "transfer-to-right",
+                  "none",
+                  "body-surfaces",
+                  "rear-right",
+                  "left-and-right-palm"
+                ]
+              },
+              "executor": {
+                "enum": ["none", "right", "both"]
+              },
+              "direction": {
+                "enum": ["neutral", "forward", "backward", "face-up"]
+              },
+              "hands": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["left", "right"],
+                "properties": {
+                  "left": {
+                    "enum": ["open", "fist", "relaxed"]
+                  },
+                  "right": {
+                    "enum": ["open", "fist", "relaxed"]
+                  }
+                }
+              },
+              "supportLeg": {
+                "enum": ["left", "right", "both", "none"]
+              },
+              "airborne": {
+                "type": "boolean"
+              },
+              "contacts": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["site", "surface", "supportsWeight"],
+                  "properties": {
+                    "site": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "surface": {
+                      "enum": [
+                        "sole",
+                        "heel",
+                        "forefoot",
+                        "palm",
+                        "posterior-body"
+                      ]
+                    },
+                    "supportsWeight": {
+                      "const": true
+                    }
+                  }
+                },
+                "minItems": 0
+              },
+              "pelvisRelation": {
+                "enum": [
+                  "relative-to-neutral",
+                  "shared-aerial-reference",
+                  "lowered-from-neutral",
+                  "supine-relative-to-neutral"
+                ]
+              }
+            }
+          },
+          "structuralDescription": {
+            "type": "string",
+            "minLength": 1
+          },
+          "criticalLandmarks": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "variableLandmarks": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "uniqueItems": true
+          },
+          "allowedVariations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["parameter", "condition"],
+              "properties": {
+                "parameter": {
+                  "enum": [
+                    "guard-spacing",
+                    "stance-width",
+                    "guard-reach",
+                    "stride",
+                    "arm-swing",
+                    "walk-pelvis-articulation",
+                    "swing-clearance",
+                    "tuck-fold",
+                    "tuck-asymmetry",
+                    "arm-opening",
+                    "crouch-depth",
+                    "reach-distance",
+                    "barrier-angle",
+                    "high-guard-height",
+                    "recoil-amplitude",
+                    "resting-flexion",
+                    "torso-turn",
+                    "rear-load",
+                    "punch-reach",
+                    "chamber-height",
+                    "counterbalance",
+                    "kick-reach",
+                    "support-spacing",
+                    "palm-spacing",
+                    "knee-drive",
+                    "non-executing-leg-fold"
+                  ]
+                },
+                "condition": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "minItems": 1
+          },
+          "coordinateStatus": {
+            "const": "character-instance-pending"
+          }
+        }
+      },
+      "minItems": 24,
+      "maxItems": 24
+    },
+    "walk": {
+      "const": {
+        "sequence": [
+          {
+            "resourceId": "base_04",
+            "phase": "left-contact"
+          },
+          {
+            "resourceId": "base_05",
+            "phase": "left-passing"
+          },
+          {
+            "resourceId": "base_06",
+            "phase": "right-contact"
+          }
+        ],
+        "unstoredTransition": {
+          "phase": "right-passing",
+          "resourceId": null,
+          "supportLeg": "right",
+          "swingLeg": "left",
+          "hands": {
+            "left": "relaxed",
+            "right": "relaxed"
+          },
+          "groundContacts": [
+            {
+              "site": "right_foot",
+              "surface": "sole",
+              "supportsWeight": true
+            }
+          ]
+        },
+        "loopTo": "base_04",
+        "interpolation": "articulated-constant-segment-lengths-with-planted-contact",
+        "runtimeAnimationChange": false
+      }
+    }
+  }
+}

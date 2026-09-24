@@ -1,0 +1,1840 @@
+{
+  "schemaVersion": 1,
+  "templateVersion": "1.0.0",
+  "status": "structure-approved",
+  "compatiblePipelineVersion": "1.0.0-draft.1",
+  "references": {
+    "global": {
+      "path": "docs/characters/pipeline-config.json",
+      "schemaVersion": 1,
+      "sha256": "be3feb5e118f0f9598385cfd1c5b5e68c22a3980f0749e5aa18e8227864afc2d"
+    },
+    "semantics": {
+      "path": "docs/characters/pose-semantics.json",
+      "schemaVersion": 1,
+      "sha256": "e050421ebafb05f1c983f9445895a4bb522b804e9a967df82992595af91b6359"
+    },
+    "geometry": {
+      "path": "docs/characters/geometry-profile.json",
+      "schemaVersion": 1,
+      "sha256": "407afe4a28ebc20c11d6e584ffdc93cc2f3a265d301d196b50a23002e81a4f95"
+    }
+  },
+  "authoringConvention": {
+    "laterality": "anatomical",
+    "lead": "left",
+    "executor": "right",
+    "lateralVariants": "explicit-character-instance",
+    "facingMirror": "preserve-anatomical-ids"
+  },
+  "rootPolicy": {
+    "actorOrigin": "geometry-profile-pivot-only",
+    "additionalActorTransform": false,
+    "neutralPelvisReference": "per-character-anatomical-reference",
+    "aerialPelvis": "shared-neutral-pelvis-reference",
+    "aerialResources": ["base_07", "base_22", "base_23"],
+    "worldTrajectory": "simulation-only",
+    "groundContacts": "surface-points-at-nominal-ground",
+    "lyingPlacement": "relative-to-character-pelvis-reference-no-bounds-centering",
+    "surfaceContactsAreLandmarkCenters": false
+  },
+  "anatomyPolicy": {
+    "owner": "character-spec",
+    "perPoseScale": false,
+    "fitCellByScaling": false,
+    "overflow": "report-for-review",
+    "landmarkCoordinates": "character-instance-only",
+    "anatomicalTolerancePercent": null
+  },
+  "walk": {
+    "sequence": [
+      {
+        "resourceId": "base_04",
+        "phase": "left-contact"
+      },
+      {
+        "resourceId": "base_05",
+        "phase": "left-passing"
+      },
+      {
+        "resourceId": "base_06",
+        "phase": "right-contact"
+      }
+    ],
+    "unstoredTransition": {
+      "phase": "right-passing",
+      "resourceId": null,
+      "supportLeg": "right",
+      "swingLeg": "left",
+      "hands": {
+        "left": "relaxed",
+        "right": "relaxed"
+      },
+      "groundContacts": [
+        {
+          "site": "right_foot",
+          "surface": "sole",
+          "supportsWeight": true
+        }
+      ]
+    },
+    "loopTo": "base_04",
+    "interpolation": "articulated-constant-segment-lengths-with-planted-contact",
+    "runtimeAnimationChange": false
+  },
+  "mannequin": {
+    "derivation": ["character-proportions", "base-movement-template"],
+    "generationInputs": [
+      "character-spec",
+      "master-character-reference",
+      "pose-definition",
+      "parametric-mannequin",
+      "skeleton-landmarks"
+    ],
+    "universalMorphology": false,
+    "expectedControlOutputs": [
+      {
+        "kind": "neutral-volume-reference",
+        "coordinateSpace": "canonical-frame",
+        "requiredAnnotations": [
+          "character-and-template-version",
+          "shared-camera-reference",
+          "no-character-identity-or-clothing"
+        ]
+      },
+      {
+        "kind": "anatomical-skeleton-landmarks",
+        "coordinateSpace": "canonical-frame",
+        "requiredAnnotations": [
+          "22-anatomical-landmark-ids",
+          "authored-not-measured",
+          "character-proportions-reference",
+          "lateral-variant"
+        ]
+      },
+      {
+        "kind": "root-ground-surface-contact-overlay",
+        "coordinateSpace": "canonical-frame",
+        "requiredAnnotations": [
+          "P04-pivot",
+          "nominal-ground",
+          "neutral-pelvis-reference",
+          "surface-contacts-separate-from-joint-centers"
+        ]
+      },
+      {
+        "kind": "visibility-and-depth-order",
+        "coordinateSpace": "shared-camera",
+        "requiredAnnotations": [
+          "front-back-limb-order",
+          "palms-orientation",
+          "visible-occluded-unknown",
+          "projection-reference"
+        ]
+      },
+      {
+        "kind": "constraint-validation-report",
+        "coordinateSpace": "not-applicable",
+        "requiredAnnotations": [
+          "structural-rules",
+          "allowed-variations",
+          "pending-measurements",
+          "P04-margins-and-overflow"
+        ]
+      }
+    ],
+    "camera": {
+      "sharedAcrossPoses": true,
+      "status": "pending-visual-validation",
+      "projection": null,
+      "parameters": null
+    },
+    "assetsGenerated": false,
+    "characterInputs": {
+      "anatomy": "characterSpec.visual.proportions",
+      "stature": "characterSpec.visual.statureGameUnits",
+      "appearanceReference": "characterSpec.visual.masterReferencePath",
+      "neutralPelvisReference": "movement-template-instance.neutralPelvisReference"
+    },
+    "segmentLengths": "constant-across-poses-derived-from-character-proportions",
+    "occludedLandmarks": "authored-control-geometry-is-not-observed-image-evidence"
+  },
+  "poses": [
+    {
+      "resourceId": "base_01",
+      "intent": "balanced-guard",
+      "family": "guard",
+      "structure": {
+        "torso": "upright-three-quarter",
+        "headPelvis": "above-pelvis-forward",
+        "arms": "guard",
+        "legs": "flexed-stance",
+        "load": "balanced",
+        "executor": "none",
+        "direction": "neutral",
+        "hands": {
+          "left": "fist",
+          "right": "fist"
+        },
+        "supportLeg": "both",
+        "airborne": false,
+        "contacts": [
+          {
+            "site": "left_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          },
+          {
+            "site": "right_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          }
+        ],
+        "pelvisRelation": "relative-to-neutral"
+      },
+      "structuralDescription": "Peso equilibrado; puño izquierdo delante del pecho y derecho junto a mejilla; rodillas disponibles.",
+      "criticalLandmarks": [
+        "head_center",
+        "neck",
+        "sternum",
+        "pelvis_center",
+        "left_shoulder",
+        "left_elbow",
+        "left_wrist",
+        "left_palm",
+        "right_shoulder",
+        "right_elbow",
+        "right_wrist",
+        "right_palm"
+      ],
+      "variableLandmarks": [
+        "left_hip",
+        "left_knee",
+        "left_ankle",
+        "left_heel",
+        "left_toe",
+        "right_hip",
+        "right_knee",
+        "right_ankle",
+        "right_heel",
+        "right_toe"
+      ],
+      "allowedVariations": [
+        {
+          "parameter": "guard-spacing",
+          "condition": "Conservar intención, topología articular, manos, apoyos y longitudes corporales del Character Spec."
+        },
+        {
+          "parameter": "stance-width",
+          "condition": "Variar separación sin cambiar contactos, pierna de apoyo, raíz ni longitudes anatómicas."
+        }
+      ],
+      "coordinateStatus": "character-instance-pending"
+    },
+    {
+      "resourceId": "base_02",
+      "intent": "compact-guard",
+      "family": "guard",
+      "structure": {
+        "torso": "upright-three-quarter",
+        "headPelvis": "above-pelvis-forward",
+        "arms": "compact-guard",
+        "legs": "flexed-stance",
+        "load": "balanced",
+        "executor": "none",
+        "direction": "neutral",
+        "hands": {
+          "left": "fist",
+          "right": "fist"
+        },
+        "supportLeg": "both",
+        "airborne": false,
+        "contacts": [
+          {
+            "site": "left_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          },
+          {
+            "site": "right_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          }
+        ],
+        "pelvisRelation": "relative-to-neutral"
+      },
+      "structuralDescription": "Codos próximos al torso y manos más centrales que 01; conservar base de apoyo.",
+      "criticalLandmarks": [
+        "head_center",
+        "neck",
+        "sternum",
+        "pelvis_center",
+        "left_shoulder",
+        "left_elbow",
+        "left_wrist",
+        "left_palm",
+        "right_shoulder",
+        "right_elbow",
+        "right_wrist",
+        "right_palm"
+      ],
+      "variableLandmarks": [
+        "left_hip",
+        "left_knee",
+        "left_ankle",
+        "left_heel",
+        "left_toe",
+        "right_hip",
+        "right_knee",
+        "right_ankle",
+        "right_heel",
+        "right_toe"
+      ],
+      "allowedVariations": [
+        {
+          "parameter": "guard-spacing",
+          "condition": "Conservar intención, topología articular, manos, apoyos y longitudes corporales del Character Spec."
+        },
+        {
+          "parameter": "stance-width",
+          "condition": "Variar separación sin cambiar contactos, pierna de apoyo, raíz ni longitudes anatómicas."
+        }
+      ],
+      "coordinateStatus": "character-instance-pending"
+    },
+    {
+      "resourceId": "base_03",
+      "intent": "exploratory-guard",
+      "family": "guard",
+      "structure": {
+        "torso": "upright-three-quarter",
+        "headPelvis": "above-pelvis-forward",
+        "arms": "exploratory-guard",
+        "legs": "flexed-stance",
+        "load": "balanced",
+        "executor": "none",
+        "direction": "neutral",
+        "hands": {
+          "left": "fist",
+          "right": "fist"
+        },
+        "supportLeg": "both",
+        "airborne": false,
+        "contacts": [
+          {
+            "site": "left_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          },
+          {
+            "site": "right_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          }
+        ],
+        "pelvisRelation": "relative-to-neutral"
+      },
+      "structuralDescription": "Antebrazo izquierdo explora delante sin extenderse como golpe; derecha protege mejilla.",
+      "criticalLandmarks": [
+        "head_center",
+        "neck",
+        "sternum",
+        "pelvis_center",
+        "left_shoulder",
+        "left_elbow",
+        "left_wrist",
+        "left_palm",
+        "right_shoulder",
+        "right_elbow",
+        "right_wrist",
+        "right_palm"
+      ],
+      "variableLandmarks": [
+        "left_hip",
+        "left_knee",
+        "left_ankle",
+        "left_heel",
+        "left_toe",
+        "right_hip",
+        "right_knee",
+        "right_ankle",
+        "right_heel",
+        "right_toe"
+      ],
+      "allowedVariations": [
+        {
+          "parameter": "guard-reach",
+          "condition": "Conservar intención, topología articular, manos, apoyos y longitudes corporales del Character Spec."
+        },
+        {
+          "parameter": "stance-width",
+          "condition": "Variar separación sin cambiar contactos, pierna de apoyo, raíz ni longitudes anatómicas."
+        }
+      ],
+      "coordinateStatus": "character-instance-pending"
+    },
+    {
+      "resourceId": "base_04",
+      "intent": "left-contact",
+      "family": "walk",
+      "structure": {
+        "torso": "upright",
+        "headPelvis": "above-pelvis-forward",
+        "arms": "contralateral-swing-right-forward",
+        "legs": "left-contact",
+        "load": "transfer-to-left",
+        "executor": "none",
+        "direction": "neutral",
+        "hands": {
+          "left": "relaxed",
+          "right": "relaxed"
+        },
+        "supportLeg": "both",
+        "airborne": false,
+        "contacts": [
+          {
+            "site": "left_foot",
+            "surface": "heel",
+            "supportsWeight": true
+          },
+          {
+            "site": "right_foot",
+            "surface": "forefoot",
+            "supportsWeight": true
+          }
+        ],
+        "pelvisRelation": "relative-to-neutral"
+      },
+      "structuralDescription": "Talón izquierdo delante y antepié derecho detrás; brazo derecho adelantado.",
+      "criticalLandmarks": [
+        "head_center",
+        "neck",
+        "sternum",
+        "pelvis_center",
+        "left_hip",
+        "left_knee",
+        "left_ankle",
+        "left_heel",
+        "left_toe",
+        "right_hip",
+        "right_knee",
+        "right_ankle",
+        "right_heel",
+        "right_toe",
+        "left_shoulder",
+        "right_shoulder",
+        "left_elbow",
+        "right_elbow"
+      ],
+      "variableLandmarks": [
+        "left_wrist",
+        "left_palm",
+        "right_wrist",
+        "right_palm"
+      ],
+      "allowedVariations": [
+        {
+          "parameter": "stride",
+          "condition": "Conservar intención, topología articular, manos, apoyos y longitudes corporales del Character Spec."
+        },
+        {
+          "parameter": "arm-swing",
+          "condition": "Conservar oposición brazo/pierna y manos relajadas de la fase de marcha."
+        },
+        {
+          "parameter": "walk-pelvis-articulation",
+          "condition": "Variar articulación local al resolver piernas; nunca añadir una transformación del actor ni modificar su trayectoria física."
+        }
+      ],
+      "coordinateStatus": "character-instance-pending"
+    },
+    {
+      "resourceId": "base_05",
+      "intent": "left-passing",
+      "family": "walk",
+      "structure": {
+        "torso": "upright",
+        "headPelvis": "above-pelvis-forward",
+        "arms": "passing-swing",
+        "legs": "left-passing",
+        "load": "left",
+        "executor": "none",
+        "direction": "neutral",
+        "hands": {
+          "left": "relaxed",
+          "right": "relaxed"
+        },
+        "supportLeg": "left",
+        "airborne": false,
+        "contacts": [
+          {
+            "site": "left_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          }
+        ],
+        "pelvisRelation": "relative-to-neutral"
+      },
+      "structuralDescription": "Apoyo izquierdo completo; pierna derecha pasa bajo pelvis sin tocar suelo; brazos cruzan fase.",
+      "criticalLandmarks": [
+        "head_center",
+        "neck",
+        "sternum",
+        "pelvis_center",
+        "left_hip",
+        "left_knee",
+        "left_ankle",
+        "left_heel",
+        "left_toe",
+        "right_hip",
+        "right_knee",
+        "right_ankle",
+        "right_heel",
+        "right_toe"
+      ],
+      "variableLandmarks": [
+        "left_shoulder",
+        "left_elbow",
+        "left_wrist",
+        "left_palm",
+        "right_shoulder",
+        "right_elbow",
+        "right_wrist",
+        "right_palm"
+      ],
+      "allowedVariations": [
+        {
+          "parameter": "swing-clearance",
+          "condition": "Conservar intención, topología articular, manos, apoyos y longitudes corporales del Character Spec."
+        },
+        {
+          "parameter": "arm-swing",
+          "condition": "Conservar oposición brazo/pierna y manos relajadas de la fase de marcha."
+        },
+        {
+          "parameter": "walk-pelvis-articulation",
+          "condition": "Variar articulación local al resolver piernas; nunca añadir una transformación del actor ni modificar su trayectoria física."
+        }
+      ],
+      "coordinateStatus": "character-instance-pending"
+    },
+    {
+      "resourceId": "base_06",
+      "intent": "right-contact",
+      "family": "walk",
+      "structure": {
+        "torso": "upright",
+        "headPelvis": "above-pelvis-forward",
+        "arms": "contralateral-swing-left-forward",
+        "legs": "right-contact",
+        "load": "transfer-to-right",
+        "executor": "none",
+        "direction": "neutral",
+        "hands": {
+          "left": "relaxed",
+          "right": "relaxed"
+        },
+        "supportLeg": "both",
+        "airborne": false,
+        "contacts": [
+          {
+            "site": "right_foot",
+            "surface": "heel",
+            "supportsWeight": true
+          },
+          {
+            "site": "left_foot",
+            "surface": "forefoot",
+            "supportsWeight": true
+          }
+        ],
+        "pelvisRelation": "relative-to-neutral"
+      },
+      "structuralDescription": "Talón derecho delante y antepié izquierdo detrás; brazo izquierdo adelantado.",
+      "criticalLandmarks": [
+        "head_center",
+        "neck",
+        "sternum",
+        "pelvis_center",
+        "left_hip",
+        "left_knee",
+        "left_ankle",
+        "left_heel",
+        "left_toe",
+        "right_hip",
+        "right_knee",
+        "right_ankle",
+        "right_heel",
+        "right_toe",
+        "left_shoulder",
+        "right_shoulder",
+        "left_elbow",
+        "right_elbow"
+      ],
+      "variableLandmarks": [
+        "left_wrist",
+        "left_palm",
+        "right_wrist",
+        "right_palm"
+      ],
+      "allowedVariations": [
+        {
+          "parameter": "stride",
+          "condition": "Conservar intención, topología articular, manos, apoyos y longitudes corporales del Character Spec."
+        },
+        {
+          "parameter": "arm-swing",
+          "condition": "Conservar oposición brazo/pierna y manos relajadas de la fase de marcha."
+        },
+        {
+          "parameter": "walk-pelvis-articulation",
+          "condition": "Variar articulación local al resolver piernas; nunca añadir una transformación del actor ni modificar su trayectoria física."
+        }
+      ],
+      "coordinateStatus": "character-instance-pending"
+    },
+    {
+      "resourceId": "base_07",
+      "intent": "bilateral-tuck",
+      "family": "jump",
+      "structure": {
+        "torso": "upright",
+        "headPelvis": "above-pelvis-forward",
+        "arms": "guard",
+        "legs": "bilateral-tuck",
+        "load": "none",
+        "executor": "none",
+        "direction": "neutral",
+        "hands": {
+          "left": "fist",
+          "right": "fist"
+        },
+        "supportLeg": "none",
+        "airborne": true,
+        "contacts": [],
+        "pelvisRelation": "shared-aerial-reference"
+      },
+      "structuralDescription": "Ambas rodillas recogidas hacia pelvis sin rodilla ejecutora adelantada; puños de guardia.",
+      "criticalLandmarks": [
+        "head_center",
+        "neck",
+        "sternum",
+        "pelvis_center",
+        "left_hip",
+        "left_knee",
+        "left_ankle",
+        "left_heel",
+        "left_toe",
+        "right_hip",
+        "right_knee",
+        "right_ankle",
+        "right_heel",
+        "right_toe"
+      ],
+      "variableLandmarks": [
+        "left_shoulder",
+        "left_elbow",
+        "left_wrist",
+        "left_palm",
+        "right_shoulder",
+        "right_elbow",
+        "right_wrist",
+        "right_palm"
+      ],
+      "allowedVariations": [
+        {
+          "parameter": "tuck-fold",
+          "condition": "Conservar intención, topología articular, manos, apoyos y longitudes corporales del Character Spec."
+        },
+        {
+          "parameter": "tuck-asymmetry",
+          "condition": "Ambas piernas siguen recogidas; ninguna rodilla o pie se convierte en miembro atacante dominante."
+        }
+      ],
+      "coordinateStatus": "character-instance-pending"
+    },
+    {
+      "resourceId": "base_08",
+      "intent": "open-crouch",
+      "family": "crouch",
+      "structure": {
+        "torso": "crouch-upright",
+        "headPelvis": "above-lowered-pelvis",
+        "arms": "open-low",
+        "legs": "crouched-stance",
+        "load": "balanced",
+        "executor": "none",
+        "direction": "neutral",
+        "hands": {
+          "left": "open",
+          "right": "open"
+        },
+        "supportLeg": "both",
+        "airborne": false,
+        "contacts": [
+          {
+            "site": "left_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          },
+          {
+            "site": "right_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          }
+        ],
+        "pelvisRelation": "lowered-from-neutral"
+      },
+      "structuralDescription": "Pelvis baja por flexión de ambas piernas; brazos abiertos y bajos, manos abiertas; ninguna rodilla apoyada.",
+      "criticalLandmarks": [
+        "head_center",
+        "neck",
+        "sternum",
+        "pelvis_center",
+        "left_shoulder",
+        "left_elbow",
+        "left_wrist",
+        "left_palm",
+        "right_shoulder",
+        "right_elbow",
+        "right_wrist",
+        "right_palm",
+        "left_hip",
+        "right_hip",
+        "left_knee",
+        "right_knee",
+        "left_heel",
+        "right_heel"
+      ],
+      "variableLandmarks": [
+        "left_ankle",
+        "left_toe",
+        "right_ankle",
+        "right_toe"
+      ],
+      "allowedVariations": [
+        {
+          "parameter": "arm-opening",
+          "condition": "Conservar intención, topología articular, manos, apoyos y longitudes corporales del Character Spec."
+        },
+        {
+          "parameter": "crouch-depth",
+          "condition": "La altura cambia por flexión articular; conservar escala, raíz y pies apoyados, sin apoyar rodillas."
+        },
+        {
+          "parameter": "stance-width",
+          "condition": "Variar separación sin cambiar contactos, pierna de apoyo, raíz ni longitudes anatómicas."
+        }
+      ],
+      "coordinateStatus": "character-instance-pending"
+    },
+    {
+      "resourceId": "base_09",
+      "intent": "low-reach",
+      "family": "crouch",
+      "structure": {
+        "torso": "forward-inclined",
+        "headPelvis": "above-lowered-pelvis",
+        "arms": "right-low-reach",
+        "legs": "crouched-stance",
+        "load": "balanced",
+        "executor": "right",
+        "direction": "forward",
+        "hands": {
+          "left": "fist",
+          "right": "open"
+        },
+        "supportLeg": "both",
+        "airborne": false,
+        "contacts": [
+          {
+            "site": "left_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          },
+          {
+            "site": "right_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          }
+        ],
+        "pelvisRelation": "lowered-from-neutral"
+      },
+      "structuralDescription": "Derecha abierta alcanza bajo sin apoyarse; izquierda en puño protege; ambos pies apoyados.",
+      "criticalLandmarks": [
+        "head_center",
+        "neck",
+        "sternum",
+        "pelvis_center",
+        "left_shoulder",
+        "left_elbow",
+        "left_wrist",
+        "left_palm",
+        "right_shoulder",
+        "right_elbow",
+        "right_wrist",
+        "right_palm",
+        "left_hip",
+        "right_hip",
+        "left_knee",
+        "right_knee",
+        "left_heel",
+        "right_heel"
+      ],
+      "variableLandmarks": [
+        "left_ankle",
+        "left_toe",
+        "right_ankle",
+        "right_toe"
+      ],
+      "allowedVariations": [
+        {
+          "parameter": "reach-distance",
+          "condition": "Conservar intención, topología articular, manos, apoyos y longitudes corporales del Character Spec."
+        },
+        {
+          "parameter": "crouch-depth",
+          "condition": "La altura cambia por flexión articular; conservar escala, raíz y pies apoyados, sin apoyar rodillas."
+        }
+      ],
+      "coordinateStatus": "character-instance-pending"
+    },
+    {
+      "resourceId": "base_10",
+      "intent": "crouched-guard",
+      "family": "crouch",
+      "structure": {
+        "torso": "crouch-upright",
+        "headPelvis": "above-lowered-pelvis",
+        "arms": "compact-guard",
+        "legs": "crouched-stance",
+        "load": "balanced",
+        "executor": "none",
+        "direction": "neutral",
+        "hands": {
+          "left": "fist",
+          "right": "fist"
+        },
+        "supportLeg": "both",
+        "airborne": false,
+        "contacts": [
+          {
+            "site": "left_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          },
+          {
+            "site": "right_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          }
+        ],
+        "pelvisRelation": "lowered-from-neutral"
+      },
+      "structuralDescription": "Base agachada de 08; puños y antebrazos cierran protección de cabeza y torso.",
+      "criticalLandmarks": [
+        "head_center",
+        "neck",
+        "sternum",
+        "pelvis_center",
+        "left_shoulder",
+        "left_elbow",
+        "left_wrist",
+        "left_palm",
+        "right_shoulder",
+        "right_elbow",
+        "right_wrist",
+        "right_palm",
+        "left_hip",
+        "right_hip",
+        "left_knee",
+        "right_knee",
+        "left_heel",
+        "right_heel"
+      ],
+      "variableLandmarks": [
+        "left_ankle",
+        "left_toe",
+        "right_ankle",
+        "right_toe"
+      ],
+      "allowedVariations": [
+        {
+          "parameter": "guard-spacing",
+          "condition": "Conservar intención, topología articular, manos, apoyos y longitudes corporales del Character Spec."
+        },
+        {
+          "parameter": "crouch-depth",
+          "condition": "La altura cambia por flexión articular; conservar escala, raíz y pies apoyados, sin apoyar rodillas."
+        }
+      ],
+      "coordinateStatus": "character-instance-pending"
+    },
+    {
+      "resourceId": "base_11",
+      "intent": "forearm-defense",
+      "family": "defense",
+      "structure": {
+        "torso": "upright-three-quarter",
+        "headPelvis": "behind-left-forearm",
+        "arms": "left-barrier",
+        "legs": "flexed-stance",
+        "load": "balanced",
+        "executor": "none",
+        "direction": "neutral",
+        "hands": {
+          "left": "fist",
+          "right": "fist"
+        },
+        "supportLeg": "both",
+        "airborne": false,
+        "contacts": [
+          {
+            "site": "left_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          },
+          {
+            "site": "right_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          }
+        ],
+        "pelvisRelation": "relative-to-neutral"
+      },
+      "structuralDescription": "Antebrazo izquierdo oblicuo/transversal delante de cara y pecho alto; derecha como segunda guardia.",
+      "criticalLandmarks": [
+        "head_center",
+        "neck",
+        "sternum",
+        "pelvis_center",
+        "left_shoulder",
+        "left_elbow",
+        "left_wrist",
+        "left_palm",
+        "right_shoulder",
+        "right_elbow",
+        "right_wrist",
+        "right_palm"
+      ],
+      "variableLandmarks": [
+        "left_hip",
+        "left_knee",
+        "left_ankle",
+        "left_heel",
+        "left_toe",
+        "right_hip",
+        "right_knee",
+        "right_ankle",
+        "right_heel",
+        "right_toe"
+      ],
+      "allowedVariations": [
+        {
+          "parameter": "barrier-angle",
+          "condition": "Conservar intención, topología articular, manos, apoyos y longitudes corporales del Character Spec."
+        },
+        {
+          "parameter": "stance-width",
+          "condition": "Variar separación sin cambiar contactos, pierna de apoyo, raíz ni longitudes anatómicas."
+        }
+      ],
+      "coordinateStatus": "character-instance-pending"
+    },
+    {
+      "resourceId": "base_12",
+      "intent": "unilateral-high-guard",
+      "family": "defense",
+      "structure": {
+        "torso": "upright-three-quarter",
+        "headPelvis": "beside-left-forearm",
+        "arms": "left-high-guard",
+        "legs": "flexed-stance",
+        "load": "balanced",
+        "executor": "none",
+        "direction": "neutral",
+        "hands": {
+          "left": "fist",
+          "right": "fist"
+        },
+        "supportLeg": "both",
+        "airborne": false,
+        "contacts": [
+          {
+            "site": "left_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          },
+          {
+            "site": "right_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          }
+        ],
+        "pelvisRelation": "relative-to-neutral"
+      },
+      "structuralDescription": "Brazo izquierdo alto junto a sien, antebrazo casi vertical; derecha más baja junto al esternón.",
+      "criticalLandmarks": [
+        "head_center",
+        "neck",
+        "sternum",
+        "pelvis_center",
+        "left_shoulder",
+        "left_elbow",
+        "left_wrist",
+        "left_palm",
+        "right_shoulder",
+        "right_elbow",
+        "right_wrist",
+        "right_palm"
+      ],
+      "variableLandmarks": [
+        "left_hip",
+        "left_knee",
+        "left_ankle",
+        "left_heel",
+        "left_toe",
+        "right_hip",
+        "right_knee",
+        "right_ankle",
+        "right_heel",
+        "right_toe"
+      ],
+      "allowedVariations": [
+        {
+          "parameter": "high-guard-height",
+          "condition": "Conservar intención, topología articular, manos, apoyos y longitudes corporales del Character Spec."
+        },
+        {
+          "parameter": "stance-width",
+          "condition": "Variar separación sin cambiar contactos, pierna de apoyo, raíz ni longitudes anatómicas."
+        }
+      ],
+      "coordinateStatus": "character-instance-pending"
+    },
+    {
+      "resourceId": "base_13",
+      "intent": "impact-recoil",
+      "family": "reaction",
+      "structure": {
+        "torso": "recoiling",
+        "headPelvis": "recoils-with-torso",
+        "arms": "disrupted-guard",
+        "legs": "absorbing-stance",
+        "load": "balanced",
+        "executor": "none",
+        "direction": "backward",
+        "hands": {
+          "left": "relaxed",
+          "right": "relaxed"
+        },
+        "supportLeg": "both",
+        "airborne": false,
+        "contacts": [
+          {
+            "site": "left_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          },
+          {
+            "site": "right_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          }
+        ],
+        "pelvisRelation": "relative-to-neutral"
+      },
+      "structuralDescription": "Cabeza y torso retroceden respecto a pelvis; rodillas absorben, manos relajadas y guardia interrumpida.",
+      "criticalLandmarks": [
+        "head_center",
+        "neck",
+        "sternum",
+        "pelvis_center",
+        "left_shoulder",
+        "left_elbow",
+        "left_wrist",
+        "left_palm",
+        "right_shoulder",
+        "right_elbow",
+        "right_wrist",
+        "right_palm"
+      ],
+      "variableLandmarks": [
+        "left_hip",
+        "left_knee",
+        "left_ankle",
+        "left_heel",
+        "left_toe",
+        "right_hip",
+        "right_knee",
+        "right_ankle",
+        "right_heel",
+        "right_toe"
+      ],
+      "allowedVariations": [
+        {
+          "parameter": "recoil-amplitude",
+          "condition": "Conservar intención, topología articular, manos, apoyos y longitudes corporales del Character Spec."
+        }
+      ],
+      "coordinateStatus": "character-instance-pending"
+    },
+    {
+      "resourceId": "base_14",
+      "intent": "supine",
+      "family": "lying",
+      "structure": {
+        "torso": "supine-horizontal",
+        "headPelvis": "behind-pelvis-face-up",
+        "arms": "resting",
+        "legs": "resting-extended",
+        "load": "body-surfaces",
+        "executor": "none",
+        "direction": "face-up",
+        "hands": {
+          "left": "relaxed",
+          "right": "relaxed"
+        },
+        "supportLeg": "none",
+        "airborne": false,
+        "contacts": [
+          {
+            "site": "back",
+            "surface": "posterior-body",
+            "supportsWeight": true
+          },
+          {
+            "site": "pelvis",
+            "surface": "posterior-body",
+            "supportsWeight": true
+          },
+          {
+            "site": "head",
+            "surface": "posterior-body",
+            "supportsWeight": true
+          }
+        ],
+        "pelvisRelation": "supine-relative-to-neutral"
+      },
+      "structuralDescription": "Eje tumbado boca arriba; cabeza hacia atrás y pies hacia delante; brazos descansan, piernas extendidas sin rigidez.",
+      "criticalLandmarks": [
+        "head_center",
+        "neck",
+        "sternum",
+        "pelvis_center",
+        "left_hip",
+        "left_knee",
+        "left_ankle",
+        "left_heel",
+        "left_toe",
+        "right_hip",
+        "right_knee",
+        "right_ankle",
+        "right_heel",
+        "right_toe"
+      ],
+      "variableLandmarks": [
+        "left_shoulder",
+        "left_elbow",
+        "left_wrist",
+        "left_palm",
+        "right_shoulder",
+        "right_elbow",
+        "right_wrist",
+        "right_palm"
+      ],
+      "allowedVariations": [
+        {
+          "parameter": "resting-flexion",
+          "condition": "Conservar intención, topología articular, manos, apoyos y longitudes corporales del Character Spec."
+        }
+      ],
+      "coordinateStatus": "character-instance-pending"
+    },
+    {
+      "resourceId": "base_15",
+      "intent": "rear-loaded-guard",
+      "family": "guard",
+      "structure": {
+        "torso": "rear-turned",
+        "headPelvis": "above-pelvis-forward",
+        "arms": "guard",
+        "legs": "flexed-stance",
+        "load": "rear-right",
+        "executor": "none",
+        "direction": "neutral",
+        "hands": {
+          "left": "fist",
+          "right": "fist"
+        },
+        "supportLeg": "both",
+        "airborne": false,
+        "contacts": [
+          {
+            "site": "left_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          },
+          {
+            "site": "right_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          }
+        ],
+        "pelvisRelation": "relative-to-neutral"
+      },
+      "structuralDescription": "Mayor giro del torso y carga posterior derecha que 01; manos en guardia, sin anticipación de ataque.",
+      "criticalLandmarks": [
+        "head_center",
+        "neck",
+        "sternum",
+        "pelvis_center",
+        "left_shoulder",
+        "left_elbow",
+        "left_wrist",
+        "left_palm",
+        "right_shoulder",
+        "right_elbow",
+        "right_wrist",
+        "right_palm"
+      ],
+      "variableLandmarks": [
+        "left_hip",
+        "left_knee",
+        "left_ankle",
+        "left_heel",
+        "left_toe",
+        "right_hip",
+        "right_knee",
+        "right_ankle",
+        "right_heel",
+        "right_toe"
+      ],
+      "allowedVariations": [
+        {
+          "parameter": "torso-turn",
+          "condition": "Conservar intención, topología articular, manos, apoyos y longitudes corporales del Character Spec."
+        },
+        {
+          "parameter": "rear-load",
+          "condition": "Mantener ambos pies apoyados y carga posterior mayor que en 01; no convertir la guardia en preparación de golpe."
+        },
+        {
+          "parameter": "guard-spacing",
+          "condition": "Conservar manos de guardia y protección sin perder la variante de guardia especificada."
+        }
+      ],
+      "coordinateStatus": "character-instance-pending"
+    },
+    {
+      "resourceId": "base_16",
+      "intent": "standing-straight-punch",
+      "family": "standing-attack",
+      "structure": {
+        "torso": "punch-rotation",
+        "headPelvis": "above-pelvis-forward",
+        "arms": "right-straight-punch",
+        "legs": "flexed-stance",
+        "load": "balanced",
+        "executor": "right",
+        "direction": "forward",
+        "hands": {
+          "left": "fist",
+          "right": "fist"
+        },
+        "supportLeg": "both",
+        "airborne": false,
+        "contacts": [
+          {
+            "site": "left_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          },
+          {
+            "site": "right_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          }
+        ],
+        "pelvisRelation": "relative-to-neutral"
+      },
+      "structuralDescription": "Puño derecho recto hacia delante, hombro acompaña; izquierda protege; codo no bloqueado.",
+      "criticalLandmarks": [
+        "head_center",
+        "neck",
+        "sternum",
+        "pelvis_center",
+        "left_shoulder",
+        "left_elbow",
+        "left_wrist",
+        "left_palm",
+        "right_shoulder",
+        "right_elbow",
+        "right_wrist",
+        "right_palm"
+      ],
+      "variableLandmarks": [
+        "left_hip",
+        "left_knee",
+        "left_ankle",
+        "left_heel",
+        "left_toe",
+        "right_hip",
+        "right_knee",
+        "right_ankle",
+        "right_heel",
+        "right_toe"
+      ],
+      "allowedVariations": [
+        {
+          "parameter": "punch-reach",
+          "condition": "Conservar intención, topología articular, manos, apoyos y longitudes corporales del Character Spec."
+        },
+        {
+          "parameter": "torso-turn",
+          "condition": "Variar rotación articular conservando intención, apoyos y longitud corporal."
+        }
+      ],
+      "coordinateStatus": "character-instance-pending"
+    },
+    {
+      "resourceId": "base_17",
+      "intent": "right-kick-chamber",
+      "family": "standing-attack",
+      "structure": {
+        "torso": "kick-counterbalance",
+        "headPelvis": "above-pelvis-forward",
+        "arms": "guard",
+        "legs": "right-chamber",
+        "load": "left",
+        "executor": "right",
+        "direction": "forward",
+        "hands": {
+          "left": "fist",
+          "right": "fist"
+        },
+        "supportLeg": "left",
+        "airborne": false,
+        "contacts": [
+          {
+            "site": "left_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          }
+        ],
+        "pelvisRelation": "relative-to-neutral"
+      },
+      "structuralDescription": "Rodilla derecha elevada y tibia plegada; pie izquierdo sostiene; preparación conectada con 18.",
+      "criticalLandmarks": [
+        "head_center",
+        "neck",
+        "sternum",
+        "pelvis_center",
+        "left_hip",
+        "left_knee",
+        "left_ankle",
+        "left_heel",
+        "left_toe",
+        "right_hip",
+        "right_knee",
+        "right_ankle",
+        "right_heel",
+        "right_toe"
+      ],
+      "variableLandmarks": [
+        "left_shoulder",
+        "left_elbow",
+        "left_wrist",
+        "left_palm",
+        "right_shoulder",
+        "right_elbow",
+        "right_wrist",
+        "right_palm"
+      ],
+      "allowedVariations": [
+        {
+          "parameter": "chamber-height",
+          "condition": "Conservar intención, topología articular, manos, apoyos y longitudes corporales del Character Spec."
+        },
+        {
+          "parameter": "counterbalance",
+          "condition": "Compensar mediante articulación del torso sin trasladar raíz, alterar apoyos ni escalar el cuerpo."
+        }
+      ],
+      "coordinateStatus": "character-instance-pending"
+    },
+    {
+      "resourceId": "base_18",
+      "intent": "right-high-kick",
+      "family": "standing-attack",
+      "structure": {
+        "torso": "kick-counterbalance",
+        "headPelvis": "above-pelvis-forward",
+        "arms": "guard",
+        "legs": "right-high-extension",
+        "load": "left",
+        "executor": "right",
+        "direction": "forward",
+        "hands": {
+          "left": "fist",
+          "right": "fist"
+        },
+        "supportLeg": "left",
+        "airborne": false,
+        "contacts": [
+          {
+            "site": "left_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          }
+        ],
+        "pelvisRelation": "relative-to-neutral"
+      },
+      "structuralDescription": "Pierna derecha extendida hacia nivel alto relativo al propio cuerpo; apoyo izquierdo y compensación del torso.",
+      "criticalLandmarks": [
+        "head_center",
+        "neck",
+        "sternum",
+        "pelvis_center",
+        "left_hip",
+        "left_knee",
+        "left_ankle",
+        "left_heel",
+        "left_toe",
+        "right_hip",
+        "right_knee",
+        "right_ankle",
+        "right_heel",
+        "right_toe"
+      ],
+      "variableLandmarks": [
+        "left_shoulder",
+        "left_elbow",
+        "left_wrist",
+        "left_palm",
+        "right_shoulder",
+        "right_elbow",
+        "right_wrist",
+        "right_palm"
+      ],
+      "allowedVariations": [
+        {
+          "parameter": "kick-reach",
+          "condition": "Conservar intención, topología articular, manos, apoyos y longitudes corporales del Character Spec."
+        },
+        {
+          "parameter": "counterbalance",
+          "condition": "Compensar mediante articulación del torso sin trasladar raíz, alterar apoyos ni escalar el cuerpo."
+        }
+      ],
+      "coordinateStatus": "character-instance-pending"
+    },
+    {
+      "resourceId": "base_19",
+      "intent": "crouched-straight-punch",
+      "family": "crouched-attack",
+      "structure": {
+        "torso": "crouched-punch-rotation",
+        "headPelvis": "above-lowered-pelvis",
+        "arms": "right-straight-punch",
+        "legs": "crouched-stance",
+        "load": "balanced",
+        "executor": "right",
+        "direction": "forward",
+        "hands": {
+          "left": "fist",
+          "right": "fist"
+        },
+        "supportLeg": "both",
+        "airborne": false,
+        "contacts": [
+          {
+            "site": "left_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          },
+          {
+            "site": "right_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          }
+        ],
+        "pelvisRelation": "lowered-from-neutral"
+      },
+      "structuralDescription": "Puño derecho recto desde pelvis baja; izquierda protege; ambos pies y ninguna rodilla apoyados.",
+      "criticalLandmarks": [
+        "head_center",
+        "neck",
+        "sternum",
+        "pelvis_center",
+        "left_shoulder",
+        "left_elbow",
+        "left_wrist",
+        "left_palm",
+        "right_shoulder",
+        "right_elbow",
+        "right_wrist",
+        "right_palm",
+        "left_hip",
+        "right_hip",
+        "left_knee",
+        "right_knee",
+        "left_heel",
+        "right_heel"
+      ],
+      "variableLandmarks": [
+        "left_ankle",
+        "left_toe",
+        "right_ankle",
+        "right_toe"
+      ],
+      "allowedVariations": [
+        {
+          "parameter": "punch-reach",
+          "condition": "Conservar intención, topología articular, manos, apoyos y longitudes corporales del Character Spec."
+        },
+        {
+          "parameter": "crouch-depth",
+          "condition": "La altura cambia por flexión articular; conservar escala, raíz y pies apoyados, sin apoyar rodillas."
+        }
+      ],
+      "coordinateStatus": "character-instance-pending"
+    },
+    {
+      "resourceId": "base_20",
+      "intent": "hand-supported-low-kick",
+      "family": "crouched-attack",
+      "structure": {
+        "torso": "toward-support-hand",
+        "headPelvis": "above-lowered-pelvis",
+        "arms": "right-hand-support",
+        "legs": "right-low-extension",
+        "load": "left-and-right-palm",
+        "executor": "right",
+        "direction": "forward",
+        "hands": {
+          "left": "fist",
+          "right": "open"
+        },
+        "supportLeg": "left",
+        "airborne": false,
+        "contacts": [
+          {
+            "site": "left_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          },
+          {
+            "site": "right_palm",
+            "surface": "palm",
+            "supportsWeight": true
+          }
+        ],
+        "pelvisRelation": "lowered-from-neutral"
+      },
+      "structuralDescription": "Pierna derecha se extiende baja; pierna izquierda flexionada y palma derecha abierta soportan; puño izquierdo protege.",
+      "criticalLandmarks": [
+        "head_center",
+        "neck",
+        "sternum",
+        "pelvis_center",
+        "left_shoulder",
+        "left_elbow",
+        "left_wrist",
+        "left_palm",
+        "right_shoulder",
+        "right_elbow",
+        "right_wrist",
+        "right_palm",
+        "left_hip",
+        "left_knee",
+        "left_ankle",
+        "left_heel",
+        "left_toe",
+        "right_hip",
+        "right_knee",
+        "right_ankle",
+        "right_heel",
+        "right_toe"
+      ],
+      "variableLandmarks": [],
+      "allowedVariations": [
+        {
+          "parameter": "support-spacing",
+          "condition": "Conservar intención, topología articular, manos, apoyos y longitudes corporales del Character Spec."
+        },
+        {
+          "parameter": "counterbalance",
+          "condition": "Compensar mediante articulación del torso sin trasladar raíz, alterar apoyos ni escalar el cuerpo."
+        }
+      ],
+      "coordinateStatus": "character-instance-pending"
+    },
+    {
+      "resourceId": "base_21",
+      "intent": "standing-palm-push",
+      "family": "standing-attack",
+      "structure": {
+        "torso": "palm-push-inclined",
+        "headPelvis": "above-pelvis-forward",
+        "arms": "bilateral-palm-push",
+        "legs": "flexed-stance",
+        "load": "balanced",
+        "executor": "both",
+        "direction": "forward",
+        "hands": {
+          "left": "open",
+          "right": "open"
+        },
+        "supportLeg": "both",
+        "airborne": false,
+        "contacts": [
+          {
+            "site": "left_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          },
+          {
+            "site": "right_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          }
+        ],
+        "pelvisRelation": "relative-to-neutral"
+      },
+      "structuralDescription": "Ambas palmas hacia delante, dedos abiertos y codos suaves; empuje de pie desde ambos apoyos.",
+      "criticalLandmarks": [
+        "head_center",
+        "neck",
+        "sternum",
+        "pelvis_center",
+        "left_shoulder",
+        "left_elbow",
+        "left_wrist",
+        "left_palm",
+        "right_shoulder",
+        "right_elbow",
+        "right_wrist",
+        "right_palm"
+      ],
+      "variableLandmarks": [
+        "left_hip",
+        "left_knee",
+        "left_ankle",
+        "left_heel",
+        "left_toe",
+        "right_hip",
+        "right_knee",
+        "right_ankle",
+        "right_heel",
+        "right_toe"
+      ],
+      "allowedVariations": [
+        {
+          "parameter": "palm-spacing",
+          "condition": "Conservar intención, topología articular, manos, apoyos y longitudes corporales del Character Spec."
+        },
+        {
+          "parameter": "stance-width",
+          "condition": "Variar separación sin cambiar contactos, pierna de apoyo, raíz ni longitudes anatómicas."
+        }
+      ],
+      "coordinateStatus": "character-instance-pending"
+    },
+    {
+      "resourceId": "base_22",
+      "intent": "right-aerial-knee",
+      "family": "aerial-attack",
+      "structure": {
+        "torso": "upright",
+        "headPelvis": "above-pelvis-forward",
+        "arms": "guard",
+        "legs": "right-knee-drive",
+        "load": "none",
+        "executor": "right",
+        "direction": "forward",
+        "hands": {
+          "left": "fist",
+          "right": "fist"
+        },
+        "supportLeg": "none",
+        "airborne": true,
+        "contacts": [],
+        "pelvisRelation": "shared-aerial-reference"
+      },
+      "structuralDescription": "Rodilla derecha proyectada hacia delante, talón derecho recogido; pierna izquierda plegada atrás, sin contacto.",
+      "criticalLandmarks": [
+        "head_center",
+        "neck",
+        "sternum",
+        "pelvis_center",
+        "left_hip",
+        "left_knee",
+        "left_ankle",
+        "left_heel",
+        "left_toe",
+        "right_hip",
+        "right_knee",
+        "right_ankle",
+        "right_heel",
+        "right_toe"
+      ],
+      "variableLandmarks": [
+        "left_shoulder",
+        "left_elbow",
+        "left_wrist",
+        "left_palm",
+        "right_shoulder",
+        "right_elbow",
+        "right_wrist",
+        "right_palm"
+      ],
+      "allowedVariations": [
+        {
+          "parameter": "knee-drive",
+          "condition": "Conservar intención, topología articular, manos, apoyos y longitudes corporales del Character Spec."
+        },
+        {
+          "parameter": "non-executing-leg-fold",
+          "condition": "La pierna izquierda continúa recogida y sin contacto; conservar ejecutora derecha y pelvis aérea común."
+        }
+      ],
+      "coordinateStatus": "character-instance-pending"
+    },
+    {
+      "resourceId": "base_23",
+      "intent": "right-aerial-kick",
+      "family": "aerial-attack",
+      "structure": {
+        "torso": "kick-counterbalance",
+        "headPelvis": "above-pelvis-forward",
+        "arms": "guard",
+        "legs": "right-air-extension",
+        "load": "none",
+        "executor": "right",
+        "direction": "forward",
+        "hands": {
+          "left": "fist",
+          "right": "fist"
+        },
+        "supportLeg": "none",
+        "airborne": true,
+        "contacts": [],
+        "pelvisRelation": "shared-aerial-reference"
+      },
+      "structuralDescription": "Pie derecho domina la acción por extensión aérea; izquierda recogida; puños de guardia, sin contacto.",
+      "criticalLandmarks": [
+        "head_center",
+        "neck",
+        "sternum",
+        "pelvis_center",
+        "left_hip",
+        "left_knee",
+        "left_ankle",
+        "left_heel",
+        "left_toe",
+        "right_hip",
+        "right_knee",
+        "right_ankle",
+        "right_heel",
+        "right_toe"
+      ],
+      "variableLandmarks": [
+        "left_shoulder",
+        "left_elbow",
+        "left_wrist",
+        "left_palm",
+        "right_shoulder",
+        "right_elbow",
+        "right_wrist",
+        "right_palm"
+      ],
+      "allowedVariations": [
+        {
+          "parameter": "kick-reach",
+          "condition": "Conservar intención, topología articular, manos, apoyos y longitudes corporales del Character Spec."
+        },
+        {
+          "parameter": "non-executing-leg-fold",
+          "condition": "La pierna izquierda continúa recogida y sin contacto; conservar ejecutora derecha y pelvis aérea común."
+        },
+        {
+          "parameter": "counterbalance",
+          "condition": "Compensar mediante articulación del torso sin trasladar raíz, alterar apoyos ni escalar el cuerpo."
+        }
+      ],
+      "coordinateStatus": "character-instance-pending"
+    },
+    {
+      "resourceId": "base_24",
+      "intent": "crouched-palm-push",
+      "family": "crouched-attack",
+      "structure": {
+        "torso": "crouched-palm-push",
+        "headPelvis": "above-lowered-pelvis",
+        "arms": "bilateral-palm-push",
+        "legs": "crouched-stance",
+        "load": "balanced",
+        "executor": "both",
+        "direction": "forward",
+        "hands": {
+          "left": "open",
+          "right": "open"
+        },
+        "supportLeg": "both",
+        "airborne": false,
+        "contacts": [
+          {
+            "site": "left_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          },
+          {
+            "site": "right_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          }
+        ],
+        "pelvisRelation": "lowered-from-neutral"
+      },
+      "structuralDescription": "Lenguaje de palmas de 21 desde base agachada; pelvis baja y ambos pies apoyados sin arrodillarse.",
+      "criticalLandmarks": [
+        "head_center",
+        "neck",
+        "sternum",
+        "pelvis_center",
+        "left_shoulder",
+        "left_elbow",
+        "left_wrist",
+        "left_palm",
+        "right_shoulder",
+        "right_elbow",
+        "right_wrist",
+        "right_palm",
+        "left_hip",
+        "right_hip",
+        "left_knee",
+        "right_knee",
+        "left_heel",
+        "right_heel"
+      ],
+      "variableLandmarks": [
+        "left_ankle",
+        "left_toe",
+        "right_ankle",
+        "right_toe"
+      ],
+      "allowedVariations": [
+        {
+          "parameter": "palm-spacing",
+          "condition": "Conservar intención, topología articular, manos, apoyos y longitudes corporales del Character Spec."
+        },
+        {
+          "parameter": "crouch-depth",
+          "condition": "La altura cambia por flexión articular; conservar escala, raíz y pies apoyados, sin apoyar rodillas."
+        }
+      ],
+      "coordinateStatus": "character-instance-pending"
+    }
+  ]
+}

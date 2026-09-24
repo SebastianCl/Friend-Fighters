@@ -1,0 +1,145 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://fighter-friends.local/character-pipeline/movement-template-instance-1.schema.json",
+  "title": "P08 per-character authoring extension v1 (P05 Character Spec referenced, never embedded)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "instanceVersion",
+    "status",
+    "characterId",
+    "characterSpec",
+    "template",
+    "lateralVariant",
+    "neutralPelvisReference"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "instanceVersion": {
+      "const": "1.0.0"
+    },
+    "status": {
+      "const": "draft"
+    },
+    "characterId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "characterSpec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "schemaVersion", "sha256"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schemaVersion": {
+          "const": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "template": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "schemaVersion", "sha256", "templateVersion"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schemaVersion": {
+          "const": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "templateVersion": {
+          "const": "1.0.0"
+        }
+      }
+    },
+    "lateralVariant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["declaration", "lead", "executor", "facingMirror"],
+      "properties": {
+        "declaration": {
+          "enum": ["default", "opposite"]
+        },
+        "lead": {
+          "enum": ["left", "right"]
+        },
+        "executor": {
+          "enum": ["left", "right"]
+        },
+        "facingMirror": {
+          "const": "preserve-anatomical-ids"
+        }
+      }
+    },
+    "neutralPelvisReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "coordinateSpace", "position", "evidence"],
+      "properties": {
+        "status": {
+          "enum": ["pending", "specified"]
+        },
+        "coordinateSpace": {
+          "const": "canonical-frame-pixels"
+        },
+        "position": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["x", "y"],
+              "properties": {
+                "x": {
+                  "type": "number"
+                },
+                "y": {
+                  "type": "number"
+                }
+              }
+            }
+          ]
+        },
+        "evidence": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["path", "sha256"],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}
