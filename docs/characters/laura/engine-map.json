@@ -1,0 +1,225 @@
+{
+  "schemaVersion": 1,
+  "character": "laura",
+  "sourceInventory": "docs/characters/source-inventory.json",
+  "meaning": "engine-usage-only",
+  "artisticInterpretation": "pending-P03",
+  "resources": [
+    {
+      "id": "base_01",
+      "category": "base",
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "engineKeys": ["guard"],
+      "used": true,
+      "reused": false
+    },
+    {
+      "id": "base_02",
+      "category": "base",
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "engineKeys": ["breathe"],
+      "used": true,
+      "reused": false
+    },
+    {
+      "id": "base_03",
+      "category": "base",
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "engineKeys": [],
+      "used": false,
+      "reused": false
+    },
+    {
+      "id": "base_04",
+      "category": "base",
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "engineKeys": ["walk-a"],
+      "used": true,
+      "reused": false
+    },
+    {
+      "id": "base_05",
+      "category": "base",
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "engineKeys": ["walk-b"],
+      "used": true,
+      "reused": false
+    },
+    {
+      "id": "base_06",
+      "category": "base",
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "engineKeys": [],
+      "used": false,
+      "reused": false
+    },
+    {
+      "id": "base_07",
+      "category": "base",
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "engineKeys": ["rise"],
+      "used": true,
+      "reused": false
+    },
+    {
+      "id": "base_08",
+      "category": "base",
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "engineKeys": ["land"],
+      "used": true,
+      "reused": false
+    },
+    {
+      "id": "base_09",
+      "category": "base",
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "engineKeys": [],
+      "used": false,
+      "reused": false
+    },
+    {
+      "id": "base_10",
+      "category": "base",
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "engineKeys": ["crouch"],
+      "used": true,
+      "reused": false
+    },
+    {
+      "id": "base_11",
+      "category": "base",
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "engineKeys": ["block"],
+      "used": true,
+      "reused": false
+    },
+    {
+      "id": "base_12",
+      "category": "base",
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "engineKeys": [],
+      "used": false,
+      "reused": false
+    },
+    {
+      "id": "base_13",
+      "category": "base",
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "engineKeys": ["hurt"],
+      "used": true,
+      "reused": false
+    },
+    {
+      "id": "base_14",
+      "category": "base",
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "engineKeys": ["fall"],
+      "used": true,
+      "reused": false
+    },
+    {
+      "id": "base_15",
+      "category": "base",
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "engineKeys": ["punch-wind", "special-wind"],
+      "used": true,
+      "reused": true
+    },
+    {
+      "id": "base_16",
+      "category": "base",
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "engineKeys": ["punch-hit"],
+      "used": true,
+      "reused": false
+    },
+    {
+      "id": "base_17",
+      "category": "base",
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "engineKeys": ["kick-wind"],
+      "used": true,
+      "reused": false
+    },
+    {
+      "id": "base_18",
+      "category": "base",
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "engineKeys": ["kick-hit"],
+      "used": true,
+      "reused": false
+    },
+    {
+      "id": "base_19",
+      "category": "base",
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "engineKeys": ["low-punch"],
+      "used": true,
+      "reused": false
+    },
+    {
+      "id": "base_20",
+      "category": "base",
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "engineKeys": ["low-kick"],
+      "used": true,
+      "reused": false
+    },
+    {
+      "id": "base_21",
+      "category": "base",
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "engineKeys": ["special-hit"],
+      "used": true,
+      "reused": false
+    },
+    {
+      "id": "base_22",
+      "category": "base",
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "engineKeys": ["air-punch"],
+      "used": true,
+      "reused": false
+    },
+    {
+      "id": "base_23",
+      "category": "base",
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "engineKeys": ["air-kick"],
+      "used": true,
+      "reused": false
+    },
+    {
+      "id": "base_24",
+      "category": "base",
+      "sourcePath": "public/art/characters/laura/source-sheet.jpg",
+      "engineKeys": ["low-special"],
+      "used": true,
+      "reused": false
+    },
+    {
+      "id": "grab_01",
+      "category": "grab",
+      "sourcePath": "public/art/characters/laura/grab-sheet.png",
+      "engineKeys": ["grab-reach"],
+      "used": true,
+      "reused": false
+    },
+    {
+      "id": "grab_02",
+      "category": "grab",
+      "sourcePath": "public/art/characters/laura/grab-sheet.png",
+      "engineKeys": ["grab-hold"],
+      "used": true,
+      "reused": false
+    },
+    {
+      "id": "grab_03",
+      "category": "grab",
+      "sourcePath": "public/art/characters/laura/grab-sheet.png",
+      "engineKeys": ["grab-throw"],
+      "used": true,
+      "reused": false
+    }
+  ]
+}
