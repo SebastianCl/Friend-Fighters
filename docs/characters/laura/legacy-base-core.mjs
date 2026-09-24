@@ -1,6 +1,7 @@
 // Browser-only legacy extraction. Shared by the production builder and P06 importer.
 // This retains the historical threshold, connected components, flood fill and placement.
 import { measureAlpha } from "../geometry-contract.ts";
+import { compareLegacyRgba } from "./legacy-image-compare.mjs";
 
 export async function reconstructLegacyBase(dataUrl, boxes) {
   const image = new Image();
@@ -229,26 +230,9 @@ export async function compareLegacyAtlas(
       y = Math.floor(i / 6) * 320;
     const left = a.context.getImageData(x, y, 300, 320).data;
     const right = b.context.getImageData(x, y, 300, 320).data;
-    let rgbaChannelDifferences = 0,
-      rgbaPixelDifferences = 0,
-      alphaPixelDifferences = 0;
-    for (let p = 0; p < 300 * 320; p++) {
-      let differs = false;
-      for (let c = 0; c < 4; c++)
-        if (left[p * 4 + c] !== right[p * 4 + c]) {
-          rgbaChannelDifferences++;
-          differs = true;
-          if (c === 3) alphaPixelDifferences++;
-        }
-      if (differs) rgbaPixelDifferences++;
-    }
     frames.push({
       resourceId: `base_${String(i + 1).padStart(2, "0")}`,
-      rgbaPixelDifferences,
-      rgbaChannelDifferences,
-      alphaPixelDifferences,
-      reconstructedAlpha: measureAlpha(left, 300, 320),
-      productionAlpha: measureAlpha(right, 300, 320),
+      ...compareLegacyRgba(left, right, 300, 320),
     });
   }
   return {

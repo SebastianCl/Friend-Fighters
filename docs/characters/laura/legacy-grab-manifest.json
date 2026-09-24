@@ -1,0 +1,242 @@
+{
+  "schemaVersion": 1,
+  "pipelineVersion": "1.0.0-draft.1",
+  "geometryProfileId": "canonical-320x352-v1",
+  "characterId": "laura",
+  "source": {
+    "path": "public/art/characters/laura/grab-sheet.png",
+    "sha256": "427744ee147151b0a41a624b77909f8fce77fef6b5702ff229e701a216303159",
+    "width": 1942,
+    "height": 809,
+    "format": "PNG"
+  },
+  "extractionAlgorithm": {
+    "decodedWith": "Chromium HTML canvas",
+    "operation": "copy each P02 source rectangle to its own same-size RGBA frame via putImageData",
+    "trim": false,
+    "resampling": false,
+    "alphaCleanup": false,
+    "sourceToLegacyScale": 1
+  },
+  "currentRuntimePresentation": {
+    "fighterHeightScenePixels": 420,
+    "grabReferenceHeightSourcePixels": 650,
+    "scenePixelsPerLegacyPixel": 0.6461538461538462,
+    "note": "Renderer presentation scale only; import/source-to-legacy scale remains 1"
+  },
+  "resources": [
+    {
+      "resourceId": "grab_01",
+      "status": "draft",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      },
+      "sourcePath": "public/art/characters/laura/grab-sheet.png",
+      "sourceSha256": "427744ee147151b0a41a624b77909f8fce77fef6b5702ff229e701a216303159",
+      "sourceDimensions": {
+        "width": 1942,
+        "height": 809
+      },
+      "sourceFormat": "PNG",
+      "sourceRect": {
+        "x": 0,
+        "y": 0,
+        "width": 700,
+        "height": 809
+      },
+      "legacyFrame": {
+        "width": 700,
+        "height": 809
+      },
+      "sourceToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      "historicalPivot": {
+        "x": 350,
+        "y": 759,
+        "referenceHeight": 650,
+        "xRule": "round(region width / 2) from P02 region",
+        "yRule": "alpha > 128 bounds bottom from current renderer"
+      },
+      "alpha": {
+        "gt0": {
+          "count": 140735,
+          "bounds": {
+            "left": 0,
+            "top": 21,
+            "right": 700,
+            "bottom": 787
+          }
+        },
+        "gt128": {
+          "count": 127651,
+          "bounds": {
+            "left": 59,
+            "top": 159,
+            "right": 674,
+            "bottom": 759
+          }
+        }
+      },
+      "alpha1To128Count": 13084,
+      "partialAlphaCount": 140103,
+      "canonical": {
+        "status": "pending",
+        "profileId": "canonical-320x352-v1",
+        "sourceTransform": null
+      },
+      "generatedFrame": {
+        "path": "pipeline/generated/legacy/laura/grab/grab_01.png",
+        "sha256": "c69c251569bc9258978238a3ae2b37f244a43bfc1572c302a3372001bd060e45",
+        "bytes": 397731
+      }
+    },
+    {
+      "resourceId": "grab_02",
+      "status": "draft",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      },
+      "sourcePath": "public/art/characters/laura/grab-sheet.png",
+      "sourceSha256": "427744ee147151b0a41a624b77909f8fce77fef6b5702ff229e701a216303159",
+      "sourceDimensions": {
+        "width": 1942,
+        "height": 809
+      },
+      "sourceFormat": "PNG",
+      "sourceRect": {
+        "x": 700,
+        "y": 0,
+        "width": 600,
+        "height": 809
+      },
+      "legacyFrame": {
+        "width": 600,
+        "height": 809
+      },
+      "sourceToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": -700,
+          "y": 0
+        }
+      },
+      "historicalPivot": {
+        "x": 300,
+        "y": 759,
+        "referenceHeight": 650,
+        "xRule": "round(region width / 2) from P02 region",
+        "yRule": "alpha > 128 bounds bottom from current renderer"
+      },
+      "alpha": {
+        "gt0": {
+          "count": 131068,
+          "bounds": {
+            "left": 1,
+            "top": 25,
+            "right": 584,
+            "bottom": 765
+          }
+        },
+        "gt128": {
+          "count": 118685,
+          "bounds": {
+            "left": 31,
+            "top": 163,
+            "right": 497,
+            "bottom": 759
+          }
+        }
+      },
+      "alpha1To128Count": 12383,
+      "partialAlphaCount": 130544,
+      "canonical": {
+        "status": "pending",
+        "profileId": "canonical-320x352-v1",
+        "sourceTransform": null
+      },
+      "generatedFrame": {
+        "path": "pipeline/generated/legacy/laura/grab/grab_02.png",
+        "sha256": "73616fa9d83896f4a8a709b077f94157532c68aa4317baf41e04166bff2b1b54",
+        "bytes": 367342
+      }
+    },
+    {
+      "resourceId": "grab_03",
+      "status": "draft",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      },
+      "sourcePath": "public/art/characters/laura/grab-sheet.png",
+      "sourceSha256": "427744ee147151b0a41a624b77909f8fce77fef6b5702ff229e701a216303159",
+      "sourceDimensions": {
+        "width": 1942,
+        "height": 809
+      },
+      "sourceFormat": "PNG",
+      "sourceRect": {
+        "x": 1300,
+        "y": 0,
+        "width": 642,
+        "height": 809
+      },
+      "legacyFrame": {
+        "width": 642,
+        "height": 809
+      },
+      "sourceToLegacy": {
+        "uniformScale": 1,
+        "translation": {
+          "x": -1300,
+          "y": 0
+        }
+      },
+      "historicalPivot": {
+        "x": 321,
+        "y": 754,
+        "referenceHeight": 650,
+        "xRule": "round(region width / 2) from P02 region",
+        "yRule": "alpha > 128 bounds bottom from current renderer"
+      },
+      "alpha": {
+        "gt0": {
+          "count": 157661,
+          "bounds": {
+            "left": 17,
+            "top": 19,
+            "right": 622,
+            "bottom": 783
+          }
+        },
+        "gt128": {
+          "count": 141388,
+          "bounds": {
+            "left": 51,
+            "top": 96,
+            "right": 612,
+            "bottom": 754
+          }
+        }
+      },
+      "alpha1To128Count": 16273,
+      "partialAlphaCount": 157071,
+      "canonical": {
+        "status": "pending",
+        "profileId": "canonical-320x352-v1",
+        "sourceTransform": null
+      },
+      "generatedFrame": {
+        "path": "pipeline/generated/legacy/laura/grab/grab_03.png",
+        "sha256": "4e84e45bdc3a96231d85d2db10c6be82c7e7dbdfe40d87453891a4b8befe66f4",
+        "bytes": 439252
+      }
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "sourcePath": "public/art/characters/laura/grab-sheet.png",
+  "sourceSha256": "427744ee147151b0a41a624b77909f8fce77fef6b5702ff229e701a216303159",
+  "sourceSize": { "width": 1942, "height": 809 },
+  "format": "PNG",
+  "regions": [
+    {
+      "resourceId": "grab_01",
+      "engineKey": "grab-reach",
+      "sourceRect": { "x": 0, "y": 0, "width": 700, "height": 809 },
+      "anchorX": 350,
+      "referenceHeight": 650
+    },
+    {
+      "resourceId": "grab_02",
+      "engineKey": "grab-hold",
+      "sourceRect": { "x": 700, "y": 0, "width": 600, "height": 809 },
+      "anchorX": 300,
+      "referenceHeight": 650
+    },
+    {
+      "resourceId": "grab_03",
+      "engineKey": "grab-throw",
+      "sourceRect": { "x": 1300, "y": 0, "width": 642, "height": 809 },
+      "anchorX": 321,
+      "referenceHeight": 650
+    }
+  ]
+}

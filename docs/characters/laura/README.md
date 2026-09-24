@@ -1,6 +1,6 @@
 # Laura · diseño vigente
 
-La única fuente de apariencia de Laura es `public/art/characters/laura/source-sheet.jpg`, la hoja de 24 poses entregada por el usuario. `build-atlas.mjs` extrae las figuras, quita el fondo blanco y los números, y genera `atlas.png`, `guard.png` y `portrait.png`. Ejecutar desde la raíz del proyecto:
+La fuente de las 24 poses base de Laura es `public/art/characters/laura/source-sheet.jpg`, la hoja entregada por el usuario. Los tres recursos grab proceden de `public/art/characters/laura/grab-sheet.png`. `build-atlas.mjs` extrae las figuras, quita el fondo blanco y los números, y genera `atlas.png`, `guard.png` y `portrait.png`. Ejecutar desde la raíz del proyecto:
 
 ```sh
 node docs/characters/laura/build-atlas.mjs
@@ -36,4 +36,20 @@ El comando reconstruye las 24 celdas `300×320` y deja los PNG y el informe de c
 
 La extracción histórica conserva el umbral `min(R,G,B)<232`, el mayor componente conectado de tinta (8 vecinos), la eliminación del exterior (4 vecinos), la ropa clara cerrada opaca y alfa binario. Cada silueta se recorta en su bbox y se coloca con escala 1: centrado horizontal en la celda legacy y borde inferior en Y=310. El manifiesto guarda el recorte, bbox en la fuente, traslaciones `source→legacy` y `cutout→legacy`, bbox para `alpha>0` y `alpha>128`, celda, pivote histórico `(150,310)` y SHA-256 del PNG importado. Estos son hechos del builder legacy, no recomendaciones de normalización.
 
-Las coordenadas de fuente, celda legacy y frame canónico `320×352` son espacios distintos. El origen legacy se calculó desde alfa para todas las poses, incluso las aéreas y tumbadas; tratarlo como raíz anatómica canónica requeriría una decisión posterior. Por eso `sourceTransform`, frame canónico, landmarks, contactos, lateralidad confirmada, manos, pierna de apoyo y `airborne` siguen pendientes en P05. No se trasladó contenido por `(+10,+18)` ni se alineó el píxel inferior con el suelo P04. El spec incluye solo la fuente y los 24 recursos base: `grab_XX` corresponde a P07. La semántica P03 y el uso actual P02 siguen referenciados por ID en sus propios contratos.
+Las coordenadas de fuente, celda legacy y frame canónico `320×352` son espacios distintos. El origen legacy se calculó desde alfa para todas las poses, incluso las aéreas y tumbadas; tratarlo como raíz anatómica canónica requeriría una decisión posterior. Por eso `sourceTransform`, frame canónico, landmarks, contactos, lateralidad confirmada, manos, pierna de apoyo y `airborne` siguen pendientes en P05. No se trasladó contenido por `(+10,+18)` ni se alineó el píxel inferior con el suelo P04. P06 importó solo la fuente y los 24 recursos base; P07 añadió después los tres `grab_XX` al mismo spec draft sin modificar esos metadatos base. La semántica P03 y el uso actual P02 siguen referenciados por ID en sus propios contratos.
+
+## P07 · importación grab legacy reproducible
+
+La fuente y hoja runtime exacta es `public/art/characters/laura/grab-sheet.png` (PNG RGBA 1942×809, SHA-256 `427744ee147151b0a41a624b77909f8fce77fef6b5702ff229e701a216303159`), fijada por P01. [legacy-grab-regions.json](legacy-grab-regions.json) registra las tres regiones de P02: `grab_01`/`grab-reach` en `(0,0,700,809)`, `grab_02`/`grab-hold` en `(700,0,600,809)` y `grab_03`/`grab-throw` en `(1300,0,642,809)`. La clave es uso actual del motor, no contrato anatómico.
+
+```sh
+npm run import:laura-grab
+node docs/characters/laura/import-legacy-grab.mjs --check
+node docs/characters/validate-config.mjs --character docs/characters/laura/character-spec.json
+```
+
+El [importador](import-legacy-grab.mjs) copia cada región entera a un frame PNG del mismo tamaño y deja PNG/informe en `pipeline/generated/legacy/laura/grab/`, fuera de producción. El [manifiesto](legacy-grab-manifest.json) y los tres JSON en [legacy-frames](legacy-frames/) conservan la ruta/hash/formato fuente, rectángulo, traslación `(-x,-y)`, escala de extracción 1, tamaño legacy, alfa y pivote histórico. [legacy-image-compare.mjs](legacy-image-compare.mjs), hashing, validación P05 y snapshots de producción se comparten con P06. El Character Spec draft ahora contiene los 27 IDs y ambas fuentes; P06 sigue verificando sus 24 frames sin cambios.
+
+El renderer actual usa `anchorX=round(width/2)`: **350, 300 y 321**. Calcula `footY` con el borde inferior de `alpha>128`: **759, 759 y 754**. Su escala de presentación actual es `420/650` píxeles de escena por píxel legacy, independiente de la copia fuente→frame, que no escala ni remuestrea. Los bounds `alpha>0` son `[0,21,700,787]`, `[1,25,584,765]` y `[17,19,622,783]`; los de `alpha>128` son `[59,159,674,759]`, `[31,163,497,759]` y `[51,96,612,754]`. El píxel semitransparente se conserva aunque no determine `footY`: llega por debajo del pivote hasta Y=787, 765 y 783, respectivamente. En `grab_01`, `alpha>0` toca ambos bordes horizontales del recorte; queda registrado como deuda de margen legacy, sin recortar ni limpiar. La recodificación PNG fue comprobada contra cada región de producción con igualdad de dimensiones, RGBA, alfa, bounds y pivote; no existe un PNG de producción independiente por grab para comparar sus bytes comprimidos.
+
+Las coordenadas fuente, frame grab legacy y frame canónico P04 siguen separadas. Los grabs de hasta 700×809 no caben como copia 1:1 en `320×352`. Convertirlos requiere una decisión explícita de encuadre, escala y raíz/interacción, pendiente; el pivote `(160,328)` no sustituye a los pivotes históricos. Tampoco hay landmarks anatómicos ni contrato mano–víctima. La selección visual `grab-throw` puede adelantarse al release mecánico, que depende de los diez ticks de sujeción en `src/combat.ts`; sincronización y puntos de interacción pertenecen a P09/P17/P18. P07 no altera esos tiempos, la posición de la víctima ni la simulación.

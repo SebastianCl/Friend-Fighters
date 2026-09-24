@@ -92,17 +92,21 @@ describe("P06 Laura legacy base importer", () => {
     expect(validateLegacyManifest(grab, crops).join()).toContain("P07 grab");
   });
 
-  it("keeps Laura pending with P05 frame references for base resources only", () => {
+  it("keeps the 24 P06 base entries pending after the P07 catalogue extension", () => {
     expect(spec.status).toBe("draft");
     expect(spec.review.status).toBe("pending");
-    expect(spec.sources).toEqual([{ path: source.path, role: "legacy" }]);
-    expect(spec.resources.map((resource) => resource.id)).toEqual(baseIds);
+    expect(spec.sources[0]).toEqual({ path: source.path, role: "legacy" });
+    expect(spec.resources.slice(0, 24).map((resource) => resource.id)).toEqual(
+      baseIds,
+    );
     expect(
-      spec.resources.every(
-        (resource) =>
-          resource.status === "pending" &&
-          resource.framePath?.includes("legacy-frames/"),
-      ),
+      spec.resources
+        .slice(0, 24)
+        .every(
+          (resource) =>
+            resource.status === "pending" &&
+            resource.framePath?.includes("legacy-frames/"),
+        ),
     ).toBe(true);
     expect(spec.visual.statureGameUnits).toBeNull();
     expect(spec.visual.proportions).toBeNull();

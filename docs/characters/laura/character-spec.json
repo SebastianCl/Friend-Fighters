@@ -6,7 +6,7 @@
   "identity": {
     "id": "laura",
     "displayName": "Laura",
-    "revision": 1
+    "revision": 2
   },
   "review": {
     "status": "pending",
@@ -15,6 +15,10 @@
   "sources": [
     {
       "path": "public/art/characters/laura/source-sheet.jpg",
+      "role": "legacy"
+    },
+    {
+      "path": "public/art/characters/laura/grab-sheet.png",
       "role": "legacy"
     }
   ],
@@ -145,6 +149,21 @@
       "id": "base_24",
       "status": "pending",
       "framePath": "docs/characters/laura/legacy-frames/base_24.json"
+    },
+    {
+      "id": "grab_01",
+      "status": "pending",
+      "framePath": "docs/characters/laura/legacy-frames/grab_01.json"
+    },
+    {
+      "id": "grab_02",
+      "status": "pending",
+      "framePath": "docs/characters/laura/legacy-frames/grab_02.json"
+    },
+    {
+      "id": "grab_03",
+      "status": "pending",
+      "framePath": "docs/characters/laura/legacy-frames/grab_03.json"
     }
   ]
 }
