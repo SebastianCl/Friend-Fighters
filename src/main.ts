@@ -1,5 +1,8 @@
 import Phaser from "phaser";
 import { Combat, idle } from "./combat";
+import type { CombatState } from "./combat-state";
+import { MatchSession } from "./application/match-session";
+import { createMatchPresentation } from "./adapters/match-presentation";
 import { CpuController } from "./cpu-controller";
 import { makeArena, presentation } from "./arena-renderer";
 import {
@@ -16,16 +19,9 @@ import {
   LANDING_DUST_ANIMATION,
   LANDING_DUST_CONFIG,
   LANDING_DUST_TYPE,
-  landedThisStep,
   landingDustDuration,
 } from "./effects/landing-dust";
-import {
-  SoundEffects,
-  captureCombatSoundState,
-  combatTransitionCues,
-  hitCue,
-  type SoundCue,
-} from "./audio";
+import { SoundEffects, type SoundCue } from "./audio";
 import { MusicPlayer } from "./music";
 import { createTournament, type Tournament } from "./tournament";
 import { createTournamentParticipants } from "./tournament-setup";
@@ -49,7 +45,7 @@ const fightTools = document.querySelector<HTMLDivElement>("#fight-tools")!;
 const inputs = new Inputs();
 const menuNavigation = new MenuNavigation(() => inputs.menuFrame());
 let overlayCancel: (() => void) | null = null;
-let combat = new Combat(),
+let combat: CombatState = new Combat(),
   chosen: [CharacterId, CharacterId] = ["laura", "sebastian"],
   screen:
     | "menu"
@@ -58,11 +54,9 @@ let combat = new Combat(),
     | "result"
     | "tournament"
     | "tournament-select" = "menu",
-  paused = false,
   practice = false,
   tournamentFight = false,
-  opponentControl: "PLAYER" | "CPU" = "PLAYER",
-  accumulator = 0;
+  opponentControl: "PLAYER" | "CPU" = "PLAYER";
 let cpuController: CpuController | null = null;
 let tournament: Tournament<CharacterId> | null = null;
 let tournamentPlayerCharacter: CharacterId = visualCharacters[0].id;
@@ -133,6 +127,24 @@ btn(
   },
   null,
 );
+const session = new MatchSession(
+  createMatchPresentation(
+    {
+      play: (cue) => sounds.play(cue),
+      spawn: (type, position) => {
+        effects.spawn(type, position);
+      },
+      flashForHit: (hit) => effects.flashForHit(hit),
+      impact: (hit) =>
+        (game.scene.getScenes(true)[0] as InstanceType<typeof Arena>).impact(
+          hit,
+        ),
+      update: (stepMs) => effects.update(stepMs),
+    },
+    presentation,
+  ),
+  () => showResult(),
+);
 const Arena = makeArena({
   state: () => ({
     combat,
@@ -140,63 +152,16 @@ const Arena = makeArena({
       screen === "tournament" || screen === "tournament-select"
         ? "menu"
         : screen,
-    paused,
+    paused: session.paused,
     characters:
       screen === "menu"
         ? [chosen[0], visualCharacters[menuCharacterIndex].id]
         : chosen,
   }),
   advance: (delta) => {
-    if (screen !== "fight" || paused) return;
-    accumulator += delta;
-    while (accumulator >= 1000 / 60) {
-      const soundStateBeforeStep = captureCombatSoundState(combat);
-      const airborneBeforeStep = soundStateBeforeStep.fighters.map(
-        (fighter) => fighter.airborne,
-      );
-      combat.step([
-        inputs.frame(0),
-        practice
-          ? idle()
-          : (cpuController?.frame(combat, 1) ?? inputs.frame(1)),
-      ]);
-      const soundStateAfterStep = captureCombatSoundState(combat);
-      combatTransitionCues(soundStateBeforeStep, soundStateAfterStep).forEach(
-        (cue) => sounds.play(cue),
-      );
-      combat.fighters.forEach((fighter, index) => {
-        if (landedThisStep(airborneBeforeStep[index], fighter.y)) {
-          effects.spawn(LANDING_DUST_TYPE, {
-            x: fighter.x * presentation.unit,
-            y: presentation.groundY,
-          });
-        }
-      });
-      for (const hit of combat.hits) {
-        sounds.play(hitCue(hit));
-        if (!hit.blocked) {
-          const effectType =
-            hit.attackKind === "special" || hit.attackKind === "grab"
-              ? "heavyHit"
-              : hit.attackKind === "kick"
-                ? "mediumHit"
-                : "lightHit";
-          effects.spawn(effectType, {
-            x: hit.x * presentation.unit,
-            y: presentation.groundY - hit.y * presentation.unit,
-          });
-        }
-        effects.flashForHit(hit);
-        (game.scene.getScenes(true)[0] as InstanceType<typeof Arena>).impact(
-          hit,
-        );
-      }
-      effects.update(1000 / 60);
-      accumulator -= 1000 / 60;
-      if (combat.phase === "over") break;
-    }
-    updateHud();
-    if (combat.phase === "over") showResult();
+    if (screen !== "fight" || session.paused) return;
+    session.advance(delta);
+    if (screen === "fight") updateHud();
   },
   ready: (scene) => {
     effects.init(scene);
@@ -339,7 +304,7 @@ document.addEventListener("fullscreenchange", () => {
 });
 function setOverlay(html: string, cancel: (() => void) | null = null) {
   app.dataset.screen = screen;
-  app.dataset.paused = String(paused);
+  app.dataset.paused = String(session.paused);
   overlay.innerHTML = html;
   overlay.classList.toggle("empty", !html);
   overlayCancel = cancel;
@@ -347,9 +312,8 @@ function setOverlay(html: string, cancel: (() => void) | null = null) {
 }
 function menu() {
   window.clearInterval(menuCharacterTimer);
-  combat.clearCombos();
+  session.finish();
   screen = "menu";
-  paused = false;
   music.setPaused(false);
   music.setTheme("menu");
   inputs.suspended = true;
@@ -528,16 +492,26 @@ function refreshPads() {
 }
 function start() {
   if (!assetsReady) return;
-  combat = new Combat(practice);
   cpuController =
     !practice && !tournamentFight && opponentControl === "CPU"
       ? new CpuController()
       : null;
+  const opponent = cpuController;
+  session.start({
+    practice,
+    inputs: [
+      () => inputs.frame(0),
+      practice
+        ? idle
+        : opponent
+          ? (state) => opponent.frame(state, 1)
+          : () => inputs.frame(1),
+    ],
+  });
+  combat = session.combat;
   screen = "fight";
-  paused = false;
   music.setPaused(false);
   music.setTheme("fight");
-  accumulator = 0;
   inputs.clear();
   inputs.suspended = false;
   setOverlay("");
@@ -563,13 +537,12 @@ function updateHud() {
   }
 }
 function pause(reason = "RESPIRA. LA RIVALIDAD ESPERA.") {
-  if (screen !== "fight" || paused) return;
+  if (screen !== "fight" || session.paused) return;
   sounds.play("pause");
-  paused = true;
+  session.pause();
   music.setPaused(true);
   inputs.suspended = true;
   inputs.clear();
-  accumulator = 0;
   setOverlay(
     `<div class="pause-panel"><p class="eyebrow">${reason}</p><h2>PAUSA</h2><button class="primary" id="resume">VOLVER AL COMBATE →</button><button class="secondary" id="pause-controls">CONTROLES</button><button class="text-button" id="exit">SALIR AL MENÚ</button><p id="pause-hint"></p></div>`,
     () => document.getElementById("resume")?.click(),
@@ -590,10 +563,9 @@ function pause(reason = "RESPIRA. LA RIVALIDAD ESPERA.") {
           "Reconecta el mando o vuelve al menú para elegir teclado.";
         return;
       }
-      paused = false;
       music.setPaused(false);
       inputs.clear();
-      combat.fighters.forEach((f) => (f.previous = idle()));
+      session.resume();
       inputs.suspended = false;
       setOverlay("");
       sounds.play("resume");
@@ -604,7 +576,6 @@ function pause(reason = "RESPIRA. LA RIVALIDAD ESPERA.") {
   btn("pause-controls", showControls, null);
 }
 function showResult() {
-  combat.clearCombos();
   updateHud();
   screen = "result";
   music.setPaused(false);
@@ -641,10 +612,10 @@ function showResult() {
 }
 const dialog = document.querySelector<HTMLDialogElement>("#controls-dialog")!;
 function showControls() {
-  if (screen === "fight" && !paused) pause();
+  if (screen === "fight" && !session.paused) pause();
   else sounds.play("ui-confirm");
   inputs.clear();
-  dialog.innerHTML = `<div class="dialog-top"><p class="eyebrow">APRENDE. PRACTICA. REPITE.</p><button id="close-controls" aria-label="Cerrar controles">×</button></div><h2 id="controls-title">TUS REGLAS.<br>TUS CONTROLES.</h2><p class="control-help">Haz clic en una tecla para cambiarla. Mantén Bloqueo para defender de pie o Agacharse + Bloqueo para defender bajo. Altos: de pie o evadir agachado; medios: ambas guardias; bajos: agachado; aéreos (overhead): de pie. Los especiales bloqueados causan 2 de daño, sin KO. Durante guard stun no puedes moverte, saltar ni atacar: mantén Bloqueo y ajusta la postura ante cada golpe. Pulsa Agarre cerca del rival: vence el bloqueo y lo lanza por los aires. Puedes evitarlo saltando o alejándote antes del contacto.</p><div class="bindings">${[0, 1].map((i) => `<div><h3>JUGADOR ${i + 1}</h3>${actions.map((a) => `<div class="binding"><span>${labels[a]}</span><button data-bind="${a}" data-player="${i}">${keyLabel(inputs.bindings[i][a])}</button></div>`).join("")}</div>`).join("")}</div><p id="binding-status" role="status">Los cambios se guardan en este navegador.</p><div class="pad-help"><strong>MANDOS ESTÁNDAR</strong><p>Cruceta / stick: moverse · A / ✕: puño · B / ○: patada · X / □: especial · Y / △: bloqueo · RB / R1: agarre<br>Start: pausa · Esc: pausa · R: reiniciar práctica</p><p>MENÚS EN SWITCH PRO: B confirma · X vuelve o cancela.</p><p>Pulsa un botón del mando para que el navegador lo detecte. Algunos teclados limitan pulsaciones simultáneas.</p></div>`;
+  dialog.innerHTML = `<div class="dialog-top"><p class="eyebrow">APRENDE. PRACTICA. REPITE.</p><button id="close-controls" aria-label="Cerrar controles">×</button></div><h2 id="controls-title">TUS REGLAS.<br>TUS CONTROLES.</h2><p class="control-help">Haz clic en una tecla para cambiarla. Mantén Bloqueo para defender de pie o Agacharse + Bloqueo para defender bajo. Altos: de pie o evadir agachado; medios: ambas guardias; bajos: agachado; aéreos (overhead): de pie. Los especiales bloqueados causan 2 de daño, sin KO. Durante guard stun no puedes moverte, saltar ni atacar: mantén Bloqueo y ajusta la postura ante cada golpe. Pulsa Agarre cerca del rival: vence el bloqueo y lo lanza por los aires. Puedes evitarlo saltando o alejándote antes del contacto.</p><div class="bindings">${[0, 1].map((i) => `<div><h3>JUGADOR ${i + 1}</h3>${actions.map((a) => `<div class="binding"><span>${labels[a]}</span><button data-bind="${a}" data-player="${i}">${keyLabel(inputs.bindings[i][a])}</button></div>`).join("")}</div>`).join("")}</div><p id="binding-status" role="status">Los cambios se guardan en este navegador.</p><div class="pad-help"><strong>NINTENDO SWITCH PRO</strong><p>Cruceta / stick: moverse · B: puño · A: patada · L: agarre · R: bloqueo · ZL: especial<br>Y, X y ZR: reservados · Start: pausa · Esc: pausa · R: reiniciar práctica</p><p>MENÚS EN SWITCH PRO: B confirma · X vuelve o cancela.</p><p>Pulsa un botón del mando para que el navegador lo detecte. Algunos teclados limitan pulsaciones simultáneas.</p></div>`;
   dialog.showModal();
   menuNavigation.setRoot(dialog, () => dialog.close());
   btn("close-controls", () => dialog.close());
@@ -706,7 +677,7 @@ window.addEventListener("keydown", (e) => {
   }
   if (dialog.open) return;
   if (e.code === "Escape" && !e.repeat && screen === "fight") {
-    if (paused) document.getElementById("resume")?.click();
+    if (session.paused) document.getElementById("resume")?.click();
     else pause();
   }
   if (
@@ -714,9 +685,9 @@ window.addEventListener("keydown", (e) => {
     !e.repeat &&
     screen === "fight" &&
     practice &&
-    !paused
+    !session.paused
   ) {
-    combat.resetPositions();
+    session.resetPractice();
     inputs.clear();
   }
 });
@@ -758,7 +729,7 @@ function pollStart() {
       p.buttons[9]?.pressed,
   );
   if (startPressed && !previousStart && screen === "fight" && !dialog.open) {
-    if (paused) document.getElementById("resume")?.click();
+    if (session.paused) document.getElementById("resume")?.click();
     else pause();
   }
   previousStart = startPressed;
@@ -768,7 +739,7 @@ pollStart();
 btn("controls-top", showControls, null);
 btn("pause-button", () => pause(), null);
 btn("reset-practice", () => {
-  combat.resetPositions();
+  session.resetPractice();
   inputs.clear();
 });
 document.querySelector<HTMLAnchorElement>(".brand")!.onclick = (e) => {

@@ -51,6 +51,12 @@ Versus: 100 de vida, rounds de 60 segundos, gana quien consigue dos rounds. Un e
 
 ## Arquitectura
 
+El piloto separa la coordinación de partidas del navegador. Consulta la [decisión de arquitectura, contratos y ejemplos SOLID](docs/architecture/match-session.md).
+
+- `src/application/match-session.ts`: ciclo de vida, pausa y avance fijo de la partida.
+- `src/adapters/match-presentation.ts`: traducción de pasos del combate a audio y efectos.
+- `src/combat-state.ts`: vista de lectura del combate para sus consumidores.
+
 - `src/combat.ts`: simulación independiente a 60 pasos por segundo, ataques, colisiones, rounds y `combatSpace` para la geometría.
 - `src/animation.ts`: atlas de 21 poses y selección de fotograma según el estado y la fase real del ataque.
 - `src/arena-renderer.ts`: carga de ilustraciones, anclajes, cámara, efectos y presentación en Phaser Canvas 2D.

@@ -11,7 +11,9 @@ for (const character of ["laura", "sebastian", "rata", "mariana"] as const) {
     await expect(
       page.locator('[data-bind="grab"][data-player="1"]'),
     ).toHaveText("M");
-    await expect(page.getByRole("dialog")).toContainText("RB / R1: agarre");
+    await expect(page.getByRole("dialog")).toContainText(
+      "B: puño · A: patada · L: agarre · R: bloqueo · ZL: especial",
+    );
     await page.getByRole("button", { name: "Cerrar controles" }).click();
 
     await page.getByRole("button", { name: "ENTRAR A PRÁCTICA" }).click();

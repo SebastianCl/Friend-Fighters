@@ -1,4 +1,5 @@
 import type { Combat, Hit, MoveSetDefinition } from "./combat";
+import type { CombatState } from "./combat-state";
 
 export const soundCues = [
   "ui-confirm",
@@ -158,7 +159,7 @@ export interface CombatSoundState {
 }
 
 export function captureCombatSoundState(
-  combat: Pick<Combat, "phase" | "fighters">,
+  combat: Pick<CombatState, "phase" | "fighters">,
 ): CombatSoundState {
   return {
     phase: combat.phase,

@@ -50,7 +50,7 @@ describe("entradas independientes de render", () => {
   });
   it("lee dos mandos independientes con zona muerta", () => {
     vi.stubGlobal("navigator", {
-      getGamepads: () => [pad([0.1, -0.8], [0, 3]), pad([-0.7, 0], [2, 3])],
+      getGamepads: () => [pad([0.1, -0.8], [0, 5]), pad([-0.7, 0], [5, 6])],
     });
     const input = new Inputs();
     input.devices = ["0", "1"];
@@ -86,8 +86,42 @@ describe("entradas independientes de render", () => {
     input.suspended = false;
     expect(input.frame(0).punch).toBe(false);
   });
-  it("lee el botón superior derecho del mando para agarrar", () => {
-    vi.stubGlobal("navigator", { getGamepads: () => [pad([0, 0], [5])] });
+  it("aplica el mapeo completo del Nintendo Switch Pro", () => {
+    vi.stubGlobal("navigator", {
+      getGamepads: () => [pad([0, 0], [0, 1, 4, 5, 6])],
+    });
+    const input = new Inputs();
+    input.devices = ["0", "keyboard"];
+    input.suspended = false;
+    expect(input.frame(0)).toMatchObject({
+      punch: true,
+      kick: true,
+      grab: true,
+      block: true,
+      special: true,
+    });
+  });
+  it("mantiene Y, X y ZR sin acción durante el combate", () => {
+    vi.stubGlobal("navigator", {
+      getGamepads: () => [pad([0, 0], [2, 3, 7])],
+    });
+    const input = new Inputs();
+    input.devices = ["0", "keyboard"];
+    input.suspended = false;
+    expect(input.frame(0)).toEqual({
+      left: false,
+      right: false,
+      up: false,
+      down: false,
+      punch: false,
+      kick: false,
+      special: false,
+      grab: false,
+      block: false,
+    });
+  });
+  it("lee el botón L del mando para agarrar", () => {
+    vi.stubGlobal("navigator", { getGamepads: () => [pad([0, 0], [4])] });
     const input = new Inputs();
     input.devices = ["0", "keyboard"];
     input.suspended = false;

@@ -189,7 +189,7 @@ for (const defender of [0, 1])
     });
   }
 
-test("mando estándar bloquea con Y / triángulo", async ({ page }) => {
+test("Nintendo Switch Pro bloquea con R", async ({ page }) => {
   await page.addInitScript(() => {
     const pad = {
       index: 0,
@@ -214,7 +214,7 @@ test("mando estándar bloquea con Y / triángulo", async ({ page }) => {
   await page.getByRole("button", { name: "¡A PELEAR!" }).click();
   await hold(page, ["KeyD"], 65);
   await page.evaluate(() => {
-    (window as any).guardTestPad.buttons[3].pressed = true;
+    (window as any).guardTestPad.buttons[5].pressed = true;
   });
   await page.keyboard.down("KeyG");
   await tick(page, 14);

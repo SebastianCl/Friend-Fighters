@@ -75,7 +75,7 @@ test("inicio, selección, controles guardados, práctica, pausa y reinicio", asy
   await expect(page.locator('[data-bind="block"][data-player="1"]')).toHaveText(
     "I",
   );
-  await expect(page.getByRole("dialog")).toContainText("Y / △: bloqueo");
+  await expect(page.getByRole("dialog")).toContainText("R: bloqueo");
   await page.locator('[data-bind="punch"][data-player="0"]').click();
   await page.keyboard.press("KeyQ");
   await expect(page.locator('[data-bind="punch"][data-player="0"]')).toHaveText(

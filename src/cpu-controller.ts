@@ -1,4 +1,5 @@
-import { combatSpace, idle, type Combat, type InputFrame } from "./combat";
+import type { CombatState } from "./combat-state";
+import { combatSpace, idle, type InputFrame } from "./combat";
 
 /** Chooses inputs for an existing fighter; combat rules remain in Combat.step. */
 export class CpuController {
@@ -14,7 +15,7 @@ export class CpuController {
     this.pulse = {};
   }
 
-  frame(combat: Combat, index: 0 | 1): InputFrame {
+  frame(combat: CombatState, index: 0 | 1): InputFrame {
     if (combat.phase !== "fight") {
       this.reset();
       return idle();
@@ -29,7 +30,7 @@ export class CpuController {
     return frame;
   }
 
-  private decide(combat: Combat, index: 0 | 1) {
+  private decide(combat: CombatState, index: 0 | 1) {
     const self = combat.fighters[index];
     const opponent = combat.fighters[1 - index];
     const distance = Math.abs(opponent.x - self.x);

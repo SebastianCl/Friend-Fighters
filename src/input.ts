@@ -105,6 +105,16 @@ export function migrateBindings(stored: unknown): Bindings[] | null {
   return migrated;
 }
 
+const switchProButtons = {
+  punch: 0, // B
+  kick: 1, // A
+  grab: 4, // L
+  block: 5, // R
+  special: 6, // ZL
+  menuConfirm: 0, // B
+  menuCancel: 3, // X
+} as const;
+
 function gamepadFrame(pad: Gamepad | null | undefined): InputFrame {
   const input = idle();
   if (!pad) return input;
@@ -112,11 +122,11 @@ function gamepadFrame(pad: Gamepad | null | undefined): InputFrame {
   input.right = !!pad.buttons[15]?.pressed || pad.axes[0] > 0.35;
   input.up = !!pad.buttons[12]?.pressed || pad.axes[1] < -0.55;
   input.down = !!pad.buttons[13]?.pressed || pad.axes[1] > 0.55;
-  input.punch = !!pad.buttons[0]?.pressed;
-  input.kick = !!pad.buttons[1]?.pressed;
-  input.special = !!pad.buttons[2]?.pressed;
-  input.block = !!pad.buttons[3]?.pressed;
-  input.grab = !!pad.buttons[5]?.pressed;
+  input.punch = !!pad.buttons[switchProButtons.punch]?.pressed;
+  input.kick = !!pad.buttons[switchProButtons.kick]?.pressed;
+  input.special = !!pad.buttons[switchProButtons.special]?.pressed;
+  input.block = !!pad.buttons[switchProButtons.block]?.pressed;
+  input.grab = !!pad.buttons[switchProButtons.grab]?.pressed;
   return input;
 }
 
@@ -181,19 +191,21 @@ export class Inputs {
   }
   menuFrame(): MenuInputFrame {
     const input = idle();
+    let confirm = false;
+    let cancel = false;
     for (const pad of navigator.getGamepads?.() ?? []) {
       mergeFrames(input, gamepadFrame(pad));
+      confirm ||= !!pad?.buttons[switchProButtons.menuConfirm]?.pressed;
+      cancel ||= !!pad?.buttons[switchProButtons.menuCancel]?.pressed;
     }
     return {
       left: input.left,
       right: input.right,
       up: input.up,
       down: input.down,
-      // Menu actions intentionally use the existing combat mapping. On a
-      // Switch Pro's standard browser mapping, button 0 is physical B and
-      // button 3 is physical X.
-      confirm: input.punch,
-      cancel: input.block,
+      // X stays reserved in combat, but remains the cancel action in menus.
+      confirm,
+      cancel,
     };
   }
 }

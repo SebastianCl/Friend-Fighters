@@ -5,7 +5,8 @@ import {
   type AnimationKey,
   type AnimationRegion,
 } from "./animation";
-import { type Combat, type Hit } from "./combat";
+import { type Hit } from "./combat";
+import type { CombatState } from "./combat-state";
 import { cameraShakeForHit } from "./effects/camera-shake";
 import {
   LANDING_DUST_ANIMATION,
@@ -24,7 +25,7 @@ interface FrameArt extends AnimationRegion {
   bounds: { left: number; top: number; right: number; bottom: number };
 }
 export interface ArenaState {
-  combat: Combat;
+  combat: CombatState;
   screen: "menu" | "select" | "fight" | "result";
   paused: boolean;
   characters: [CharacterId, CharacterId];
