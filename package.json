@@ -12,7 +12,8 @@
     "format": "prettier --write src tests *.ts *.json index.html README.md",
     "import:laura-legacy": "node docs/characters/laura/import-legacy-base.mjs",
     "import:laura-grab": "node docs/characters/laura/import-legacy-grab.mjs",
-    "validate:movement-template": "node docs/characters/validate-movement-template.mjs"
+    "validate:movement-template": "node docs/characters/validate-movement-template.mjs",
+    "validate:grab-template": "node docs/characters/validate-grab-template.mjs"
   },
   "dependencies": {
     "phaser": "3.90.0"

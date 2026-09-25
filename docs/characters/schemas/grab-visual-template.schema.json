@@ -1,0 +1,746 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://fighter-friends.local/character-pipeline/grab-visual-template-1.schema.json",
+  "title": "P09 Grab Visual Template v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "templateVersion",
+    "status",
+    "compatiblePipelineVersion",
+    "referenceVersions",
+    "separationOfConcerns",
+    "roles",
+    "policies",
+    "laterality",
+    "temporal",
+    "depth",
+    "dualMannequin",
+    "legacyEvidence",
+    "references",
+    "poses",
+    "anchors",
+    "surfaces",
+    "pairingCandidate"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "templateVersion": {
+      "const": "1.0.0"
+    },
+    "status": {
+      "const": "structure-approved"
+    },
+    "compatiblePipelineVersion": {
+      "const": "1.0.0-draft.1"
+    },
+    "referenceVersions": {
+      "const": {
+        "semanticsSchema": 1,
+        "geometrySchema": 1,
+        "baseMovementTemplate": "1.0.0",
+        "handGestures": "1.0.0"
+      }
+    },
+    "separationOfConcerns": {
+      "const": ["anatomy", "pose", "visual-interaction", "mechanical-state"]
+    },
+    "roles": {
+      "const": {
+        "attacker": {
+          "identity": "explicit-role-not-screen-position",
+          "characterSpec": "own-P05-reference-through-P08-instance",
+          "anatomy": "own-character-spec",
+          "root": "own-simulation-root-P04-pivot",
+          "pelvis": "own-P08-neutral-pelvis-reference",
+          "landmarks": "own-22-P03-landmarks",
+          "facing": "own-simulation-facing",
+          "laterality": "anatomical"
+        },
+        "victim": {
+          "identity": "explicit-role-not-screen-position",
+          "characterSpec": "own-P05-reference-through-P08-instance",
+          "anatomy": "own-character-spec",
+          "root": "own-simulation-root-P04-pivot",
+          "pelvis": "own-P08-neutral-pelvis-reference",
+          "landmarks": "own-22-P03-landmarks",
+          "facing": "own-simulation-facing",
+          "laterality": "anatomical"
+        }
+      }
+    },
+    "policies": {
+      "const": {
+        "geometryProfileId": "canonical-320x352-v1",
+        "rootPolicy": "independent-simulation-roots",
+        "globalVisualOffsets": "forbidden",
+        "anchorError": "diagnostic-never-translation-command",
+        "perCharacterScaling": "forbidden",
+        "limbStretching": "forbidden",
+        "proportionChanges": "forbidden",
+        "universalArtisticSeparation": null,
+        "handTorsoTolerance": null,
+        "camera": "inherit-P08-pending-visual-validation",
+        "pairing": "explicit-per-variant-dual-mannequin-review",
+        "gripCenter": "diagnostic-only-never-replaces-two-contacts"
+      }
+    },
+    "laterality": {
+      "const": {
+        "lead": "left",
+        "executor": "right",
+        "variant": "explicit-P08-instance",
+        "mirror": "preserve-anatomical-ids-and-roles",
+        "anchors": "transform-around-own-pivot",
+        "surfaceOrientations": "transform-with-facing",
+        "composition": "transform-both-roots-and-facings-coherently"
+      }
+    },
+    "temporal": {
+      "const": {
+        "classification": "conceptual-not-runtime-state-enum",
+        "sequence": [
+          "attempt",
+          "capture",
+          "hold",
+          "pre-release",
+          "release",
+          "flight",
+          "impact-or-cancel"
+        ],
+        "cancelFrom": [
+          "attempt",
+          "capture",
+          "hold",
+          "pre-release",
+          "release",
+          "flight"
+        ],
+        "impactResponsibility": "outside-grab_03",
+        "mechanicalEvidenceRequired": [
+          "interaction-id",
+          "attacker-victim-identities",
+          "capture-confirmed",
+          "capture-tick",
+          "release-tick",
+          "impact-tick",
+          "cancel-reason",
+          "final-roots",
+          "facing",
+          "received-stance",
+          "elapsed-since-capture"
+        ],
+        "attackHitProvesCapture": false
+      }
+    },
+    "depth": {
+      "const": {
+        "model": "acyclic-part-occlusion-relations",
+        "wholeActorDrawOrderIsSufficient": false,
+        "requiresLayering": "explicit-when-parts-of-both-actors-must-interleave",
+        "automaticRendererChanges": false
+      }
+    },
+    "dualMannequin": {
+      "const": {
+        "inputs": [
+          "attacker-P05-spec-and-P08-instance",
+          "victim-P05-spec-and-P08-instance",
+          "grab-pose-definition",
+          "explicit-pairing",
+          "observed-mechanical-roots-and-facings"
+        ],
+        "overlays": [
+          "roots-pivots",
+          "neutral-pelvis-references",
+          "skeletons",
+          "22-landmarks-per-actor",
+          "interaction-surfaces",
+          "interaction-anchors",
+          "active-links",
+          "per-contact-error-vectors",
+          "observed-mechanical-root-separation",
+          "feasible-visual-range-when-evidenced",
+          "ground-contacts",
+          "facing-anatomical-laterality",
+          "depth-occlusion",
+          "requiresLayering"
+        ],
+        "anatomyCases": [
+          "tall-to-short",
+          "short-to-tall",
+          "wide-narrow-torso",
+          "long-short-arms",
+          "standing-crouching-victim",
+          "both-facings",
+          "explicit-lateral-variants"
+        ],
+        "camera": "P08-shared-parameters-pending",
+        "assetsGenerated": false
+      }
+    },
+    "legacyEvidence": {
+      "const": {
+        "authority": "P07-reference-only",
+        "rootSeparationGameUnits": 100,
+        "throwBeforeReleaseTicks": [1, 3],
+        "attackHitProvesCapture": false,
+        "simultaneousGrabMayShowHoldThrowWithoutCapture": true,
+        "victimHold": {
+          "engineKey": "hurt",
+          "resourceId": "base_13",
+          "purpose": "legacy-compatibility-only"
+        },
+        "victimFlight": {
+          "engineKey": "fall",
+          "resourceId": "base_14",
+          "purpose": "legacy-compatibility-only-not-canonical-aerial-pose"
+        },
+        "base14Semantics": "supine-with-ground-contacts-per-P08",
+        "notStandards": [
+          "700-600-642-by-809-cells",
+          "alpha-derived-pivots",
+          "legacy-scale",
+          "Laura-hand-proximity",
+          "absent-victim",
+          "current-timing",
+          "current-draw-order"
+        ],
+        "preserveAllAlphaGreaterThanZero": true,
+        "synchronizationTickets": ["P17", "P18"]
+      }
+    },
+    "references": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "global",
+        "semantics",
+        "poseMaster",
+        "geometry",
+        "baseMovement",
+        "handGestures",
+        "legacyGrab"
+      ],
+      "properties": {
+        "global": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "sha256"],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        },
+        "semantics": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "sha256"],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        },
+        "poseMaster": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "sha256"],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        },
+        "geometry": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "sha256"],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        },
+        "baseMovement": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "sha256"],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        },
+        "handGestures": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "sha256"],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        },
+        "legacyGrab": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "sha256"],
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        }
+      }
+    },
+    "poses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "resourceId",
+          "meaning",
+          "conceptualPhases",
+          "activeContacts",
+          "attacker",
+          "victim",
+          "structuralConstraints",
+          "allowedVariations",
+          "criticalLandmarks",
+          "criticalAnchors"
+        ],
+        "properties": {
+          "resourceId": {
+            "enum": ["grab_01", "grab_02", "grab_03"]
+          },
+          "meaning": {
+            "type": "string",
+            "minLength": 1
+          },
+          "conceptualPhases": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "attempt",
+                "capture",
+                "hold",
+                "pre-release",
+                "release",
+                "flight"
+              ]
+            }
+          },
+          "activeContacts": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "attacker": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "torso",
+              "arms",
+              "hands",
+              "supportLeg",
+              "airborne",
+              "groundContacts",
+              "pelvis"
+            ],
+            "properties": {
+              "torso": {
+                "type": "string",
+                "minLength": 1
+              },
+              "arms": {
+                "type": "string",
+                "minLength": 1
+              },
+              "hands": {
+                "$ref": "https://fighter-friends.local/character-pipeline/interaction-hand-gestures-1.schema.json"
+              },
+              "supportLeg": {
+                "enum": ["left", "right", "both", "none"]
+              },
+              "airborne": {
+                "type": "boolean"
+              },
+              "groundContacts": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["site", "surface", "supportsWeight"],
+                  "properties": {
+                    "site": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "surface": {
+                      "enum": ["sole", "forefoot"]
+                    },
+                    "supportsWeight": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              },
+              "pelvis": {
+                "const": "articulated-relative-to-own-neutral-reference"
+              }
+            }
+          },
+          "victim": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "posture",
+              "hands",
+              "supportPolicy",
+              "airbornePolicy",
+              "resourcePolicy"
+            ],
+            "properties": {
+              "posture": {
+                "type": "string",
+                "minLength": 1
+              },
+              "hands": {
+                "$ref": "https://fighter-friends.local/character-pipeline/interaction-hand-gestures-1.schema.json"
+              },
+              "supportPolicy": {
+                "type": "string",
+                "minLength": 1
+              },
+              "airbornePolicy": {
+                "type": "string",
+                "minLength": 1
+              },
+              "resourcePolicy": {
+                "enum": [
+                  "no-forced-resource",
+                  "constraints-without-new-resource"
+                ]
+              }
+            }
+          },
+          "structuralConstraints": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "allowedVariations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "criticalLandmarks": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["attacker", "victim"],
+            "properties": {
+              "attacker": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "victim": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          "criticalAnchors": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      },
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "anchors": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/anchor"
+      },
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "surfaces": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "owner",
+          "laterality",
+          "region",
+          "kind",
+          "geometry",
+          "clothingDependent"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "owner": {
+            "enum": ["attacker", "victim"]
+          },
+          "laterality": {
+            "enum": ["left", "right"]
+          },
+          "region": {
+            "enum": [
+              "palm-and-finger-contact-surface",
+              "anterolateral-upper-torso"
+            ]
+          },
+          "kind": {
+            "const": "body-surface"
+          },
+          "geometry": {
+            "const": "character-or-pair-instance-pending"
+          },
+          "clothingDependent": {
+            "const": false
+          }
+        }
+      },
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "pairingCandidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "contacts"],
+      "properties": {
+        "status": {
+          "const": "candidate-needs-dual-mannequin-review"
+        },
+        "contacts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/contact"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      }
+    }
+  },
+  "$defs": {
+    "anchor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "owner",
+        "laterality",
+        "surfaceId",
+        "coordinateSpace",
+        "position",
+        "surfaceOrientation",
+        "provenance",
+        "measurementStatus",
+        "review"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "owner": {
+          "enum": ["attacker", "victim"]
+        },
+        "laterality": {
+          "enum": ["left", "right"]
+        },
+        "surfaceId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "coordinateSpace": {
+          "const": "canonical-frame-pixels"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["x", "y"],
+              "properties": {
+                "x": {
+                  "type": "number"
+                },
+                "y": {
+                  "type": "number"
+                }
+              }
+            }
+          ]
+        },
+        "surfaceOrientation": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["x", "y"],
+              "properties": {
+                "x": {
+                  "type": "number"
+                },
+                "y": {
+                  "type": "number"
+                }
+              }
+            }
+          ]
+        },
+        "provenance": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["path", "sha256"],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              }
+            }
+          ]
+        },
+        "measurementStatus": {
+          "enum": ["pending", "authored", "measured"]
+        },
+        "review": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "reviewedBy"],
+          "properties": {
+            "status": {
+              "enum": ["pending", "approved"]
+            },
+            "reviewedBy": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "string",
+                  "minLength": 1
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "contact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "attackerAnchor", "victimAnchor"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "attackerAnchor": {
+          "type": "string",
+          "minLength": 1
+        },
+        "victimAnchor": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    }
+  }
+}

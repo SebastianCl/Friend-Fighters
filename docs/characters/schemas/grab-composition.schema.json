@@ -1,0 +1,448 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://fighter-friends.local/character-pipeline/grab-composition-1.schema.json",
+  "title": "P09 dual-actor authoring composition v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "compositionVersion",
+    "status",
+    "template",
+    "geometryProfileId",
+    "resourceId",
+    "actors",
+    "anchors",
+    "pairing",
+    "pairingReview",
+    "activeContacts",
+    "mechanicalPhase",
+    "globalVisualOffsets",
+    "occlusion",
+    "feasibility"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "compositionVersion": {
+      "const": "1.0.0"
+    },
+    "status": {
+      "const": "draft"
+    },
+    "template": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "geometryProfileId": {
+      "const": "canonical-320x352-v1"
+    },
+    "resourceId": {
+      "enum": ["grab_01", "grab_02", "grab_03"]
+    },
+    "actors": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["attacker", "victim"],
+      "properties": {
+        "attacker": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "actorId",
+            "movementInstance",
+            "root",
+            "facing",
+            "receivedStance"
+          ],
+          "properties": {
+            "actorId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "movementInstance": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["path", "sha256"],
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "sha256": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    }
+                  }
+                }
+              ]
+            },
+            "root": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["x", "y"],
+                  "properties": {
+                    "x": {
+                      "type": "number"
+                    },
+                    "y": {
+                      "type": "number"
+                    }
+                  }
+                }
+              ]
+            },
+            "facing": {
+              "enum": [-1, 1, null]
+            },
+            "receivedStance": {
+              "enum": ["standing", "crouching", null]
+            }
+          }
+        },
+        "victim": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "actorId",
+            "movementInstance",
+            "root",
+            "facing",
+            "receivedStance"
+          ],
+          "properties": {
+            "actorId": {
+              "type": "string",
+              "minLength": 1
+            },
+            "movementInstance": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["path", "sha256"],
+                  "properties": {
+                    "path": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "sha256": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    }
+                  }
+                }
+              ]
+            },
+            "root": {
+              "anyOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["x", "y"],
+                  "properties": {
+                    "x": {
+                      "type": "number"
+                    },
+                    "y": {
+                      "type": "number"
+                    }
+                  }
+                }
+              ]
+            },
+            "facing": {
+              "enum": [-1, 1, null]
+            },
+            "receivedStance": {
+              "enum": ["standing", "crouching", null]
+            }
+          }
+        }
+      }
+    },
+    "anchors": {
+      "type": "array",
+      "items": {
+        "$ref": "https://fighter-friends.local/character-pipeline/grab-visual-template-1.schema.json#/$defs/anchor"
+      },
+      "minItems": 4,
+      "maxItems": 4
+    },
+    "pairing": {
+      "type": "array",
+      "items": {
+        "$ref": "https://fighter-friends.local/character-pipeline/grab-visual-template-1.schema.json#/$defs/contact"
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "pairingReview": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "evidence", "reviewedBy"],
+      "properties": {
+        "status": {
+          "enum": ["pending", "approved"]
+        },
+        "evidence": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["path", "sha256"],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              }
+            }
+          ]
+        },
+        "reviewedBy": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "string",
+              "minLength": 1
+            }
+          ]
+        }
+      }
+    },
+    "activeContacts": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "mechanicalPhase": {
+      "enum": [
+        "attempt",
+        "capture",
+        "hold",
+        "pre-release",
+        "release",
+        "flight",
+        "impact",
+        "cancel",
+        null
+      ]
+    },
+    "globalVisualOffsets": {
+      "const": "forbidden"
+    },
+    "occlusion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "relations", "requiresLayering", "evidence"],
+      "properties": {
+        "status": {
+          "enum": ["pending", "reviewed"]
+        },
+        "relations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["front", "back"],
+            "properties": {
+              "front": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["owner", "part"],
+                "properties": {
+                  "owner": {
+                    "enum": ["attacker", "victim"]
+                  },
+                  "part": {
+                    "enum": [
+                      "head",
+                      "torso",
+                      "pelvis",
+                      "left_arm",
+                      "right_arm",
+                      "left_hand",
+                      "right_hand",
+                      "left_leg",
+                      "right_leg"
+                    ]
+                  }
+                }
+              },
+              "back": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["owner", "part"],
+                "properties": {
+                  "owner": {
+                    "enum": ["attacker", "victim"]
+                  },
+                  "part": {
+                    "enum": [
+                      "head",
+                      "torso",
+                      "pelvis",
+                      "left_arm",
+                      "right_arm",
+                      "left_hand",
+                      "right_hand",
+                      "left_leg",
+                      "right_leg"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requiresLayering": {
+          "enum": [true, false, null]
+        },
+        "evidence": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["path", "sha256"],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "feasibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "derivation",
+        "rootDistanceRangeGameUnits",
+        "contactToleranceCanonicalPixels",
+        "evidence",
+        "reasons"
+      ],
+      "properties": {
+        "status": {
+          "enum": ["pending", "compatible", "incompatible"]
+        },
+        "derivation": {
+          "const": "anatomy-articulation-surfaces-facing"
+        },
+        "rootDistanceRangeGameUnits": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["min", "max"],
+              "properties": {
+                "min": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "max": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              }
+            }
+          ]
+        },
+        "contactToleranceCanonicalPixels": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "number",
+              "minimum": 0
+            }
+          ]
+        },
+        "evidence": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["path", "sha256"],
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                }
+              }
+            }
+          ]
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

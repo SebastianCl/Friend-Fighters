@@ -1,0 +1,628 @@
+{
+  "schemaVersion": 1,
+  "templateVersion": "1.0.0",
+  "status": "structure-approved",
+  "compatiblePipelineVersion": "1.0.0-draft.1",
+  "references": {
+    "global": {
+      "path": "docs/characters/pipeline-config.json",
+      "sha256": "be3feb5e118f0f9598385cfd1c5b5e68c22a3980f0749e5aa18e8227864afc2d"
+    },
+    "semantics": {
+      "path": "docs/characters/pose-semantics.json",
+      "sha256": "e050421ebafb05f1c983f9445895a4bb522b804e9a967df82992595af91b6359"
+    },
+    "poseMaster": {
+      "path": "docs/characters/pose-master-contract.ts",
+      "sha256": "cde8d0f1531f41a68b59e895dc21ac9e9f542fd59ebac684f487a4077b55bb76"
+    },
+    "geometry": {
+      "path": "docs/characters/geometry-profile.json",
+      "sha256": "407afe4a28ebc20c11d6e584ffdc93cc2f3a265d301d196b50a23002e81a4f95"
+    },
+    "baseMovement": {
+      "path": "docs/characters/base-movement-template.json",
+      "sha256": "41f212518050470f430701efc2463a61ba868c8fa73dfa8718b589166ba6984d"
+    },
+    "handGestures": {
+      "path": "docs/characters/schemas/interaction-hand-gestures.schema.json",
+      "sha256": "a379ce11c5a3324cca5e87f4702654b62ee130e158f266502ca4a6007071af96"
+    },
+    "legacyGrab": {
+      "path": "docs/characters/laura/legacy-grab-manifest.json",
+      "sha256": "6c661f1e7fdf00d1fd17c1c903e8c641c23186620f3ce5429a4fb7a580053771"
+    }
+  },
+  "referenceVersions": {
+    "semanticsSchema": 1,
+    "geometrySchema": 1,
+    "baseMovementTemplate": "1.0.0",
+    "handGestures": "1.0.0"
+  },
+  "separationOfConcerns": [
+    "anatomy",
+    "pose",
+    "visual-interaction",
+    "mechanical-state"
+  ],
+  "roles": {
+    "attacker": {
+      "identity": "explicit-role-not-screen-position",
+      "characterSpec": "own-P05-reference-through-P08-instance",
+      "anatomy": "own-character-spec",
+      "root": "own-simulation-root-P04-pivot",
+      "pelvis": "own-P08-neutral-pelvis-reference",
+      "landmarks": "own-22-P03-landmarks",
+      "facing": "own-simulation-facing",
+      "laterality": "anatomical"
+    },
+    "victim": {
+      "identity": "explicit-role-not-screen-position",
+      "characterSpec": "own-P05-reference-through-P08-instance",
+      "anatomy": "own-character-spec",
+      "root": "own-simulation-root-P04-pivot",
+      "pelvis": "own-P08-neutral-pelvis-reference",
+      "landmarks": "own-22-P03-landmarks",
+      "facing": "own-simulation-facing",
+      "laterality": "anatomical"
+    }
+  },
+  "policies": {
+    "geometryProfileId": "canonical-320x352-v1",
+    "rootPolicy": "independent-simulation-roots",
+    "globalVisualOffsets": "forbidden",
+    "anchorError": "diagnostic-never-translation-command",
+    "perCharacterScaling": "forbidden",
+    "limbStretching": "forbidden",
+    "proportionChanges": "forbidden",
+    "universalArtisticSeparation": null,
+    "handTorsoTolerance": null,
+    "camera": "inherit-P08-pending-visual-validation",
+    "pairing": "explicit-per-variant-dual-mannequin-review",
+    "gripCenter": "diagnostic-only-never-replaces-two-contacts"
+  },
+  "laterality": {
+    "lead": "left",
+    "executor": "right",
+    "variant": "explicit-P08-instance",
+    "mirror": "preserve-anatomical-ids-and-roles",
+    "anchors": "transform-around-own-pivot",
+    "surfaceOrientations": "transform-with-facing",
+    "composition": "transform-both-roots-and-facings-coherently"
+  },
+  "surfaces": [
+    {
+      "id": "attacker_left_grip_surface",
+      "owner": "attacker",
+      "laterality": "left",
+      "region": "palm-and-finger-contact-surface",
+      "kind": "body-surface",
+      "geometry": "character-or-pair-instance-pending",
+      "clothingDependent": false
+    },
+    {
+      "id": "attacker_right_grip_surface",
+      "owner": "attacker",
+      "laterality": "right",
+      "region": "palm-and-finger-contact-surface",
+      "kind": "body-surface",
+      "geometry": "character-or-pair-instance-pending",
+      "clothingDependent": false
+    },
+    {
+      "id": "victim_left_upper_torso_surface",
+      "owner": "victim",
+      "laterality": "left",
+      "region": "anterolateral-upper-torso",
+      "kind": "body-surface",
+      "geometry": "character-or-pair-instance-pending",
+      "clothingDependent": false
+    },
+    {
+      "id": "victim_right_upper_torso_surface",
+      "owner": "victim",
+      "laterality": "right",
+      "region": "anterolateral-upper-torso",
+      "kind": "body-surface",
+      "geometry": "character-or-pair-instance-pending",
+      "clothingDependent": false
+    }
+  ],
+  "anchors": [
+    {
+      "id": "left_grip_contact",
+      "owner": "attacker",
+      "laterality": "left",
+      "surfaceId": "attacker_left_grip_surface",
+      "coordinateSpace": "canonical-frame-pixels",
+      "position": null,
+      "surfaceOrientation": null,
+      "provenance": null,
+      "measurementStatus": "pending",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      }
+    },
+    {
+      "id": "right_grip_contact",
+      "owner": "attacker",
+      "laterality": "right",
+      "surfaceId": "attacker_right_grip_surface",
+      "coordinateSpace": "canonical-frame-pixels",
+      "position": null,
+      "surfaceOrientation": null,
+      "provenance": null,
+      "measurementStatus": "pending",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      }
+    },
+    {
+      "id": "left_upper_torso_contact",
+      "owner": "victim",
+      "laterality": "left",
+      "surfaceId": "victim_left_upper_torso_surface",
+      "coordinateSpace": "canonical-frame-pixels",
+      "position": null,
+      "surfaceOrientation": null,
+      "provenance": null,
+      "measurementStatus": "pending",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      }
+    },
+    {
+      "id": "right_upper_torso_contact",
+      "owner": "victim",
+      "laterality": "right",
+      "surfaceId": "victim_right_upper_torso_surface",
+      "coordinateSpace": "canonical-frame-pixels",
+      "position": null,
+      "surfaceOrientation": null,
+      "provenance": null,
+      "measurementStatus": "pending",
+      "review": {
+        "status": "pending",
+        "reviewedBy": null
+      }
+    }
+  ],
+  "pairingCandidate": {
+    "status": "candidate-needs-dual-mannequin-review",
+    "contacts": [
+      {
+        "id": "right_grip",
+        "attackerAnchor": "right_grip_contact",
+        "victimAnchor": "left_upper_torso_contact"
+      },
+      {
+        "id": "left_grip",
+        "attackerAnchor": "left_grip_contact",
+        "victimAnchor": "right_upper_torso_contact"
+      }
+    ]
+  },
+  "poses": [
+    {
+      "resourceId": "grab_01",
+      "meaning": "reach-attempt",
+      "conceptualPhases": ["attempt"],
+      "activeContacts": [],
+      "attacker": {
+        "torso": "inclined-toward-target",
+        "arms": "right-reach-left-ready",
+        "hands": {
+          "contractVersion": "1.0.0",
+          "left": "relaxed",
+          "right": "open"
+        },
+        "supportLeg": "both",
+        "airborne": false,
+        "groundContacts": [
+          {
+            "site": "left_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          },
+          {
+            "site": "right_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          }
+        ],
+        "pelvis": "articulated-relative-to-own-neutral-reference"
+      },
+      "victim": {
+        "posture": "preserve-previous-pose",
+        "hands": {
+          "contractVersion": "1.0.0",
+          "left": null,
+          "right": null
+        },
+        "supportPolicy": "inherit-previous",
+        "airbornePolicy": "inherit-previous",
+        "resourcePolicy": "no-forced-resource"
+      },
+      "structuralConstraints": [
+        "right-open-hand-reaches-with-soft-elbow",
+        "left-hand-ready-near-torso",
+        "no-confirmed-contact",
+        "no-victim-reaction-before-capture"
+      ],
+      "allowedVariations": [
+        "stance-width",
+        "knee-flexion",
+        "torso-inclination",
+        "reach-height-within-character-anatomy"
+      ],
+      "criticalLandmarks": {
+        "attacker": [
+          "head_center",
+          "neck",
+          "sternum",
+          "pelvis_center",
+          "left_shoulder",
+          "left_elbow",
+          "left_wrist",
+          "left_palm",
+          "left_hip",
+          "left_knee",
+          "left_ankle",
+          "left_heel",
+          "left_toe",
+          "right_shoulder",
+          "right_elbow",
+          "right_wrist",
+          "right_palm",
+          "right_hip",
+          "right_knee",
+          "right_ankle",
+          "right_heel",
+          "right_toe"
+        ],
+        "victim": [
+          "neck",
+          "sternum",
+          "pelvis_center",
+          "left_shoulder",
+          "right_shoulder"
+        ]
+      },
+      "criticalAnchors": [
+        "right_grip_contact",
+        "left_upper_torso_contact",
+        "right_upper_torso_contact"
+      ]
+    },
+    {
+      "resourceId": "grab_02",
+      "meaning": "bilateral-upper-torso-hold",
+      "conceptualPhases": ["capture", "hold", "pre-release"],
+      "activeContacts": ["right_grip", "left_grip"],
+      "attacker": {
+        "torso": "stable-facing-victim",
+        "arms": "bilateral-grip-soft-elbows",
+        "hands": {
+          "contractVersion": "1.0.0",
+          "left": "grasp",
+          "right": "grasp"
+        },
+        "supportLeg": "both",
+        "airborne": false,
+        "groundContacts": [
+          {
+            "site": "left_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          },
+          {
+            "site": "right_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          }
+        ],
+        "pelvis": "articulated-relative-to-own-neutral-reference"
+      },
+      "victim": {
+        "posture": "received-standing-or-crouching-with-moderate-recoil",
+        "hands": {
+          "contractVersion": "1.0.0",
+          "left": "relaxed",
+          "right": "relaxed"
+        },
+        "supportPolicy": "both-feet-no-forced-standing",
+        "airbornePolicy": "grounded",
+        "resourcePolicy": "constraints-without-new-resource"
+      },
+      "structuralConstraints": [
+        "two-independent-upper-torso-contacts",
+        "grasp-is-not-fist",
+        "clothing-independent",
+        "victim-arms-clear-contact-surfaces",
+        "no-forced-crossed-arms"
+      ],
+      "allowedVariations": [
+        "stance-width",
+        "knee-flexion",
+        "elbow-flexion",
+        "torso-inclination",
+        "surface-contact-placement-within-region"
+      ],
+      "criticalLandmarks": {
+        "attacker": [
+          "head_center",
+          "neck",
+          "sternum",
+          "pelvis_center",
+          "left_shoulder",
+          "left_elbow",
+          "left_wrist",
+          "left_palm",
+          "left_hip",
+          "left_knee",
+          "left_ankle",
+          "left_heel",
+          "left_toe",
+          "right_shoulder",
+          "right_elbow",
+          "right_wrist",
+          "right_palm",
+          "right_hip",
+          "right_knee",
+          "right_ankle",
+          "right_heel",
+          "right_toe"
+        ],
+        "victim": [
+          "head_center",
+          "neck",
+          "sternum",
+          "pelvis_center",
+          "left_shoulder",
+          "left_elbow",
+          "left_wrist",
+          "left_palm",
+          "left_hip",
+          "left_knee",
+          "left_ankle",
+          "left_heel",
+          "left_toe",
+          "right_shoulder",
+          "right_elbow",
+          "right_wrist",
+          "right_palm",
+          "right_hip",
+          "right_knee",
+          "right_ankle",
+          "right_heel",
+          "right_toe"
+        ]
+      },
+      "criticalAnchors": [
+        "left_grip_contact",
+        "right_grip_contact",
+        "left_upper_torso_contact",
+        "right_upper_torso_contact"
+      ]
+    },
+    {
+      "resourceId": "grab_03",
+      "meaning": "immediate-post-release-follow-through",
+      "conceptualPhases": ["release", "flight"],
+      "activeContacts": [],
+      "attacker": {
+        "torso": "forward-upward-follow-through",
+        "arms": "bilateral-open-extension-soft-elbows",
+        "hands": {
+          "contractVersion": "1.0.0",
+          "left": "open",
+          "right": "open"
+        },
+        "supportLeg": "both",
+        "airborne": false,
+        "groundContacts": [
+          {
+            "site": "left_foot",
+            "surface": "sole",
+            "supportsWeight": true
+          },
+          {
+            "site": "right_foot",
+            "surface": "forefoot",
+            "supportsWeight": true
+          }
+        ],
+        "pelvis": "articulated-relative-to-own-neutral-reference"
+      },
+      "victim": {
+        "posture": "released-local-disequilibrium",
+        "hands": {
+          "contractVersion": "1.0.0",
+          "left": "relaxed",
+          "right": "relaxed"
+        },
+        "supportPolicy": "no-ground-contacts-during-flight",
+        "airbornePolicy": "simulation-owned-flight",
+        "resourcePolicy": "constraints-without-new-resource"
+      },
+      "structuralConstraints": [
+        "open-hands-no-active-grip",
+        "victim-free-of-hands",
+        "victim-trajectory-simulation-only",
+        "impact-outside-this-resource",
+        "attacker-grounded-left-lead-load"
+      ],
+      "allowedVariations": [
+        "knee-flexion",
+        "torso-inclination",
+        "elbow-flexion",
+        "follow-through-angle"
+      ],
+      "criticalLandmarks": {
+        "attacker": [
+          "head_center",
+          "neck",
+          "sternum",
+          "pelvis_center",
+          "left_shoulder",
+          "left_elbow",
+          "left_wrist",
+          "left_palm",
+          "left_hip",
+          "left_knee",
+          "left_ankle",
+          "left_heel",
+          "left_toe",
+          "right_shoulder",
+          "right_elbow",
+          "right_wrist",
+          "right_palm",
+          "right_hip",
+          "right_knee",
+          "right_ankle",
+          "right_heel",
+          "right_toe"
+        ],
+        "victim": [
+          "head_center",
+          "neck",
+          "sternum",
+          "pelvis_center",
+          "left_shoulder",
+          "left_elbow",
+          "left_wrist",
+          "left_palm",
+          "left_hip",
+          "left_knee",
+          "left_ankle",
+          "left_heel",
+          "left_toe",
+          "right_shoulder",
+          "right_elbow",
+          "right_wrist",
+          "right_palm",
+          "right_hip",
+          "right_knee",
+          "right_ankle",
+          "right_heel",
+          "right_toe"
+        ]
+      },
+      "criticalAnchors": [
+        "left_grip_contact",
+        "right_grip_contact",
+        "left_upper_torso_contact",
+        "right_upper_torso_contact"
+      ]
+    }
+  ],
+  "temporal": {
+    "classification": "conceptual-not-runtime-state-enum",
+    "sequence": [
+      "attempt",
+      "capture",
+      "hold",
+      "pre-release",
+      "release",
+      "flight",
+      "impact-or-cancel"
+    ],
+    "cancelFrom": [
+      "attempt",
+      "capture",
+      "hold",
+      "pre-release",
+      "release",
+      "flight"
+    ],
+    "impactResponsibility": "outside-grab_03",
+    "mechanicalEvidenceRequired": [
+      "interaction-id",
+      "attacker-victim-identities",
+      "capture-confirmed",
+      "capture-tick",
+      "release-tick",
+      "impact-tick",
+      "cancel-reason",
+      "final-roots",
+      "facing",
+      "received-stance",
+      "elapsed-since-capture"
+    ],
+    "attackHitProvesCapture": false
+  },
+  "depth": {
+    "model": "acyclic-part-occlusion-relations",
+    "wholeActorDrawOrderIsSufficient": false,
+    "requiresLayering": "explicit-when-parts-of-both-actors-must-interleave",
+    "automaticRendererChanges": false
+  },
+  "dualMannequin": {
+    "inputs": [
+      "attacker-P05-spec-and-P08-instance",
+      "victim-P05-spec-and-P08-instance",
+      "grab-pose-definition",
+      "explicit-pairing",
+      "observed-mechanical-roots-and-facings"
+    ],
+    "overlays": [
+      "roots-pivots",
+      "neutral-pelvis-references",
+      "skeletons",
+      "22-landmarks-per-actor",
+      "interaction-surfaces",
+      "interaction-anchors",
+      "active-links",
+      "per-contact-error-vectors",
+      "observed-mechanical-root-separation",
+      "feasible-visual-range-when-evidenced",
+      "ground-contacts",
+      "facing-anatomical-laterality",
+      "depth-occlusion",
+      "requiresLayering"
+    ],
+    "anatomyCases": [
+      "tall-to-short",
+      "short-to-tall",
+      "wide-narrow-torso",
+      "long-short-arms",
+      "standing-crouching-victim",
+      "both-facings",
+      "explicit-lateral-variants"
+    ],
+    "camera": "P08-shared-parameters-pending",
+    "assetsGenerated": false
+  },
+  "legacyEvidence": {
+    "authority": "P07-reference-only",
+    "rootSeparationGameUnits": 100,
+    "throwBeforeReleaseTicks": [1, 3],
+    "attackHitProvesCapture": false,
+    "simultaneousGrabMayShowHoldThrowWithoutCapture": true,
+    "victimHold": {
+      "engineKey": "hurt",
+      "resourceId": "base_13",
+      "purpose": "legacy-compatibility-only"
+    },
+    "victimFlight": {
+      "engineKey": "fall",
+      "resourceId": "base_14",
+      "purpose": "legacy-compatibility-only-not-canonical-aerial-pose"
+    },
+    "base14Semantics": "supine-with-ground-contacts-per-P08",
+    "notStandards": [
+      "700-600-642-by-809-cells",
+      "alpha-derived-pivots",
+      "legacy-scale",
+      "Laura-hand-proximity",
+      "absent-victim",
+      "current-timing",
+      "current-draw-order"
+    ],
+    "preserveAllAlphaGreaterThanZero": true,
+    "synchronizationTickets": ["P17", "P18"]
+  }
+}

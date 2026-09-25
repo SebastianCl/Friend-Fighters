@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://fighter-friends.local/character-pipeline/interaction-hand-gestures-1.schema.json",
+  "title": "P09 interaction gestures v1; additive authoring extension, not the P03/P08 hand enum",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contractVersion", "left", "right"],
+  "properties": {
+    "contractVersion": {
+      "const": "1.0.0"
+    },
+    "left": {
+      "enum": ["open", "fist", "relaxed", "grasp", null]
+    },
+    "right": {
+      "enum": ["open", "fist", "relaxed", "grasp", null]
+    }
+  }
+}
